@@ -43,8 +43,55 @@ def fin_function(lead_id, sub_project_name, first_name, last_name, phone, email1
     if '+971' in phone:
         country_name = 'United Arab Emirates'
         phone = phone[4:] 
-
-
+    if '+93' in phone:
+        country_name = 'Afghanistan'
+        phone = phone[3:]
+    if '+880' in phone:
+        country_name = 'Bangladesh'
+        phone = phone[4:]
+    if '+501' in phone:
+        country_name = 'Belize'
+        phone = phone[4:]
+    if '+55' in phone:
+        country_name = 'Brazil'
+        phone = phone[3:]
+    if '+33' in phone:
+        country_name = 'France'
+        phone = phone[3:]
+    if '+49' in phone:
+        country_name = 'Germany'
+        phone = phone[3:]
+    if '+98' in phone:
+        country_name = 'Iran'
+        phone = phone[3:]
+    if '+39' in phone:
+        country_name = 'Italy'
+        phone = phone[3:]
+    if '+81' in phone:
+        country_name = 'Japan'
+        phone = phone[3:]
+    if '+962' in phone:
+        country_name = 'Jordan'
+        phone = phone[4:]
+    if '+965' in phone:
+        country_name = 'Kuwait'
+        phone = phone[4:]
+    if '+60' in phone:
+        country_name = 'Malaysia'
+        phone = phone[3:]
+    if '+64' in phone:
+        country_name = 'New Zealand'
+        phone = phone[3:]
+    if '+65' in phone:
+        country_name = 'Singapore'
+        phone = phone[3:]
+    if '+94' in phone:
+        country_name = 'Sri Lanka'
+        phone = phone[3:]
+    if '+34' in phone:
+        country_name = 'Spain'
+        phone = phone[3:]
+  
     ### ADD PROPERTIES HERE
 
     if sub_project_name == "Radiance Elite":
