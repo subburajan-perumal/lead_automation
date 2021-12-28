@@ -28,16 +28,10 @@ class Lead(db.Model):
 
 
 ### POST NEW LEADS FOR REGISTRATION
+### Webhook from Zoho is sends the POST request of required information
 @app.route('/',methods=['POST'])
 def webhook():
-    if request.method == 'POST':
-
-        #print("webhook is working")
-        
-        #print(request.headers)
-        
-        #print(request.body)
-        
+    if request.method == 'POST':       
         lead_id = request.headers['lead_id']
         first_name = request.headers['first_name']
         last_name = request.headers['last_name']
