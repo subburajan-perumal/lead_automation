@@ -27,6 +27,7 @@ last_name = "Test"
 email1 = "redacted@example.com"
 sub_project_name = 'CG Zenith'
 phone = '9000000000'
+countrycode = "44" #test number taken
 
 
 
@@ -68,6 +69,9 @@ mail1.click()
 mail1.send_keys(email1)
 mail1.send_keys(Keys.RETURN)
 phone1 = browser.find_element(By.XPATH, '//*[@id="lead_phone"]')
+phone1.send_keys(Keys.BACKSPACE)
+phone1.send_keys(Keys.BACKSPACE)
+phone1.send_keys(countrycode)
 phone1.click()
 phone1.send_keys(phone)
 button2 = browser.find_element(By.XPATH, '//*[@id="s2id_lead_project_ids"]/a/span[2]')
