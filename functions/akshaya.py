@@ -25,6 +25,7 @@ def fin_function(lead_id, sub_project_name, first_name, last_name, phone, email1
     if not last_name:
         last_name = first_name
 
+    ### GET path for Zoho uploads     
     save_paths = getsavePath(path, name1, phone, sub_project_name) 
     save_path1 = save_paths[1]
     save_path = save_paths[0]
