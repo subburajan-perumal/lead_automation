@@ -25,10 +25,48 @@ def fin_function(lead_id, sub_project_name, first_name, last_name, phone, email1
     save_path = save_paths[0]
     save_path2 = save_paths[2]
 
-    if '+91' not in phone:
-        print('Not an Indian Number')
-        return 'Failed'
-    phone = phone[3:]
+    if '+91' in  phone:
+        cc='India (+91)'
+    elif '+1' in phone:
+        cc='Canada (+1)'
+    elif '+44' in phone:
+        cc='United Kingdom (+44)'
+    elif '+93' in phone:
+        cc='Afghanistan (+93)'
+    elif '+880' in phone:
+        cc='Bangladesh (+880)'
+    elif '+501' in phone:
+        cc='Belize (+501)'
+    elif '+55' in phone:
+        cc='Brazil (+55)'
+    elif '+33' in phone:
+        cc='France (+33)'
+    elif '+49' in phone:
+        cc='Germany (+49)'
+    elif '+98' in phone:
+        cc='Iran (+98)'
+    elif '+39' in phone:
+        cc='Italy (+39)'
+    elif '+81' in phone:
+        cc='Japan (+81)'
+    elif '+962' in phone:
+        cc='Jordan (+962)'
+    elif '+965' in phone:
+        cc='Kuwait (+965)'
+    elif '+60' in phone:
+        cc='Malaysia (+60)'
+    elif '+64' in phone:
+        cc='New Zealand (+64)'
+    elif '+65' in phone:
+        cc='Singapore (+65)'
+    elif '+34' in phone:
+        cc='Spain (+34)'
+    elif '+94' in phone:
+        cc='Sri Lanka (+94)'
+    elif '+971' in phone:
+        cc='United Arab Emirates (+971)'
+    else:
+        print('Failed')
 
     if sub_project_name == "Shriram Park 63":
         sub_project_name = 'Park 63'
@@ -73,7 +111,7 @@ def fin_function(lead_id, sub_project_name, first_name, last_name, phone, email1
         coustmer_email = browser.find_element(By.XPATH, '//*[@id="input_9_3"]')
         coustmer_email.send_keys(email1)
         code = Select(browser.find_element(By.XPATH, '//*[@id="input_9_56"]'))
-        code.select_by_visible_text('India (+91)')
+        code.select_by_visible_text(cc)
         coustmer_phone = browser.find_element(By.XPATH, '//*[@id="input_9_4"]')
         coustmer_phone.send_keys(phone)
         resident = Select(browser.find_element(
