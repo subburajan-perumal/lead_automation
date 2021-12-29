@@ -43,8 +43,6 @@ def fin_function(lead_id, sub_project_name, first_name, last_name, phone, email1
     if sub_project_name == "Green Enclave":
         sub_project_name = 'TVS Emerald Green Enclave'
 
-    if '+91' in phone:
-        phone = phone[3:]
 
     s=Service(constants.engine)
     '''
