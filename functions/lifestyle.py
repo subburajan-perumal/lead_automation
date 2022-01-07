@@ -35,12 +35,22 @@ def fin_function(lead_id, sub_project_name, first_name, last_name, phone, email1
     if sub_project_name == "Porur":
         sub_project_name = 'Lifestyle LeParadis'
         
-
+    '''
     if '+91' not in phone:
         print("Not Indian Number")
         return "Failed"
 
     phone = phone[3:]
+    '''
+    country_code = [+91,+1,+44,+93,+880,+501,+55,+33,+49,+98,+39,+81,+962,+965,+60,+64,+65,+34,+94,+971]
+
+    for i in country_code:
+        #print('+'+str(i), ' ', phone[:len('+'+str(i))])
+        if '+'+str(i)== phone[:len('+'+str(i))]:
+            country_code = phone[:len('+'+str(i))]
+            phone = phone[len('+'+str(i)):]
+            
+    
     alternet_contact = phone
     whatsapp = phone
     remark = "NIL"
@@ -73,6 +83,15 @@ def fin_function(lead_id, sub_project_name, first_name, last_name, phone, email1
         adding=browser.find_element(By.CLASS_NAME,'icon-plus')
         adding.click()
         time.sleep(2)
+        
+        #Adding the country code
+        country1=  browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[1]/td[4]/div/span/div/a/div/b')
+        country1.click()
+        country2 = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[1]/td[4]/div/span/div/div/div/input')
+        country2.send_keys(country_code)
+        country2.send_keys(Keys.RETURN)
+        
+        #Adding phone number
         name  = browser.find_element(By.NAME, "contactname")
         name.send_keys(name1)
         contact=browser.find_element(By.NAME,'mobile')
