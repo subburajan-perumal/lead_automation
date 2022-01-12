@@ -91,6 +91,24 @@ def fin_function(lead_id, sub_project_name, first_name, last_name, phone, email1
         add=browser.find_element(By.XPATH,'/html/body/div[3]/div/div/div/form/button').click()
         
         time.sleep(5)
+        
+        #checking whether the data was submitted succesfully or not
+        #It will return the correct message if the data was submitted succesfully or it will tell the error message
+        try:
+            p1 = '/html/body/section/div/p'
+            a = browser.find_element(By.XPATH, p1).text
+            if a=="The Lead is Registered Successfully. Thank You.":
+                print('The lead was rigistered succesfullly')
+            elif a =='Duplicate Lead. Please contact the Sales Manager.':
+                print(a)
+            else:
+                print('the lead could not get registered, please provide the correct information or try again later')
+
+        except:
+            print('the lead was not subbmitted succesfully')
+        
+        #Taking screenshot and saving it
+        
 
         browser.save_screenshot(save_path)    
         browser.quit()
