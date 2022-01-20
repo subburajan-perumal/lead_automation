@@ -1,0 +1,12 @@
+#driver
+geckodriver
+
+#pythoncache
+*.pyc
+
+
+#storage
+storage
+
+#environment
+genv
