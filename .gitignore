@@ -10,3 +10,5 @@ storage
 
 #environment
 genv
+/test/
+.vscode
