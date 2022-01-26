@@ -3,6 +3,7 @@ geckodriver
 
 #pythoncache
 *.pyc
+__pycache__
 
 
 #storage
@@ -12,3 +13,8 @@ storage
 genv
 /test/
 .vscode
+
+#logger
+system.log
+
+#Dockerfile

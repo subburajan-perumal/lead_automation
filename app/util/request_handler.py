@@ -1,0 +1,34 @@
+###post P_request-> P_request
+import json
+
+def find_format(P_request):
+    try:
+
+        print("fomat finder working")
+        content_type=P_request.headers["Content-type"].split("/")
+        req_data={}
+        if "x-www-form-urlencoded" in content_type :
+                print("default post P_request")
+                print(P_request)   
+                req_data =P_request.get_data()
+                
+
+        elif "form-data" in content_type:
+            tempdata=P_request.get_data()
+            req_data=json.loads(tempdata.decode())
+        
+        elif "json" in content_type:
+            if(type(P_request.get_json()) is dict):
+                req_data=P_request.get_json()
+                # data=''.join(key for key,value in data if key.isalnum())
+            #multiple json in single P_request
+            elif(type(P_request.get_json())==list):
+                # print("json array")
+                req_data=P_request.get_json()
+        else:
+            req_data={}
+        return req_data
+    except:
+        print("problem in finding data type")
+        req_data={}
+        return req_data
