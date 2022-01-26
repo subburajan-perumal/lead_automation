@@ -13,6 +13,9 @@ home=Blueprint("home",__name__)
 def task_response():
     taskid=request.args.get('taskid')
     return Response(taskid,200)
+@home.route("/test")
+def test_page():
+    return "site working"
 
 @home.post("/")
 def home_page():
