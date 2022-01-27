@@ -1,8 +1,9 @@
-from config import DevelopmentConfig
+from app.config import DevelopmentConfig
 from celery import Celery
 import time
 from pymongo import MongoClient
 import json
+
 
 CELERY= Celery("tasks", broker=DevelopmentConfig.broker_url,backend=DevelopmentConfig.result_backend)
 

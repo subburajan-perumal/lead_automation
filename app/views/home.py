@@ -1,9 +1,8 @@
 from flask import Blueprint,Response,request
-from markupsafe import re
-from util.request_handler import find_format
+from ..util.request_handler import find_format
 import time
 import json
-from tasks import CELERY
+from ..tasks import CELERY
 # from .. import tasks
 
 #blueprint for the app route

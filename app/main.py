@@ -1,15 +1,19 @@
 from flask import Flask
-from views.home import home
-from config import DevelopmentConfig
-import tasks
+from app.views.error_handler import errorHandler,badrequest_handler
+from app.views.home import home
+from app.config import DevelopmentConfig
 
-app=Flask(__name__)
-app.config.from_object(DevelopmentConfig())
-app.register_blueprint(home)
+# import tasks
+
+def create_app():
+    app=Flask(__name__)
+    app.config.from_object(DevelopmentConfig())
+    app.register_blueprint(home)
+    # app.register_error_handler(errorHandler,badrequest_handler)
+    return app
 
 
 
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0",debug=True, port = 8686,threaded=True)
+
     

@@ -17,4 +17,8 @@ genv
 #logger
 system.log
 
+#key
+cert.pem
+key.pem
+
 #Dockerfile
