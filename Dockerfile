@@ -1,10 +1,3 @@
-FROM python:3.9.2
+FROM alpine
 
-ADD . /opt/lead_automation
-
-WORKDIR /opt/lead_automation
-
-RUN pip install -r requirements.txt
-
-CMD ["run.py"]
-
+COPY . /lead_automation
