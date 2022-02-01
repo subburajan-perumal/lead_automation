@@ -1,31 +1,29 @@
-from app.config import DevelopmentConfig
-from celery import Celery
+# from curses.ascii import isalnum, isalpha
+from celery import Celery,shared_task
+from app.functions.finder import  function_finder
+# from config import DevelopmentConfig
+from app.util.utility import cmpstring
 import time
-from pymongo import MongoClient
 import json
-
-
-CELERY= Celery("tasks", broker=DevelopmentConfig.broker_url,backend=DevelopmentConfig.result_backend)
-
-@CELERY.task
+MONGODB="mongodb://REDACTED_MONGO_URI"
+celery_app= Celery(__name__, broker="redis://REDACTED_REDIS_URI",backend="redis://REDACTED_REDIS_URI")
+# celery_app.conf.update(celery.co)
+@celery_app.task
 def lead(**kwargs):
     try:
-        f = open("test.json",'a')
-
-        f.write(json.dumps(kwargs))
-        f.close()
-        # time.sleep(10)
-        
-        return "success"
+        print("celery started")
+        result=function_finder(kwargs)
+        return result
     except:
         return "failed"
 
-@CELERY.task
+@celery_app.task
 def bulk_lead(*args):
     try:
         f = open("bulk_lead.json","a")
         f.write(str(args))
         f.close()
+        time.sleep(10)
         return "success" 
     except:
         return "failed"

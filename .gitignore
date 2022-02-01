@@ -21,4 +21,4 @@ system.log
 cert.pem
 key.pem
 
-#Dockerfile
+geckodriver.log
