@@ -1,3 +1,4 @@
+from urllib import response
 from flask import Blueprint,Response,request
 from ..util.request_handler import find_format
 import time
@@ -23,6 +24,7 @@ async def home_page():
         start_time=time.time()
         data={}
         data=find_format(request)
+        if data=={}: return Response("invalid request",200)
         if type(data) is list:
             print(data)
         

@@ -1,6 +1,4 @@
-from genericpath import exists
 from importlib import import_module
-from re import S, sub
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
@@ -14,7 +12,7 @@ import os
 
 def addlead(project,sub_project_name,storage,**lead_data):
     #database
-    print("akshaya")
+    print("function working")
     try:
         CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
         DB = CONN['lead_automation']
@@ -35,90 +33,100 @@ def addlead(project,sub_project_name,storage,**lead_data):
         print("browser not working")
     
     try:
-        site_name = "akshaya"
+        site_name = SITE["name"]
         path = storage+site_name
         if not os.path.exists(path):
             os.mkdir(path)
         
         fullname = lead_data['first_name'] + ' ' + lead_data['last_name']
 
-        
-        if sub_project_name == "Akshaya Tango":
-            sub_project_name = 'Tango'
-        if sub_project_name == "Akshaya Republic":
-            sub_project_name = 'Republic'
-        if sub_project_name == "Akshaya Today":
-            sub_project_name = 'Today'
-        if sub_project_name == "Akshaya OrlandO":
-            sub_project_name = 'OrlandO'
-        if sub_project_name == "Akshaya Earth":
-            sub_project_name = 'Earth'
-        if sub_project_name == "Akshaya Shanti":
-            sub_project_name = 'Shanti'
-        if sub_project_name == "Akshaya Poongavanam":
-            sub_project_name = 'Poongavanam'
-        if sub_project_name == "Thoraipakkam":
-            sub_project_name = 'Tango'
-        if sub_project_name == "Perungudi":
-            sub_project_name = 'Tango'     
-        if sub_project_name == "Pallavaram":
-            sub_project_name = 'Tango'
-        if sub_project_name == "OMR":
-            sub_project_name = 'Today'
-        if sub_project_name == "Kelambakkam":
-            sub_project_name = 'Today'
-        if sub_project_name == "Sholinganallur":
-            sub_project_name = 'Tango'
-        if sub_project_name == "Navalur":
-            sub_project_name = 'Today'
-    #browser# yield "on working"
+        if sub_project_name == "Casagrand Zenith":
+            sub_project_name = 'CG Zenith'
+        if sub_project_name == "Casagrand Esquire":
+            sub_project_name = 'CG Esquire'
+        if sub_project_name == "Casagrand Tudor":
+            sub_project_name = 'CG Tudor'
+        if sub_project_name == "Casagrand Savoye":
+            sub_project_name = 'CG Savoye'
+        if sub_project_name == "Casagrand Supremus":
+            sub_project_name = 'CG Supremus'
+        if sub_project_name == "Casagrand ECR 14":
+            sub_project_name = 'CG ECR 14'
+        if sub_project_name == "Casagrand Primera":
+            sub_project_name = 'CG Primera'
+        if sub_project_name == "Casagrand Crescendo Elite":
+            sub_project_name = 'CG Crescendo Elite'
+        if sub_project_name == "Casagrand Crecendo Compact":
+            sub_project_name = 'CG Crecendo Compact'
+        if sub_project_name == "Casagrand Millenia":
+            sub_project_name = 'CG Millenia'
+        if sub_project_name == "Casagrand Royale":
+            sub_project_name = 'CG Royale'
+        if sub_project_name == "Casagrand Utopia":
+            sub_project_name = 'CG Utopia'
+        if sub_project_name == "Casagrand Athens":
+            sub_project_name = 'CG Athens'
+        if sub_project_name == "Casagrand FirstCity":
+            sub_project_name = 'CG FirstCity'
+            
+        #browser# yield "on working"
         save_path=getsavePath(path,sub_project_name)
         
-        
-        print("\tSelenium started")
         browser.get(SITE["url"])
-        f_email = browser.find_element(By.ID, "user_email")
-        f_email.send_keys(SITE["email"])
-        f_password = browser.find_element(By.ID,"user_password")
-        f_password.send_keys(SITE["pass"])
+        fl_email = browser.find_element(By.ID, "user_email")
+        fl_email.send_keys(SITE["email"])
+        fl_password = browser.find_element(By.ID,"user_password")
+        fl_password.send_keys(SITE["pass"])
         browser.find_element(By.XPATH,"//button[@type='submit']").click()
+
         f_Leads = browser.find_element(By.LINK_TEXT, "Leads")
         f_Leads.click()
-        f_addlead = browser.find_element(By.XPATH, "//a[@href='/broker/2150/leads/new']")
+        f_addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
         f_addlead.click()
+
         f_firstname = browser.find_element(By.ID, "lead_first_name")
-        f_firstname.send_keys(lead_data.get("first_name"))
+        f_firstname.send_keys(lead_data["first_name"])
         f_lastname = browser.find_element(By.ID, "lead_last_name")
-        f_lastname.send_keys(lead_data.get("last_name"))
+        f_lastname.send_keys(lead_data["last_name"])
+
+        #nri = browser.find_element(By.ID, "lead_nri")
+        #nri.click()
+        #nri.click()
+
         f_mail = browser.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a')
         f_mail.click()
         f_mail1 = browser.find_element(By.XPATH, '/html/body/div[3]/div/input')
         f_mail1.click()
-        f_mail1.send_keys(lead_data.get("email"))
+        f_mail1.send_keys(lead_data["email"])
         f_mail1.send_keys(Keys.RETURN)
         f_phone = browser.find_element(By.XPATH, '//*[@id="lead_phone"]')
         f_phone.click()
-        f_phone.send_keys(lead_data.get("phone"))
+        f_phone.send_keys(lead_data["phone"])
         f_button2 = browser.find_element(By.XPATH, '//*[@id="s2id_lead_project_ids"]/a/span[2]')
         f_button2.click()
-        f_project1 = browser.find_element(By.XPATH, '/html/body/div[4]/div/input')
-        f_project1.send_keys(sub_project_name)
-        f_project1.send_keys(Keys.RETURN)
-        
-        
-        browser.save_screenshot(save_path[0])
+        f_project = browser.find_element(By.XPATH, '/html/body/div[4]/div/input')
+        f_project.send_keys(sub_project_name)
+        f_project.send_keys(Keys.RETURN)
+
+        browser.save_screenshot(save_path[0])    
+
+        fs_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
+        fs_save.click()
         
         time.sleep(5)
-        browser.save_screenshot(save_path[1])
-        browser.close()
+        browser.save_screenshot(save_path[1]) 
+        browser.close()        
+
+        req = "Success" 
+            
 
         print("\tSelenium working properly")
         req="success"
         s_leads={"name":fullname,
         "project_name":sub_project_name,
         "phone":lead_data["phone"],
+        "email":lead_data["email"],
         "status":req,
-        "email":lead_data["email"], 
         "created_at":getTime()}
         LEADS.insert_one(s_leads)
         print("lead uploaded")
