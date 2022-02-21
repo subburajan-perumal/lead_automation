@@ -11,6 +11,7 @@ def getTime():
             # dd/mm/YY H:M:S
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             return dt_string
+            
 def getsavePath(path,sub_project_name):
     from datetime import date
     today = date.today()

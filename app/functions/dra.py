@@ -8,25 +8,22 @@ from pymongo import MongoClient
 from app.util.utility import getTime,getsavePath
 import time
 import os
-from datetime import datetime
-import app.functions.Config as Config
 
 def addlead(project,sub_project_name,storage,**lead_data):
     #database
-    print("akshaya")
-     #Replace Keyword with Project Name
+    print("dra")
     try:
-        sub_project_name = Config.project_sub[sub_project_name]
         CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
         DB = CONN['lead_automation']
         LEADS=DB['leads']
         SITE=DB['Site'].find_one({"name":project})
         print(SITE['name'])
         print("db working")
-        # projectexist=LEADS.find_one({"email":lead_data["email"],"project_name":{"$ne":sub_project_name}}})
+        
     except Exception as e:
         print("Error occured due to "+str(e))
     try:
+        
         firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
         opt=Options()
         opt.headless=False
@@ -35,9 +32,21 @@ def addlead(project,sub_project_name,storage,**lead_data):
         print("browser not working")
     
     try:
-
-    
-        path = storage+SITE['name']
+        if sub_project_name == "DRA Centralia":
+            sub_project_name = 'Centralia'
+        if sub_project_name == "DRA Truliv Navalur":
+            sub_project_name = 'Truliv Navalur'           
+        if sub_project_name == "DRA 90 Degrees":
+            sub_project_name = '90 Degrees'   
+        if sub_project_name == "DRA Truliv Porur":
+            sub_project_name = 'Truliv Porur'   
+        if sub_project_name == "DRA Truliv Navalur Commercial":
+            sub_project_name = 'Truliv Navalur Commercial'   
+        if sub_project_name == "Porur":
+            sub_project_name = 'Truliv Porur'   
+            
+        site_name = SITE["name"]
+        path = storage+site_name
         if not os.path.exists(path):
             os.mkdir(path)
         
@@ -46,70 +55,70 @@ def addlead(project,sub_project_name,storage,**lead_data):
         
         
     #browser# yield "on working"
-        
-
-
         save_path=getsavePath(path,sub_project_name)
-        
-        
-        print("\tSelenium started")
         browser.get(SITE["url"])
-        f_email = browser.find_element(By.ID, "user_email")
-        f_email.send_keys(SITE["email"])
-        f_password = browser.find_element(By.ID,"user_password")
-        f_password.send_keys(SITE["pass"])
+        fl_email = browser.find_element(By.ID, "user_email")
+        fl_email.send_keys(SITE["email"])
+        fl_password = browser.find_element(By.ID,"user_password")
+        fl_password.send_keys(SITE["pass"])
         browser.find_element(By.XPATH,"//button[@type='submit']").click()
+
         f_Leads = browser.find_element(By.LINK_TEXT, "Leads")
         f_Leads.click()
-        f_addlead = browser.find_element(By.XPATH, "//a[@href='/broker/2150/leads/new']")
+        f_addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
         f_addlead.click()
+
         f_firstname = browser.find_element(By.ID, "lead_first_name")
-        f_firstname.send_keys(lead_data.get("first_name"))
+        f_firstname.send_keys(lead_data["first_name"])
         f_lastname = browser.find_element(By.ID, "lead_last_name")
-        f_lastname.send_keys(lead_data.get("last_name"))
+        f_lastname.send_keys(lead_data["last_name"])
+
+        #nri = browser.find_element(By.ID, "lead_nri")
+        #nri.click()
+        #nri.click()
+
         f_mail = browser.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a')
         f_mail.click()
         f_mail1 = browser.find_element(By.XPATH, '/html/body/div[3]/div/input')
         f_mail1.click()
-        f_mail1.send_keys(lead_data.get("email"))
+        f_mail1.send_keys(lead_data["email"])
         f_mail1.send_keys(Keys.RETURN)
         f_phone = browser.find_element(By.XPATH, '//*[@id="lead_phone"]')
         f_phone.click()
-        f_phone.send_keys(lead_data.get("phone"))
+        f_phone.send_keys(lead_data["phone"])
         f_button2 = browser.find_element(By.XPATH, '//*[@id="s2id_lead_project_ids"]/a/span[2]')
         f_button2.click()
-        f_project1 = browser.find_element(By.XPATH, '/html/body/div[4]/div/input')
-        f_project1.send_keys(sub_project_name)
-        f_project1.send_keys(Keys.RETURN)
-        
-        
-        browser.save_screenshot(save_path[0])
+        f_project = browser.find_element(By.XPATH, '/html/body/div[4]/div/input')
+        f_project.send_keys(sub_project_name)
+        f_project.send_keys(Keys.RETURN)
+
+        browser.save_screenshot(save_path[0])    
+
+        f_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
+        f_save.click()
         
         time.sleep(5)
-        browser.save_screenshot(save_path[1])
+        browser.save_screenshot(save_path[1]) 
+        browser.close()        
+
+        req = "Success"
         
 
         print("\tSelenium working properly")
         req="success"
-        lead_detail={"projectname":SITE['name'],
-        "subproject":sub_project_name,
-        "applied_time":datetime.now()}
-        LEADS.update_one({"email":lead_data["email"]},{"$push":{"project":lead_detail}})
-        # s_leads={"name":fullname,
-        # "project_name":sub_project_name,
-        # "phone":lead_data["phone"],
-        # "status":req,
-        # "email":lead_data["email"], 
-        # "created_at":datetime.datetime.now()}
-        # insertedData=LEADS.insert_one(s_leads)      
-        # print(insertedData.inserted_id)
+        s_leads={"name":fullname,
+        "project_name":sub_project_name,
+        "phone":lead_data["phone"],
+        "email":lead_data["email"],
+        "status":req,
+        "created_at":getTime()}
+        LEADS.insert_one(s_leads)
         print("lead uploaded")
     
     
-    except Exception as e:
+    except:
         browser.save_screenshot(save_path[2])
         req="failed"
-        print(str(e))
         print('error occured')
     
     finally:

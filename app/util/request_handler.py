@@ -1,6 +1,4 @@
-###post P_request-> P_request
 import json
-# import xmltodict
 def find_format(P_request):
     try:
 

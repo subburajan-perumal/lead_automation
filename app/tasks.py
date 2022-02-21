@@ -5,6 +5,7 @@ from app.config import DevelopmentConfig
 # from app.util.utility import cmpstring
 import time
 import json
+
 MONGODB="mongodb://REDACTED_MONGO_URI"
 celery_app= Celery(__name__, broker="redis://REDACTED_REDIS_URI",backend="redis://REDACTED_REDIS_URI")
 # celery_app.conf(DevelopmentConfig())

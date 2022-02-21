@@ -1,6 +1,6 @@
-import importlib
+
+from datetime import datetime
 from pymongo import MongoClient
-from app.functions import akshaya
 from importlib import import_module
 import os
 def function_finder(lead_data):
@@ -16,24 +16,45 @@ def function_finder(lead_data):
         print("Error occured due to "+str(e))
     
     try:
-       
+        user_detail=LEADS.find_one({"email":lead_data["email"]})
+        print(user_detail)
+        fullname=lead_data['first_name']+lead_data['last_name']
+        if not user_detail:
+            user_creation={"name":fullname,
+                    "phone":lead_data["phone"],
+                    "email":lead_data["email"], 
+                    "created_at":datetime.now()}
+            LEADS.insert_one(user_creation)
+    
         project_name=lead_data.get("project_enquired_for")
         print("working before using db")
         site=SITE.find_one({"key_words":{"$in":[project_name]}})
         # site=SITE.find_one({"key_words":{"$in":["Akshaya Tango"]}}) 
         # print("site name :",site," ",)
+
+        # LEADS.insert_one()
+        if not site:
+            return "failed"
+
         dyn_mod=import_module("."+site['name'],"app.functions")
+        
         storage="./storage/"
+    
         #project_enquire_for
         dyn_mod.addlead(site['name'],sub_project_name=project_name,storage=storage,**lead_data)
         for interested_site in lead_data["interested_properties"]:
             site=SITE.find_one({"key_words":{"$in":[interested_site]}})
+            if not site:
+                continue
             dyn_mod=import_module("."+site['name'],"app.functions")
             dyn_mod.addlead(site['name'],sub_project_name=interested_site,storage=storage,**lead_data)
+        # for place in lead_data["localities"]:
+            # pass
+        #bylocalities
 
-
+            #omr-akshaya tango
         return "success"
     except Exception as e:
         print("error occured in function_finder",str(e))
-        print(os.getcwd())
+        # print(os.getcwd())
         return "failed"
