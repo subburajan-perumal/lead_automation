@@ -23,6 +23,11 @@ def addlead(project,sub_project_name,storage,**lead_data):
         SITE=DB['Site'].find_one({"name":project})
         print(SITE['name'])
         print("db working")
+        projectexist=LEADS.find_one({"email":"redacted@example.com","project":{"$elemMatch":{"subproject":sub_project_name}}},{"project.$":1})
+        if projectexist :
+            req="Success"
+            print("lead already exist")
+            return req
         # projectexist=LEADS.find_one({"email":lead_data["email"],"project_name":{"$ne":sub_project_name}}})
     except Exception as e:
         print("Error occured due to "+str(e))
@@ -87,13 +92,15 @@ def addlead(project,sub_project_name,storage,**lead_data):
         
         time.sleep(5)
         browser.save_screenshot(save_path[1])
-        
+        browser.close()
 
         print("\tSelenium working properly")
         req="success"
         lead_detail={"projectname":SITE['name'],
         "subproject":sub_project_name,
-        "applied_time":datetime.now()}
+        "applied_time":datetime.now(),
+        "status":req
+        }
         LEADS.update_one({"email":lead_data["email"]},{"$push":{"project":lead_detail}})
         # s_leads={"name":fullname,
         # "project_name":sub_project_name,
