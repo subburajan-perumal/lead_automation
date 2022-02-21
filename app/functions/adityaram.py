@@ -5,33 +5,25 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from pymongo import MongoClient
+import app.functions.common_util as commonutil
 from app.util.utility import getTime,getsavePath
+from datetime import datetime
+import app.functions.Config as Config
 import time
 import os
 
 def addlead(project,sub_project_name,storage,**lead_data):
     #database
-    print("function working")
+    SITE, LEADS = commonutil.addlead(project,sub_project_name,**lead_data)
+    if SITE == -1:
+        return "Failed"
     try:
-        CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
-        DB = CONN['lead_automation']
-        LEADS=DB['leads']
-        SITE=DB['Site'].find_one({"name":project})
-        print(SITE['name'])
-        print("db working")
-        
-    except Exception as e:
-        print("Error occured due to "+str(e))
-    try:
-        
+        sub_project_name = Config.project_sub[sub_project_name]
         firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
         opt=Options()
         opt.headless=False
         browser=webdriver.Firefox(options=opt,service=firefox_service)
-    except:
-        print("browser not working")
     
-    try:
         site_name = SITE["name"]
         path = storage+site_name
         if not os.path.exists(path):
@@ -39,13 +31,6 @@ def addlead(project,sub_project_name,storage,**lead_data):
         
         fullname = lead_data['first_name'] + ' ' + lead_data['last_name']
 
-        if sub_project_name == "Adityaram Nagar Phase 5":
-            sub_project_name = "Adityaram Nagar 5"
-        if sub_project_name == "Adityaram":
-            sub_project_name = "Adityaram Signature City"        
-        if sub_project_name == "Adityaram Signature City":
-            sub_project_name = "Adityaram Signature City"
-        
         
     #browser# yield "on working"
         save_path=getsavePath(path,sub_project_name)
@@ -78,16 +63,13 @@ def addlead(project,sub_project_name,storage,**lead_data):
         browser.close()        
 
         print("\tSelenium working properly")
-        req="success"
-
-        s_leads={"name":fullname,
-        "project_name":sub_project_name,
-        "phone":lead_data["phone"],
-        "email":lead_data["email"],
-        "status":req,
-        "created_at":getTime()}
-        LEADS.insert_one(s_leads)
-        print("lead uploaded")
+        req="success" 
+        lead_detail={"projectname":SITE['name'],
+        "subproject":sub_project_name,
+        "applied_time":datetime.now(),
+        "status":req
+        }
+        LEADS.update_one({"email":lead_data["email"]},{"$push":{"project":lead_detail}})
     
     
     except:

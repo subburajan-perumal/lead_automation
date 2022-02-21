@@ -8,29 +8,13 @@ from pymongo import MongoClient
 from app.util.utility import getTime,getsavePath
 import time
 import os
-from datetime import datetime
-import app.functions.Config as Config
+from datetime import datetime, timedelta
+import app.functions.common_util as commnutil
 
 def addlead(project,sub_project_name,storage,**lead_data):
-    #database
-    print("akshaya")
-     #Replace Keyword with Project Name
-    try:
-        sub_project_name = Config.project_sub[sub_project_name]
-        CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
-        DB = CONN['lead_automation']
-        LEADS=DB['leads']
-        SITE=DB['Site'].find_one({"name":project})
-        print(SITE['name'])
-        print("db working")
-        projectexist=LEADS.find_one({"email":"redacted@example.com","project":{"$elemMatch":{"subproject":sub_project_name}}},{"project.$":1})
-        if projectexist :
-            req="Success"
-            print("lead already exist")
-            return req
-        # projectexist=LEADS.find_one({"email":lead_data["email"],"project_name":{"$ne":sub_project_name}}})
-    except Exception as e:
-        print("Error occured due to "+str(e))
+    SITE, LEADS = commnutil.addlead(project,sub_project_name,**lead_data)
+    if SITE == -1:
+        return "Failed"
     try:
         firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
         opt=Options()
@@ -40,8 +24,6 @@ def addlead(project,sub_project_name,storage,**lead_data):
         print("browser not working")
     
     try:
-
-    
         path = storage+SITE['name']
         if not os.path.exists(path):
             os.mkdir(path)
@@ -64,10 +46,12 @@ def addlead(project,sub_project_name,storage,**lead_data):
         f_password = browser.find_element(By.ID,"user_password")
         f_password.send_keys(SITE["pass"])
         browser.find_element(By.XPATH,"//button[@type='submit']").click()
+        time.sleep(5)
         f_Leads = browser.find_element(By.LINK_TEXT, "Leads")
         f_Leads.click()
         f_addlead = browser.find_element(By.XPATH, "//a[@href='/broker/2150/leads/new']")
         f_addlead.click()
+        
         f_firstname = browser.find_element(By.ID, "lead_first_name")
         f_firstname.send_keys(lead_data.get("first_name"))
         f_lastname = browser.find_element(By.ID, "lead_last_name")
@@ -102,14 +86,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
         "status":req
         }
         LEADS.update_one({"email":lead_data["email"]},{"$push":{"project":lead_detail}})
-        # s_leads={"name":fullname,
-        # "project_name":sub_project_name,
-        # "phone":lead_data["phone"],
-        # "status":req,
-        # "email":lead_data["email"], 
-        # "created_at":datetime.datetime.now()}
-        # insertedData=LEADS.insert_one(s_leads)      
-        # print(insertedData.inserted_id)
+        
         print("lead uploaded")
     
     
