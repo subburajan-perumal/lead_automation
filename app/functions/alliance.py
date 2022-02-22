@@ -9,24 +9,19 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from pymongo import MongoClient
 from app.util.utility import getTime,getsavePath
+from  datetime import datetime
 import time
 import os
-
+import app.functions.common_util as commnutil
+import app.functions.Config as Config
 def addlead(project,sub_project_name,storage,**lead_data):
     #database
-    print("alliance")
     try:
-        CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
-        DB = CONN['lead_automation']
-        LEADS=DB['leads']
-        SITE=DB['Site'].find_one({"name":project})
-        print(SITE['name'])
-        print("db working")
-        
-    except Exception as e:
-        print("Error occured due to "+str(e))
-    try:
-        
+        print("alliance function working")
+        SITE, LEADS = commnutil.dbcheck(project,sub_project_name,**lead_data)
+        if SITE == -1:
+            return "Failed"
+        sub_project_name = Config.project_sub[sub_project_name]
         firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
         opt=Options()
         opt.headless=False
@@ -42,18 +37,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
         
         fullname = lead_data['first_name'] + ' ' + lead_data['last_name']
 
-        if sub_project_name == "Alliance Humming Gardens": ## FROM CRM
-            sub_project_name = 'Humming Gardens'            ## FROM PARTNER PORTAL
-        if sub_project_name == "Alliance Galleria":
-            sub_project_name = 'Alliance Galleria Residences'
-        if sub_project_name == "Urbanrise Eternity":
-            sub_project_name = 'Villabelvedere/Eternity'
-        if sub_project_name == "alliancegalleria":
-            sub_project_name = 'Alliance Galleria Residences'
-        if sub_project_name == "OMR":
-            sub_project_name = 'OMR Cluster - JS/CNCB,CNGS'
-        if sub_project_name == "Sholinganallur":
-            sub_project_name = 'OMR Cluster - JS/CNCB,CNGS' 
+    
         
     #browser# yield "on working"
         save_path=getsavePath(path,sub_project_name)
@@ -95,14 +79,15 @@ def addlead(project,sub_project_name,storage,**lead_data):
 
         print("\tSelenium working properly")
         req="success"
-        s_leads={"name":fullname,
-        "project_name":sub_project_name,
-        "phone":lead_data.get("phone"),
-        "status":req,
-        "email":lead_data["email"],
-        "created_at":getTime()}
-        LEADS.insert_one(s_leads)
+        lead_detail={"projectname":SITE['name'],
+        "subproject":sub_project_name,
+        "applied_time":datetime.now(),
+        "status":req
+        }
+        LEADS.update_one({"email":lead_data["email"]},{"$push":{"project":lead_detail}})
+        
         print("lead uploaded")
+    
     
     
     except:

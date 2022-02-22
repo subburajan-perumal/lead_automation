@@ -7,32 +7,27 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from pymongo import MongoClient
 from app.util.utility import getTime,getsavePath
+from datetime import datetime
 import time
 import os
+import app.functions.common_util as commnutil
+import app.functions.Config as Config
 
 def addlead(project,sub_project_name,storage,**lead_data):
     #database
     print("function working")
     try:
-        CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
-        DB = CONN['lead_automation']
-        LEADS=DB['leads']
-        SITE=DB['Site'].find_one({"name":project})
-        print(SITE['name'])
-        print("db working")
+        SITE, LEADS = commnutil.dbcheck(project,sub_project_name,**lead_data)
+        if SITE == -1:
+            req="failed"
+            return req
         
-    except Exception as e:
-        print("Error occured due to "+str(e))
-    try:
-        
+        sub_project_name = Config.project_sub[sub_project_name]
         firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
         opt=Options()
         opt.headless=False
         browser=webdriver.Firefox(options=opt,service=firefox_service)
-    except:
-        print("browser not working")
     
-    try:
         site_name = SITE["name"]
         path = storage+site_name
         if not os.path.exists(path):
@@ -40,35 +35,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
         
         fullname = lead_data['first_name'] + ' ' + lead_data['last_name']
 
-        if sub_project_name == "Casagrand Zenith":
-            sub_project_name = 'CG Zenith'
-        if sub_project_name == "Casagrand Esquire":
-            sub_project_name = 'CG Esquire'
-        if sub_project_name == "Casagrand Tudor":
-            sub_project_name = 'CG Tudor'
-        if sub_project_name == "Casagrand Savoye":
-            sub_project_name = 'CG Savoye'
-        if sub_project_name == "Casagrand Supremus":
-            sub_project_name = 'CG Supremus'
-        if sub_project_name == "Casagrand ECR 14":
-            sub_project_name = 'CG ECR 14'
-        if sub_project_name == "Casagrand Primera":
-            sub_project_name = 'CG Primera'
-        if sub_project_name == "Casagrand Crescendo Elite":
-            sub_project_name = 'CG Crescendo Elite'
-        if sub_project_name == "Casagrand Crecendo Compact":
-            sub_project_name = 'CG Crecendo Compact'
-        if sub_project_name == "Casagrand Millenia":
-            sub_project_name = 'CG Millenia'
-        if sub_project_name == "Casagrand Royale":
-            sub_project_name = 'CG Royale'
-        if sub_project_name == "Casagrand Utopia":
-            sub_project_name = 'CG Utopia'
-        if sub_project_name == "Casagrand Athens":
-            sub_project_name = 'CG Athens'
-        if sub_project_name == "Casagrand FirstCity":
-            sub_project_name = 'CG FirstCity'
-            
+     
         #browser# yield "on working"
         save_path=getsavePath(path,sub_project_name)
         
@@ -122,20 +89,19 @@ def addlead(project,sub_project_name,storage,**lead_data):
 
         print("\tSelenium working properly")
         req="success"
-        s_leads={"name":fullname,
-        "project_name":sub_project_name,
-        "phone":lead_data["phone"],
-        "email":lead_data["email"],
-        "status":req,
-        "created_at":getTime()}
-        LEADS.insert_one(s_leads)
+        lead_detail={"projectname":SITE['name'],
+        "subproject":sub_project_name,
+        "applied_time":datetime.now(),
+        "status":req
+        }
+        LEADS.update_one({"email":lead_data["email"]},{"$push":{"project":lead_detail}})
         print("lead uploaded")
     
     
-    except:
+    except Exception as e:
         browser.save_screenshot(save_path[2])
         req="failed"
-        print('error occured')
+        print('error occured due to ',str(e))
     
     finally:
         return req

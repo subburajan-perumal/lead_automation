@@ -14,7 +14,7 @@ import os
 
 def addlead(project,sub_project_name,storage,**lead_data):
     #database
-    SITE, LEADS = commonutil.addlead(project,sub_project_name,**lead_data)
+    SITE, LEADS = commonutil.dbcheck(project,sub_project_name,**lead_data)
     if SITE == -1:
         return "Failed"
     try:

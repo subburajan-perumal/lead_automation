@@ -1,40 +1,38 @@
+
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from pymongo import MongoClient
 from app.util.utility import getTime,getsavePath
 import time
 import os
 from datetime import datetime, timedelta
 import app.functions.common_util as commnutil
+import app.functions.Config as Config
 
 def addlead(project,sub_project_name,storage,**lead_data):
-    SITE, LEADS = commnutil.addlead(project,sub_project_name,**lead_data)
-    if SITE == -1:
-        return "Failed"
     try:
+        SITE, LEADS = commnutil.dbcheck(project,sub_project_name,**lead_data)
+        if SITE == -1:
+            req="failed"
+            return req
+    
+        sub_project_name = Config.project_sub[sub_project_name]
         firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
         opt=Options()
         opt.headless=False
         browser=webdriver.Firefox(options=opt,service=firefox_service)
-    except:
-        print("browser not working")
-    
-    try:
+        
         path = storage+SITE['name']
         if not os.path.exists(path):
             os.mkdir(path)
         
         fullname = lead_data['first_name'] + ' ' + lead_data['last_name']
-
-        
-        
-    #browser# yield "on working"
-        
-
 
         save_path=getsavePath(path,sub_project_name)
         
@@ -46,12 +44,13 @@ def addlead(project,sub_project_name,storage,**lead_data):
         f_password = browser.find_element(By.ID,"user_password")
         f_password.send_keys(SITE["pass"])
         browser.find_element(By.XPATH,"//button[@type='submit']").click()
-        time.sleep(5)
-        f_Leads = browser.find_element(By.LINK_TEXT, "Leads")
+
+        f_Leads = WebDriverWait(browser, 10).until(
+        EC.presence_of_element_located((By.LINK_TEXT, "Leads")))
+        # f_Leads = browser.find_element(By.LINK_TEXT, "Leads")
         f_Leads.click()
         f_addlead = browser.find_element(By.XPATH, "//a[@href='/broker/2150/leads/new']")
-        f_addlead.click()
-        
+        f_addlead.click()    
         f_firstname = browser.find_element(By.ID, "lead_first_name")
         f_firstname.send_keys(lead_data.get("first_name"))
         f_lastname = browser.find_element(By.ID, "lead_last_name")
@@ -85,7 +84,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
         "applied_time":datetime.now(),
         "status":req
         }
-        LEADS.update_one({"email":lead_data["email"]},{"$push":{"project":lead_detail}})
+        LEADS.update_one({"email":lead_data["email"]},{"$set":{"modified_time":datetime.now()},"$push":{"project":lead_detail}})
         
         print("lead uploaded")
     

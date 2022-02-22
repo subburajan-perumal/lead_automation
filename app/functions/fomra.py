@@ -12,25 +12,24 @@ from pymongo import MongoClient
 from app.util.utility import getTime,getsavePath
 import time
 import os
-
+from datetime import datetime
+import app.functions.common_util as commonutil
+import app.functions.Config as Config
 def addlead(project,sub_project_name,storage,**lead_data):
     #database
     try:
-        CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
-        DB = CONN['lead_automation']
-        LEADS=DB['leads']
-        SITE=DB['Site'].find_one({"name":project})
-        print(SITE['name'])
-        print("db working")
-        
+        SITE, LEADS = commonutil.dbcheck(project,sub_project_name,**lead_data)
+        if SITE == -1:
+            req="failed"
+            return req
+    
+        sub_project_name = Config.project_sub[sub_project_name]
         firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
         opt=Options()
         opt.headless=True
         browser=webdriver.Firefox(options=opt,service=firefox_service)
-        print("db driver working")
         site_name = "fomra"
-        path = storage+site_name
-        print("problem in create path")
+        path = storage+SITE['name']
         if not os.path.exists(str(path)):
             os.mkdir(path)
         fullname = lead_data['first_name'] + ' ' + lead_data['last_name']
@@ -73,14 +72,13 @@ def addlead(project,sub_project_name,storage,**lead_data):
         browser.save_screenshot(save_path[1])
         browser.close()
         req="success"
-        s_leads={"name":fullname,
-        "project_name":sub_project_name,
-        "phone":lead_data["phone"],
-        "status":req,
-        "email":lead_data["email"],
-        "status":req,  
-        "created_at":getTime()}
-        LEADS.insert_one(s_leads)
+        lead_detail={"projectname":SITE['name'],
+        "subproject":sub_project_name,
+        "applied_time":datetime.now(),
+        "status":req
+        }
+        LEADS.update_one({"email":lead_data["email"]},{"$set":{"modified_time":datetime.now()},"$push":{"project":lead_detail}})
+        
         print("lead uploaded")
     
     

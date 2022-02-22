@@ -1,4 +1,3 @@
-
 from datetime import datetime
 from pymongo import MongoClient
 from importlib import import_module
@@ -23,7 +22,9 @@ def function_finder(lead_data):
             user_creation={"name":fullname,
                     "phone":lead_data["phone"],
                     "email":lead_data["email"], 
-                    "created_at":datetime.now()}
+                    "created_at":datetime.now(),
+                    "modified":datetime.now()
+                    }
             LEADS.insert_one(user_creation)
     
         project_name=lead_data.get("project_enquired_for")
@@ -42,12 +43,14 @@ def function_finder(lead_data):
     
         #project_enquire_for
         dyn_mod.addlead(site['name'],sub_project_name=project_name,storage=storage,**lead_data)
-        for interested_site in lead_data["interested_properties"]:
-            site=SITE.find_one({"key_words":{"$in":[interested_site]}})
-            if not site:
-                continue
-            dyn_mod=import_module("."+site['name'],"app.functions")
-            dyn_mod.addlead(site['name'],sub_project_name=interested_site,storage=storage,**lead_data)
+        if "interested_properties" in lead_data:
+
+            for interested_site in lead_data["interested_properties"]:
+                site=SITE.find_one({"key_words":{"$in":[interested_site]}})
+                if not site:
+                    continue
+                dyn_mod=import_module("."+site['name'],"app.functions")
+                dyn_mod.addlead(site['name'],sub_project_name=interested_site,storage=storage,**lead_data)
         # for place in lead_data["localities"]:
             # pass
         #bylocalities

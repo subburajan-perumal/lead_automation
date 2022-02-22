@@ -8,42 +8,25 @@ from pymongo import MongoClient
 from app.util.utility import getTime,getsavePath
 import time
 import os
-
+from datetime import datetime
+import app.functions.common_util as commonutil
+import app.functions.Config as Config
 def addlead(project,sub_project_name,storage,**lead_data):
     #database
     print("dra")
     try:
-        CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
-        DB = CONN['lead_automation']
-        LEADS=DB['leads']
-        SITE=DB['Site'].find_one({"name":project})
-        print(SITE['name'])
-        print("db working")
-        
-    except Exception as e:
-        print("Error occured due to "+str(e))
-    try:
-        
+        SITE, LEADS = commonutil.dbcheck(project,sub_project_name,**lead_data)
+        if SITE == -1:
+            req="failed"
+            return req
+
+        sub_project_name = Config.project_sub[sub_project_name]
+
         firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
         opt=Options()
         opt.headless=False
         browser=webdriver.Firefox(options=opt,service=firefox_service)
-    except:
-        print("browser not working")
-    
-    try:
-        if sub_project_name == "DRA Centralia":
-            sub_project_name = 'Centralia'
-        if sub_project_name == "DRA Truliv Navalur":
-            sub_project_name = 'Truliv Navalur'           
-        if sub_project_name == "DRA 90 Degrees":
-            sub_project_name = '90 Degrees'   
-        if sub_project_name == "DRA Truliv Porur":
-            sub_project_name = 'Truliv Porur'   
-        if sub_project_name == "DRA Truliv Navalur Commercial":
-            sub_project_name = 'Truliv Navalur Commercial'   
-        if sub_project_name == "Porur":
-            sub_project_name = 'Truliv Porur'   
+           
             
         site_name = SITE["name"]
         path = storage+site_name
@@ -106,20 +89,19 @@ def addlead(project,sub_project_name,storage,**lead_data):
 
         print("\tSelenium working properly")
         req="success"
-        s_leads={"name":fullname,
-        "project_name":sub_project_name,
-        "phone":lead_data["phone"],
-        "email":lead_data["email"],
-        "status":req,
-        "created_at":getTime()}
-        LEADS.insert_one(s_leads)
+        lead_detail={"projectname":SITE['name'],
+        "subproject":sub_project_name,
+        "applied_time":datetime.now(),
+        "status":req
+        }
+        LEADS.update_one({"email":lead_data["email"]},{"$push":{"project":lead_detail}})
         print("lead uploaded")
     
     
-    except:
+    except Exception as e:
         browser.save_screenshot(save_path[2])
         req="failed"
-        print('error occured')
+        print('error occured',str(e))
     
     finally:
         return req

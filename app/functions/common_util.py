@@ -5,7 +5,8 @@ import os
 from datetime import datetime, timedelta
 import app.functions.Config as Config
 
-def addlead(project,sub_project_name,**lead_data):
+#CHECK DATA
+def dbcheck(project,sub_project_name,**lead_data):
     #database
     print("sub_project_name")
      #Replace Keyword with Project Name
@@ -37,4 +38,6 @@ def addlead(project,sub_project_name,**lead_data):
         print("Error occured due to "+str(e))
         return -1, -1
     return SITE, LEADS
-  
+
+def upload():
+    pass
