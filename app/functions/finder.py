@@ -15,7 +15,7 @@ def function_finder(lead_data):
         print("Error occured due to "+str(e))
     
     try:
-        user_detail=LEADS.find_one({"email":lead_data["email"]})
+        user_detail=LEADS.find_one({"email":lead_data["email"],"phone":lead_data["phone"]})
         print(user_detail)
         fullname=lead_data['first_name']+lead_data['last_name']
         if not user_detail:
@@ -41,7 +41,7 @@ def function_finder(lead_data):
         
         storage="./storage/"
     
-        #project_enquire_for
+        #project_enquire_for., mvc vv
         dyn_mod.addlead(site['name'],sub_project_name=project_name,storage=storage,**lead_data)
         if "interested_properties" in lead_data:
 

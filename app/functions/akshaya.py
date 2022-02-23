@@ -23,7 +23,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
             return req
     
         sub_project_name = Config.project_sub[sub_project_name]
-        firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
+        firefox_service=Service("./geckodriver")
         opt=Options()
         opt.headless=False
         browser=webdriver.Firefox(options=opt,service=firefox_service)
@@ -79,19 +79,20 @@ def addlead(project,sub_project_name,storage,**lead_data):
 
         print("\tSelenium working properly")
         req="success"
-        lead_detail={"projectname":SITE['name'],
-        "subproject":sub_project_name,
+        lead_detail={"projectname":SITE['name'],#akshaya
+        "subproject":sub_project_name,#Tango
         "applied_time":datetime.now(),
         "status":req
         }
-        LEADS.update_one({"email":lead_data["email"]},{"$set":{"modified_time":datetime.now()},"$push":{"project":lead_detail}})
+        LEADS.update_one({"email":lead_data["email"],"phone":lead_data["phone"]},{"$set":{"modified_time":datetime.now()},"$push":{"project":lead_detail}})
         
         print("lead uploaded")
     
     
     except Exception as e:
-        browser.save_screenshot(save_path[2])
         req="failed"
+        browser.save_screenshot(save_path[2])
+        
         print(str(e))
         print('error occured')
     

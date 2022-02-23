@@ -24,7 +24,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
             return req
     
         sub_project_name = Config.project_sub[sub_project_name]
-        firefox_service=Service("/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver")
+        firefox_service=Service("./geckodriver")
         opt=Options()
         opt.headless=True
         browser=webdriver.Firefox(options=opt,service=firefox_service)
@@ -77,7 +77,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
         "applied_time":datetime.now(),
         "status":req
         }
-        LEADS.update_one({"email":lead_data["email"]},{"$set":{"modified_time":datetime.now()},"$push":{"project":lead_detail}})
+        LEADS.update_one({"email":lead_data["email"],"phone":lead_data["phone"]},{"$set":{"modified_time":datetime.now()},"$push":{"project":lead_detail}})
         
         print("lead uploaded")
     

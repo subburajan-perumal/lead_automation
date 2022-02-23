@@ -1,5 +1,5 @@
 #driver
-geckodriver
+# geckodriver
 
 #pythoncache
 *.pyc
@@ -12,7 +12,7 @@ storage
 #environment
 genv
 /test/
-.vscode
+# .vscode
 
 #logger
 system.log

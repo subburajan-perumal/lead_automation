@@ -39,5 +39,3 @@ def dbcheck(project,sub_project_name,**lead_data):
         return -1, -1
     return SITE, LEADS
 
-def upload():
-    pass
