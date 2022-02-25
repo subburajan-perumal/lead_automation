@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 from pymongo import MongoClient
 from app.util.utility import getTime,getsavePath
 from  datetime import datetime
@@ -18,7 +19,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
     #database
     try:
         print("alliance function working")
-        SITE, LEADS = commnutil.dbcheck(project,sub_project_name,**lead_data)
+        SITE, LEADS = commnutil.projectCheck(project,sub_project_name,**lead_data)
         if SITE == -1:
             return "Failed"
         sub_project_name = Config.project_sub[sub_project_name]
@@ -89,6 +90,16 @@ def addlead(project,sub_project_name,storage,**lead_data):
         print("lead uploaded")
     
     
+    except NoSuchElementException as nse:
+        req="failed"
+        browser.save_screenshot(save_path[2])
+        browser.close()
+        lead_detail={"projectname":SITE['name'],#akshaya
+        "subproject":sub_project_name,#Tango
+        "applied_time":datetime.now(),
+        "status":req
+        }
+        LEADS.update_one({"email":lead_data["email"],"phone":lead_data["phone"]},{"$set":{"modified_time":datetime.now()},"$push":{"project":lead_detail}})
     
     except:
         browser.save_screenshot(save_path[2])

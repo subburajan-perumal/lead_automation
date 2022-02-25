@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 from pymongo import MongoClient
 from app.util.utility import getTime,getsavePath
 import time
@@ -15,19 +16,23 @@ from datetime import datetime, timedelta
 import app.functions.common_util as commnutil
 import app.functions.Config as Config
 
+# async def browsertimer(v_browser):
+#     time.sleep(100)
+#     v_browser.quit()
+
 def addlead(project,sub_project_name,storage,**lead_data):
     try:
-        SITE, LEADS = commnutil.dbcheck(project,sub_project_name,**lead_data)
+        SITE, LEADS = commnutil.projectCheck(project,sub_project_name,**lead_data)
         if SITE == -1:
             req="failed"
             return req
-    
+
         sub_project_name = Config.project_sub[sub_project_name]
         firefox_service=Service("./geckodriver")
         opt=Options()
         opt.headless=False
         browser=webdriver.Firefox(options=opt,service=firefox_service)
-        
+        # browsertimer(browser)
         path = storage+SITE['name']
         if not os.path.exists(path):
             os.mkdir(path)
@@ -88,7 +93,18 @@ def addlead(project,sub_project_name,storage,**lead_data):
         
         print("lead uploaded")
     
-    
+    except NoSuchElementException as nse:
+        req="failed"
+        browser.save_screenshot(save_path[2])
+        browser.close()
+        print("Error occured : ",str(nse))
+        lead_detail={"projectname":SITE['name'],#akshaya
+        "subproject":sub_project_name,#Tango
+        "applied_time":datetime.now(),
+        "status":req
+        }
+        LEADS.update_one({"email":lead_data["email"],"phone":lead_data["phone"]},{"$set":{"modified_time":datetime.now()},"$push":{"project":lead_detail}})
+
     except Exception as e:
         req="failed"
         browser.save_screenshot(save_path[2])

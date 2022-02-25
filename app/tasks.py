@@ -5,6 +5,7 @@ from app.config import DevelopmentConfig
 # from app.util.utility import cmpstring
 import time
 import json
+import os
 
 MONGODB="mongodb://REDACTED_MONGO_URI"
 celery_app= Celery(__name__, broker="redis://REDACTED_REDIS_URI",backend="redis://REDACTED_REDIS_URI")
@@ -14,6 +15,7 @@ celery_app= Celery(__name__, broker="redis://REDACTED_REDIS_URI",backend="redis:
 @celery_app.task
 def lead(**lead_data):
     try:
+        # print(os.getenv())
         print("celery started")
         result=function_finder(lead_data)
         return result

@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 import app.functions.Config as Config
 
 #CHECK DATA
-def dbcheck(project,sub_project_name,**lead_data):
+def projectCheck(project,sub_project_name,**lead_data):
     #database
-    print("sub_project_name")
+    # print("sub_project_name")
      #Replace Keyword with Project Name
     try:
         sub_project_name = Config.project_sub[sub_project_name]

@@ -23,29 +23,30 @@ def function_finder(lead_data):
                     "phone":lead_data["phone"],
                     "email":lead_data["email"], 
                     "created_at":datetime.now(),
-                    "modified":datetime.now()
+                    "modified_time":datetime.now()
                     }
             LEADS.insert_one(user_creation)
     
-        project_name=lead_data.get("project_enquired_for")
-        print("working before using db")
-        site=SITE.find_one({"key_words":{"$in":[project_name]}})
+        # project_name=lead_data.get("project_enquired_for")
+        # print("working before using db")
+        # site=SITE.find_one({"key_words":{"$in":[project_name]}})
         # site=SITE.find_one({"key_words":{"$in":["Akshaya Tango"]}}) 
         # print("site name :",site," ",)
 
         # LEADS.insert_one()
-        if not site:
-            return "failed"
-
-        dyn_mod=import_module("."+site['name'],"app.functions")
+        # if not site:
+            # return "failed"
+            # pass
+        # else:
+            # dyn_mod=import_module("."+site['name'],"app.functions")
         
         storage="./storage/"
     
         #project_enquire_for., mvc vv
-        dyn_mod.addlead(site['name'],sub_project_name=project_name,storage=storage,**lead_data)
+        # dyn_mod.addlead(site['name'],sub_project_name=project_name,storage=storage,**lead_data)
         if "interested_properties" in lead_data:
 
-            for interested_site in lead_data["interested_properties"]:
+            for interested_site in lead_data["interested_properties"].split(";"):
                 site=SITE.find_one({"key_words":{"$in":[interested_site]}})
                 if not site:
                     continue

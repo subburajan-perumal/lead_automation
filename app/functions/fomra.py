@@ -1,12 +1,10 @@
-from importlib import import_module
-from re import S, sub
-import re
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
+from selenium.common.exceptions import NoSuchElementException
 from pymongo import MongoClient
 
 from app.util.utility import getTime,getsavePath
@@ -18,7 +16,7 @@ import app.functions.Config as Config
 def addlead(project,sub_project_name,storage,**lead_data):
     #database
     try:
-        SITE, LEADS = commonutil.dbcheck(project,sub_project_name,**lead_data)
+        SITE, LEADS = commonutil.projectCheck(project,sub_project_name,**lead_data)
         if SITE == -1:
             req="failed"
             return req
@@ -81,7 +79,19 @@ def addlead(project,sub_project_name,storage,**lead_data):
         
         print("lead uploaded")
     
-    
+    except NoSuchElementException as nse:
+        req="failed"
+        browser.save_screenshot(save_path[2])
+        browser.close()
+        print("Error occured : ",str(nse))
+        lead_detail={"projectname":SITE['name'],#akshaya
+        "subproject":sub_project_name,#Tango
+        "applied_time":datetime.now(),
+        "status":req
+        }
+        LEADS.update_one({"email":lead_data["email"],"phone":lead_data["phone"]},{"$set":{"modified_time":datetime.now()},"$push":{"project":lead_detail}})
+
+
     except:
         browser.save_screenshot(save_path[2])
         req="failed"
