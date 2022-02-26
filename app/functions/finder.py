@@ -1,7 +1,9 @@
 from datetime import datetime
 from pymongo import MongoClient
 from importlib import import_module
+from app.functions.site_base import common_site_validation
 import os
+
 def function_finder(lead_data):
     try:
         CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
@@ -27,9 +29,17 @@ def function_finder(lead_data):
                     }
             LEADS.insert_one(user_creation)
     
-        # project_name=lead_data.get("project_enquired_for")
-        # print("working before using db")
-        # site=SITE.find_one({"key_words":{"$in":[project_name]}})
+        project_name=lead_data.get("project_enquired_for")
+        print("working before using db")
+
+        
+        site=SITE.find_one({"key_words":{"$in":[project_name]}})
+
+        browser_automation = common_site_validation( lead_data[ "phone" ] , lead_data[ "email" ],lead_data)
+        browser_automation.projectCheck( site ['name'], project_name)
+        browser_automation.automated_flow()
+        browser_automation.upload_data()
+        
         # site=SITE.find_one({"key_words":{"$in":["Akshaya Tango"]}}) 
         # print("site name :",site," ",)
 
@@ -42,19 +52,19 @@ def function_finder(lead_data):
         
         storage="./storage/"
     
-        #project_enquire_for., mvc vv
+        #project_enquire_for
         # dyn_mod.addlead(site['name'],sub_project_name=project_name,storage=storage,**lead_data)
-        if "interested_properties" in lead_data:
+        # if "interested_properties" in lead_data:
 
-            for interested_site in lead_data["interested_properties"].split(";"):
-                site=SITE.find_one({"key_words":{"$in":[interested_site]}})
-                if not site:
-                    continue
-                dyn_mod=import_module("."+site['name'],"app.functions")
-                dyn_mod.addlead(site['name'],sub_project_name=interested_site,storage=storage,**lead_data)
-        # for place in lead_data["localities"]:
-            # pass
-        #bylocalities
+        #     for interested_site in lead_data["interested_properties"].split(";"):
+        #         site=SITE.find_one({"key_words":{"$in":[interested_site]}})
+        #         if not site:
+        #             continue
+        #         dyn_mod=import_module("."+site['name'],"app.functions")
+        #         dyn_mod.addlead(site['name'],sub_project_name=interested_site,storage=storage,**lead_data)
+        # # for place in lead_data["localities"]:
+        #     # pass
+        # #bylocalities
 
             #omr-akshaya tango
         return "success"

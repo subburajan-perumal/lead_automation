@@ -4,6 +4,7 @@
 #pythoncache
 *.pyc
 __pycache__
+.pytest_cache
 
 
 #storage
@@ -11,7 +12,7 @@ storage
 
 #environment
 genv
-/test/
+/manual_test/
 # .vscode
 
 #logger
