@@ -16,12 +16,29 @@ import app.functions.Config as Config
 # async def browsertimer(v_browser):
 #     time.sleep(100)
 #     v_browser.quit()
-MONGO_USER="REDACTED"
-MONGO_PASSWORD="REDACTED"
-DRIVER="./geckodriver"
-MONGO_DB="REDACTED"
+MONGO_USER = "REDACTED"
+MONGO_PASSWORD = "REDACTED"
+DRIVER = "./geckodriver"
+MONGO_DB = "REDACTED"
 project_store = {
-     "akshaya" : akshaya,"brigade":brigade,"fomra":fomra }
+     "alliance"   : alliance,
+     "akshaya"    : akshaya,     #1
+     "brigade"    : brigade,     #2
+     "fomra"      : fomra,     #3
+     "adityaran"  : "adityaram", #4
+     "casagrand"  : "casagrand", #5
+     "dra"        : "dra",       #6
+     "tvs"        : "tvs",       #7
+     "shriram"    : "shriram",   #8
+     "radiance"   : "radiance",  #9
+     "lifestyle"  : "lifestyle", #10
+     "hiranadgani": "hirandani", #11
+     "pragnya"    : "pragnya",   #12
+     "doshi"      : "doshi",     #13
+     "krishnagrp" : "krishnagrp",#14
+     "gsquare"    : "gsquare"    #15
+
+       }
 
 class SiteAutomator:
     def __init__ ( self , phone , email,lead_data) -> None:
@@ -32,6 +49,7 @@ class SiteAutomator:
         self.LEAD = ""
         # self.lead_data=lead_data
         self.driver = DRIVER
+        
         firefox_service = Service(self.driver)
         opt = Options()
         opt.add_argument ( "--incognito" )
@@ -42,7 +60,7 @@ class SiteAutomator:
             )
     
 
-    def projectCheck(self,project,sub_project_name):
+    def projectCheck(self,project,sub_project_name,keyword_search):
         try:
             self.sub_project_name = Config.project_sub[sub_project_name]
             CONN=MongoClient(MONGO_DB)
@@ -64,6 +82,7 @@ class SiteAutomator:
                     {"$gte": filterdate}
                 },
                 { "project.$": 1 })
+            
             if self.projectexist :
                 self.result ="failed"
                 print("lead already exist")
@@ -74,13 +93,17 @@ class SiteAutomator:
         # self.automated_flow()
     
     def automated_flow( self):
-        if self.result=="failed":return
-        if not self.projectexist:
-            self.path="./storage/"+self.SITE["name"]
-            if not os.path.exists(self.path):
-                os.mkdir(self.path)
-            v_automator = project_store[ self.SITE['name'] ]
-            self.result = v_automator(self.sub_project_name, self.browser , self.SITE , self.lead_data,self.path)
+        try:
+            # if self.result=="failed":return
+            if not self.projectexist:
+                self.path="./storage/"+self.SITE["name"]
+                if not os.path.exists(self.path):
+                    os.mkdir(self.path)
+                v_automator = project_store[ self.SITE['name'] ]
+                self.result = v_automator(self.sub_project_name, self.browser , self.SITE , self.lead_data,self.path)
+        except Exception as e :
+            self.result="failed"
+
 
     def is_element_present(self,how,what):
         try: self.browser.find_element( by=how, value=what )
@@ -92,7 +115,7 @@ class SiteAutomator:
         except NoAlertPresentException as e: return False
     
     def upload_data( self):
-     
+        
         lead_detail = { 
             "projectname": self.SITE[ 'name' ],#akshaya
             "subproject": self.sub_project_name ,#Tango
@@ -102,7 +125,7 @@ class SiteAutomator:
         self.LEAD.update_one(
             {
                 "email": self.lead_data[ "email" ] ,
-                "phone": self.lead_data["phone"] 
+                "phone": self.lead_data[ "phone" ] 
             },
             {
                 "$set": 
