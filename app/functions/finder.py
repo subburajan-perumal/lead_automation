@@ -1,12 +1,17 @@
 from datetime import datetime
 from pymongo import MongoClient
-from importlib import import_module
-from app.functions.site_base import common_site_validation
+from app.functions.site_base import SiteAutomator
+import logging
 import os
+MONGO_DB="REDACTED"
+
 
 def function_finder(lead_data):
     try:
-        CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
+    #     logging.basicConfig("")
+    #     logger=logging.getLogger()
+    #     logger.level
+        CONN=MongoClient(MONGO_DB)
         DB = CONN['lead_automation']
         LEADS=DB['leads']
         SITE=DB['Site']
@@ -21,24 +26,27 @@ def function_finder(lead_data):
         print(user_detail)
         fullname=lead_data['first_name']+lead_data['last_name']
         if not user_detail:
-            user_creation={"name":fullname,
+            lead_creation={"name":fullname,
                     "phone":lead_data["phone"],
                     "email":lead_data["email"], 
                     "created_at":datetime.now(),
                     "modified_time":datetime.now()
                     }
-            LEADS.insert_one(user_creation)
+            LEADS.insert_one(lead_creation)
     
         project_name=lead_data.get("project_enquired_for")
         print("working before using db")
 
         
         site=SITE.find_one({"key_words":{"$in":[project_name]}})
+        if site:
+            browser_automation = SiteAutomator( lead_data[ "phone" ] , lead_data[ "email" ],lead_data)
+            browser_automation.projectCheck( site ['name'], project_name)
+            browser_automation.automated_flow()
+            browser_automation.upload_data()
+            browser_automation.teardown()
+            
 
-        browser_automation = common_site_validation( lead_data[ "phone" ] , lead_data[ "email" ],lead_data)
-        browser_automation.projectCheck( site ['name'], project_name)
-        browser_automation.automated_flow()
-        browser_automation.upload_data()
         
         # site=SITE.find_one({"key_words":{"$in":["Akshaya Tango"]}}) 
         # print("site name :",site," ",)

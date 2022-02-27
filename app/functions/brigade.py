@@ -94,7 +94,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
 
         browser.save_screenshot(save_path[0])    
 
-        # f_add=browser.find_element(By.XPATH,'//*[@id="input_2"]').click()
+        f_add=browser.find_element(By.XPATH,'//*[@id="input_2"]').click()
         
         time.sleep(10)
         browser.save_screenshot(save_path[1])

@@ -33,7 +33,7 @@ def addlead(project,sub_project_name,storage,**lead_data):
         fullname = lead_data['first_name'] + ' ' + lead_data['last_name']
 
         
-    #browser# yield "on working"
+    #bro wser# yield "on working"
         save_path=getsavePath(path,sub_project_name)
         browser.get(SITE["url"])
         f_name=browser.find_elements(By.XPATH,'/html/body/div[1]/div/form/div[2]/div/div/input')

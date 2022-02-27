@@ -1,19 +1,29 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
+from selenium.common.exceptions import NoAlertPresentException
+from selenium.common.exceptions import NoSuchElementException
 from pymongo import MongoClient
-from app.functions.browser_automation import akshaya
+from app.functions.browser_automation import *
 from app.util.utility import getTime,getsavePath
 import time
 import os
 from datetime import datetime, timedelta
 import app.functions.Config as Config
 
+
+
 # async def browsertimer(v_browser):
 #     time.sleep(100)
 #     v_browser.quit()
-project_store = { "akshaya" : akshaya }
-class common_site_validation:
+MONGO_USER="REDACTED"
+MONGO_PASSWORD="REDACTED"
+DRIVER="./geckodriver"
+MONGO_DB="REDACTED"
+project_store = {
+     "akshaya" : akshaya,"brigade":brigade,"fomra":fomra }
+
+class SiteAutomator:
     def __init__ ( self , phone , email,lead_data) -> None:
         self.phone = phone 
         self.email = email
@@ -21,7 +31,7 @@ class common_site_validation:
         self.SITE = ""
         self.LEAD = ""
         # self.lead_data=lead_data
-        self.driver = "./geckodriver"
+        self.driver = DRIVER
         firefox_service = Service(self.driver)
         opt = Options()
         opt.add_argument ( "--incognito" )
@@ -30,11 +40,12 @@ class common_site_validation:
             options = opt ,
             service = firefox_service
             )
+    
 
     def projectCheck(self,project,sub_project_name):
         try:
             self.sub_project_name = Config.project_sub[sub_project_name]
-            CONN=MongoClient("mongodb://REDACTED_MONGO_URI")
+            CONN=MongoClient(MONGO_DB)
             self.DB = CONN['lead_automation']
             self.LEAD=self.DB['leads'] #collectioncursor
             self.SITE=self.DB['Site'].find_one({"name":project}) #dictnoi
@@ -63,11 +74,23 @@ class common_site_validation:
         # self.automated_flow()
     
     def automated_flow( self):
+        if self.result=="failed":return
         if not self.projectexist:
+            self.path="./storage/"+self.SITE["name"]
+            if not os.path.exists(self.path):
+                os.mkdir(self.path)
             v_automator = project_store[ self.SITE['name'] ]
-            self.result = v_automator(self.sub_project_name, self.browser , self.SITE , self.lead_data)
+            self.result = v_automator(self.sub_project_name, self.browser , self.SITE , self.lead_data,self.path)
 
-
+    def is_element_present(self,how,what):
+        try: self.browser.find_element( by=how, value=what )
+        except NoAlertPresentException: return False
+    
+    
+    def is_alert_present(self):
+        try: self.browser.switch_to_alert()
+        except NoAlertPresentException as e: return False
+    
     def upload_data( self):
      
         lead_detail = { 
@@ -93,4 +116,7 @@ class common_site_validation:
             })
         
         print("lead uploaded")
+        
+    def teardown(self):
+        self.browser.quit()
         
