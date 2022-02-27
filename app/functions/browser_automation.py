@@ -1,3 +1,4 @@
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
@@ -122,7 +123,7 @@ def brigade(subproject, browser, site_data, lead_data,path):
         # time.sleep(10)
         browser.save_screenshot(save_path[1])
         browser.close()
-
+        print("brigage website work successfully")
         return "Success"
     except Exception as e:
         return "failed"
@@ -159,5 +160,99 @@ def fomra(subproject, browser, site_data, lead_data, path):
         browser.close()
         return "success"
     except Exception as e:
+        browser.save_screenshot(save_path[2])
 
+        return "failed"
+
+def alliance(subproject, browser, site_data, lead_data, path):
+    try:
+        save_path=getsavePath(path,subproject)
+        browser.get(site_data["url"])
+        f_search=browser.find_element(By.ID,'email')
+        f_search.send_keys(site_data["email"])
+        f_passo=browser.find_element(By.ID,'password')
+        f_passo.send_keys(site_data["pass"])
+        f_submit=browser.find_element(By.ID,'digit_login_signin_submit')
+        f_submit.send_keys(Keys.RETURN)
+        time.sleep(10)
+        f_lead=browser.find_elements(By.CLASS_NAME,'kt-menu__item')
+        f_lead[1].click()
+        time.sleep(5)
+        f_name=browser.find_element(By.NAME,'name')
+        f_name.send_keys(lead_data['name'])
+        contact=browser.find_element(By.NAME,'contact')
+        contact.send_keys(lead_data['phone'])
+        email=browser.find_element(By.NAME,'email')
+        email.send_keys(lead_data['email'])
+        project=Select(browser.find_element(By.ID,'select_project'))
+        project.select_by_visible_text(subproject)
+
+        browser.save_screenshot(save_path[1])    
+
+        add=browser.find_element(By.ID,'lead_submit_btn').click()
+        aa = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH,"//*[@id='kt_table_1']/tbody/tr[1]/td[7]"))
+        )
+        browser.save_screenshot(save_path[0])
+        req=aa.text
+        aa.click()
+        
+        time.sleep(5) ## FOR CHANGING WAIT TIME
+        browser.save_screenshot(save_path[1])
+        return "success"
+    except Exception as e:
+        return "failed"
+
+
+
+def casagrand(subproject, browser, site_data, lead_data, path):
+    try:
+        save_path=getsavePath(path,subproject)
+        fullname=lead_data['name']
+        browser.get(site_data["url"])
+        email = browser.find_element(By.ID, "user_email")
+        email.send_keys(site_data["email"])
+        password = browser.find_element(By.ID,"user_password")
+        password.send_keys(site_data["pass"])
+        browser.find_element(By.XPATH,"//button[@type='submit']").click()
+
+        Leads = browser.find_element(By.LINK_TEXT, "Leads")
+        Leads.click()
+        addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
+        addlead.click()
+
+        firstname = browser.find_element(By.ID, "lead_first_name")
+        firstname.send_keys(fullname)
+        lastname = browser.find_element(By.ID, "lead_last_name")
+        lastname.send_keys(fullname)
+
+        #nri = browser.find_element(By.ID, "lead_nri")
+        #nri.click()
+        #nri.click()
+
+        mail = browser.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a')
+        mail.click()
+        mail1 = browser.find_element(By.XPATH, '/html/body/div[3]/div/input')
+        mail1.click()
+        mail1.send_keys(lead_data['email'])
+        mail1.send_keys(Keys.RETURN)
+        phone1 = browser.find_element(By.XPATH, '//*[@id="lead_phone"]')
+        phone1.click()
+        phone1.send_keys(lead_data['phone'])
+        button2 = browser.find_element(By.XPATH, '//*[@id="s2id_lead_project_ids"]/a/span[2]')
+        button2.click()
+        project = browser.find_element(By.XPATH, '/html/body/div[4]/div/input')
+        project.send_keys(subproject)
+        project.send_keys(Keys.RETURN)
+
+        browser.save_screenshot(save_path[1])    
+    
+
+        save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
+        save.click()
+        
+        time.sleep(5)
+        browser.save_screenshot(save_path)
+        return "success" 
+    except Exception as e:
         return "failed"
