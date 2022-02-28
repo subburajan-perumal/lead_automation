@@ -69,6 +69,7 @@ def function_finder(lead_data):
             if lead_data["interested_localities"]!= "":
                 for localities in lead_data['interested_localities'].split(";"):
                     site=SITE.find_one({"location":localities})
+                    
                 
                     pass
         # # for place in lead_data["localities"]:
