@@ -5,7 +5,7 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.common.exceptions import NoSuchElementException
 from pymongo import MongoClient
 from app.functions.browser_automation import *
-from app.util.utility import getTime,getsavePath,upload_an_attachment
+from app.util.utility import getTime,getsavePath, send_mail,upload_an_attachment
 import time
 import os
 from datetime import datetime, timedelta
@@ -49,6 +49,7 @@ class SiteAutomator:
         self.SITE = ""
         self.LEAD = ""
         self.driver = DRIVER
+        self.result=0
         
         firefox_service = Service(self.driver)
         opt = Options()
@@ -93,7 +94,7 @@ class SiteAutomator:
                 { "project.$": 1 })
             
             if self.projectexist :
-                self.result ="failed"
+                self.result =0
                 print("lead already exist")
 
         except Exception as e:
@@ -108,27 +109,22 @@ class SiteAutomator:
                 self.path="./storage/"+self.SITE["name"]
                 if not os.path.exists(self.path):
                     os.mkdir(self.path)
+                automate_path=getsavePath(self.path,self.SITE['name'],self.sub_project_name,self.lead_data['name'])
                 v_automator = project_store[ self.SITE['name'] ]
-                self.result = v_automator(self.sub_project_name, self.browser , self.SITE , self.lead_data,self.path)
+                self.result = v_automator(self.sub_project_name, self.browser , self.SITE , self.lead_data,automate_path)
         except Exception as e :
-            self.result="failed"
+            self.result=2
 
 
-    def is_element_present(self,how,what):
-        try: self.browser.find_element( by=how, value=what )
-        except NoAlertPresentException: return False
-    
-    
-    def is_alert_present(self):
-        try: self.browser.switch_to_alert()
-        except NoAlertPresentException as e: return False
-    
     def upload_data( self):
         
         try:
         
         #ZOHO attachment
-            upload_an_attachment(self.lead_data["lead_id"],self.path)
+            if self.result ==1 or self.result==-1 :
+                upload_an_attachment(self.lead_data["lead_id"],self.path)
+            if self.result ==2 or self.result==-1:
+                send_mail(self.lead_data['lead_id'],self.path,self.sub_project_name,self.lead_data['name'])
         #DB
             lead_detail = { 
                 "projectname": self.SITE[ 'name' ],#akshaya
