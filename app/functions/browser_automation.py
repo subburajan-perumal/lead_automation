@@ -4,13 +4,12 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from app.util.utility import getsavePath
 
 
 
-def akshaya(subproject, browser, site_data, lead_data,path):
+def akshaya(subproject, browser, site_data, lead_data,automate_path):
     try:
-        save_path = getsavePath(path, subproject)
+        save_path = automate_path
         browser.get(site_data["url"])
         f_email = browser.find_element(By.ID, "user_email")
         f_email.send_keys(site_data["email"])
@@ -50,19 +49,21 @@ def akshaya(subproject, browser, site_data, lead_data,path):
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
-        return "success"
+        return 1
 
     except Exception as e:
+        browser.save_screenshot(save_path[2])
         browser.close()
-        return "failed"
+        return -1
 
 
-def brigade(subproject, browser, site_data, lead_data,path):         
+def brigade(subproject, browser, site_data, lead_data,automate_path):         
     try:    
+        
         fullname = lead_data['name']
         
     #browser# yield "on working"
-        save_path=getsavePath(path,subproject)
+        save_path=automate_path
         browser.get(site_data["url"])
         company_name = browser.find_element(By.XPATH,'//*[@id="input_5"]')
         company_name.send_keys(site_data["company"])
@@ -124,13 +125,15 @@ def brigade(subproject, browser, site_data, lead_data,path):
         browser.save_screenshot(save_path[1])
         browser.close()
         print("brigage website work successfully")
-        return "Success"
+        return 1
     except Exception as e:
-        return "failed"
+        browser.save_screenshot(save_path[2])
+    
+        return -1
 
-def fomra(subproject, browser, site_data, lead_data, path):
+def fomra(subproject, browser, site_data, lead_data, automate_path):
     try:
-        save_path=getsavePath(path,subproject) 
+        save_path=automate_path
         fullname = lead_data['name']
         browser.get(site_data['url'])
         f_name=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[2]/div/div/input[1]')
@@ -158,15 +161,15 @@ def fomra(subproject, browser, site_data, lead_data, path):
         
         browser.save_screenshot(save_path[1])
         browser.close()
-        return "success"
+        return 1
     except Exception as e:
         browser.save_screenshot(save_path[2])
 
-        return "failed"
+        return -1
 
-def alliance(subproject, browser, site_data, lead_data, path):
+def alliance(subproject, browser, site_data, lead_data, automate_path):
     try:
-        save_path=getsavePath(path,subproject)
+        save_path=automate_path
         browser.get(site_data["url"])
         f_search=browser.find_element(By.ID,'email')
         f_search.send_keys(site_data["email"])
@@ -199,15 +202,16 @@ def alliance(subproject, browser, site_data, lead_data, path):
         
         time.sleep(5) ## FOR CHANGING WAIT TIME
         browser.save_screenshot(save_path[1])
-        return "success"
+        return 1
     except Exception as e:
-        return "failed"
+        browser.save_screenshot(save_path[2])
+        return -1
 
 
 
-def casagrand(subproject, browser, site_data, lead_data, path):
+def casagrand(subproject, browser, site_data, lead_data, automate_path):
     try:
-        save_path=getsavePath(path,subproject)
+        save_path=automate_path
         fullname=lead_data['name']
         browser.get(site_data["url"])
         email = browser.find_element(By.ID, "user_email")
@@ -245,14 +249,15 @@ def casagrand(subproject, browser, site_data, lead_data, path):
         project.send_keys(subproject)
         project.send_keys(Keys.RETURN)
 
-        browser.save_screenshot(save_path[1])    
+        browser.save_screenshot(save_path[0])    
     
 
         save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
         save.click()
         
         time.sleep(5)
-        browser.save_screenshot(save_path)
-        return "success" 
+        browser.save_screenshot(save_path[1])
+        return 1
     except Exception as e:
-        return "failed"
+        browser.save_screenshot(save_path[2])
+        return -1
