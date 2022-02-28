@@ -5,11 +5,12 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.common.exceptions import NoSuchElementException
 from pymongo import MongoClient
 from app.functions.browser_automation import *
-from app.util.utility import getTime,getsavePath
+from app.util.utility import getTime,getsavePath,upload_an_attachment
 import time
 import os
 from datetime import datetime, timedelta
 import app.functions.Config as Config
+
 
 
 
@@ -25,7 +26,7 @@ project_store = {
      "akshaya"    : akshaya,     #1
      "brigade"    : brigade,     #2
      "fomra"      : fomra,     #3
-     "adityaran"  : "adityaram", #4
+     "adityaram"  : "adityaram", #4
      "casagrand"  : "casagrand", #5
      "dra"        : "dra",       #6
      "tvs"        : "tvs",       #7
@@ -47,7 +48,6 @@ class SiteAutomator:
         self.lead_data = lead_data
         self.SITE = ""
         self.LEAD = ""
-        # self.lead_data=lead_data
         self.driver = DRIVER
         
         firefox_service = Service(self.driver)
@@ -62,13 +62,22 @@ class SiteAutomator:
 
     def projectCheck(self,project,sub_project_name,keyword_search):
         try:
-            self.sub_project_name = Config.project_sub[sub_project_name]
+        
+            
             CONN=MongoClient(MONGO_DB)
             self.DB = CONN['lead_automation']
             self.LEAD=self.DB['leads'] #collectioncursor
             self.SITE=self.DB['Site'].find_one({"name":project}) #dictnoi
             print(self.SITE['name'])
             print("db working")
+            
+            self.sub_project_name = Config.project_sub[sub_project_name]
+
+            if keyword_search==True:
+                self.sub_project_name = Config.project_sub[sub_project_name]
+                # self.sub_project_name = self.DB["Keyword"].find({},{"_id":0,:sub_project_name:1})
+
+
             filterdate=datetime.now()-timedelta(30)
             self.projectexist=self.LEAD.find_one(
                 { 
@@ -116,30 +125,36 @@ class SiteAutomator:
     
     def upload_data( self):
         
-        lead_detail = { 
-            "projectname": self.SITE[ 'name' ],#akshaya
-            "subproject": self.sub_project_name ,#Tango
-            "applied_time": datetime.now() ,
-            "status": self.result,
-            }
-        self.LEAD.update_one(
-            {
-                "email": self.lead_data[ "email" ] ,
-                "phone": self.lead_data[ "phone" ] 
-            },
-            {
-                "$set": 
-                {
-                    "modified_time" : datetime.now() 
-                },
-                "$push":
-                {
-                    "project": lead_detail
+        try:
+        
+        #ZOHO attachment
+            upload_an_attachment(self.lead_data["lead_id"],self.path)
+        #DB
+            lead_detail = { 
+                "projectname": self.SITE[ 'name' ],#akshaya
+                "subproject": self.sub_project_name ,#Tango
+                "applied_time": datetime.now() ,
+                "status": self.result,
                 }
-            })
+            self.LEAD.update_one(
+                {
+                    "email": self.lead_data[ "email" ] ,
+                    "phone": self.lead_data[ "phone" ] 
+                },
+                {
+                    "$set": 
+                    {
+                        "modified_time" : datetime.now() 
+                    },
+                    "$push":
+                    {
+                        "project": lead_detail
+                    }
+                })
         
-        print("lead uploaded")
-        
+            print("lead uploaded")
+        except Exception as e:
+            print(e)
     def teardown(self):
         self.browser.quit()
         
