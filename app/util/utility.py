@@ -12,6 +12,20 @@ def getTime():
             # dd/mm/YY H:M:S
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             return dt_string
+
+            
+def getName(name):
+    splited_name=name.split(" ")
+    
+    if len(splited_name)==1:
+
+        return([splited_name[0],splited_name[0]])
+    elif len(splited_name)==2:
+        return([splited_name])
+    elif len(splited_name)==3:
+        return([splited_name[0]+splited_name[1],splited_name[2]])
+    else:
+        return name
             
 #pre_akshaya_Adityaram_phase_5_krishnamoorthy perumal.png
 #(site,sub_projectname,path,leadname)
