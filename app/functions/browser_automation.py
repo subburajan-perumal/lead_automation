@@ -190,13 +190,13 @@ def alliance(subproject, browser, site_data, lead_data, automate_path):
         project=Select(browser.find_element(By.ID,'select_project'))
         project.select_by_visible_text(subproject)
 
-        browser.save_screenshot(save_path[1])    
+        browser.save_screenshot(save_path[0])    
 
         add=browser.find_element(By.ID,'lead_submit_btn').click()
         aa = WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located((By.XPATH,"//*[@id='kt_table_1']/tbody/tr[1]/td[7]"))
         )
-        browser.save_screenshot(save_path[0])
+        # browser.save_screenshot(save_path[0])
         aa.click()
         
         time.sleep(5) ## FOR CHANGING WAIT TIME
