@@ -1,4 +1,6 @@
 import json
+
+from flask import request
 def find_format(P_request):
     try:
 
@@ -27,12 +29,17 @@ def find_format(P_request):
         elif "json" in content_type:
             if(type(P_request.get_json()) is dict):
                 req_data=P_request.get_json()
-                print(req_data)
+                if 'phone' in req_data and 'email' in req_data and 'lead_id'  in req_data and 'name' in req_data:
+                    return req_data
+                else:
+                    req_data={}
+                    print(req_data)
                 # data=''.join(key for key,value in data if key.isalnum())
             #multiple json in single P_request
             elif(type(P_request.get_json())==list):
-                # print("json array")
-                req_data=P_request.get_json()
+                print("json array")
+                # for _ in P_request.get_json():
+
         else:
             req_data={}
         return req_data
