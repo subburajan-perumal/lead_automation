@@ -27,7 +27,7 @@ project_store = {
      "brigade"    : brigade,     #2
      "fomra"      : fomra,     #3
      "adityaram"  : "adityaram", #4
-     "casagrand"  : "casagrand", #5
+     "casagrand"  : casagrand, #5
      "dra"        : "dra",       #6
      "tvs"        : "tvs",       #7
      "shriram"    : "shriram",   #8
@@ -72,7 +72,7 @@ class SiteAutomator:
             print(self.SITE['name'])
             print("db working")
             
-            self.sub_project_name = Config.project_sub[sub_project_name]
+            self.sub_project_name = sub_project_name
 
             if keyword_search==True:
                 self.sub_project_name = Config.project_sub[sub_project_name]
@@ -89,7 +89,13 @@ class SiteAutomator:
                             "subproject": self.sub_project_name} 
                         },
                 "project.applied_time":
-                    {"$gte": filterdate}
+                    {
+                        "$gte": filterdate
+                    },
+                "project.status":
+                    {
+                        "$eq":1
+                    }
                 },
                 { "project.$": 1 })
             

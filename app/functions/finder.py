@@ -33,7 +33,7 @@ def function_finder(lead_data):
                     "modified_time":datetime.now()
                     }
             LEADS.insert_one(lead_creation)
-    
+        #Enquired site
         if "project_enquired_for" in lead_data:
             project_name=lead_data.get("project_enquired_for")
             print("working before using db")
@@ -64,11 +64,24 @@ def function_finder(lead_data):
                     browser_automation.teardown()
                     del browser_automation
 
-
+        #interestlocaties
         if "interested_localities" in lead_data:
             if lead_data["interested_localities"]!= "":
                 for localities in lead_data['interested_localities'].split(";"):
-                    site=SITE.find_one({"location":localities})
+                    site_list=SITE.find({"location.location_name":localities},{"name":1,"location.project_name":1})
+                    for single_site in site_list:
+                        # print()
+                        # print(single_site['name'])
+                        # print(single_site["location"][0]["project_name"])
+                        site_name=(single_site['name'])
+                        project=single_site["location"][0]["project_name"]
+                        browser_automation = SiteAutomator( lead_data[ "phone" ] , lead_data[ "email" ],lead_data)
+                        browser_automation.projectCheck(site_name,project,False)
+                        browser_automation.automated_flow()
+                        browser_automation.upload_data()
+                        browser_automation.teardown()
+                        del browser_automation
+
                     
                 
                     pass
