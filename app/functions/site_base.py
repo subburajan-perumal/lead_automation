@@ -69,13 +69,22 @@ class SiteAutomator:
             self.DB = CONN['lead_automation']
             self.LEAD=self.DB['leads'] #collectioncursor
             self.SITE=self.DB['Site'].find_one({"name":project}) #dictnoi
+            self.KEYWORD=self.DB['Keyword']
+
             print(self.SITE['name'])
             print("db working")
             
             self.sub_project_name = sub_project_name
 
             if keyword_search==True:
+                # key_value=self.KEYWORD.find_one({},{sub_project_name:1})
+                # if key_value:
+                #     temp_data=dict(*key_value)
+                #     self.sub_project_name=temp_data[sub_project_name]
+                # else:
                 self.sub_project_name = Config.project_sub[sub_project_name]
+
+                #  db.Keyword.find({},{"Fomra Vayou":1})
                 # self.sub_project_name = self.DB["Keyword"].find({},{"_id":0,:sub_project_name:1})
 
 
