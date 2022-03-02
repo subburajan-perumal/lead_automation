@@ -13,19 +13,19 @@ def getTime():
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             return dt_string
 
-            
+
 def getName(name):
     splited_name=name.split(" ")
     
     if len(splited_name)==1:
 
-        return([splited_name[0],splited_name[0]])
+        return splited_name[0],splited_name[0]
     elif len(splited_name)==2:
-        return([splited_name])
+        return splited_name[0],splited_name[1]
     elif len(splited_name)==3:
-        return([splited_name[0]+splited_name[1],splited_name[2]])
+        return splited_name[0]+splited_name[1],splited_name[2]
     else:
-        return name
+        return "" ""
             
 #pre_akshaya_Adityaram_phase_5_krishnamoorthy perumal.png
 #(site,sub_projectname,path,leadname)
@@ -36,11 +36,11 @@ def getsavePath(path,site_name,sub_project_name,leadname):
     # formateddate = today.strftime("%d%m%y")
     # print("d1 =", d1)
 
-    return [str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname) + ".png"), 
-    str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname) + ".png"),
-    str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name) + ".png")
+    return [str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ",'_') + ".png"), 
+    str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ","_") + ".png"),
+    str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ","_") + ".png")
     ]
-# print(getsavePath("akshaya","Tango"))
+# print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
 
 
 
