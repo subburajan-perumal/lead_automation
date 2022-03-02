@@ -4,12 +4,15 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from app.util.utility import getName
 
 
 
 def akshaya(subproject, browser, site_data, lead_data,automate_path):
     try:
         save_path = automate_path
+        fullname=str(lead_data['name'])
+        first_name,last_name=getName(fullname)
         browser.get(site_data["url"])
         fl_email = browser.find_element(By.ID, "user_email")
         fl_email.send_keys(site_data["email"])
@@ -24,9 +27,9 @@ def akshaya(subproject, browser, site_data, lead_data,automate_path):
             By.XPATH, "//a[@href='/broker/2150/leads/new']")
         f_addlead.click()
         f_firstname = browser.find_element(By.ID, "lead_first_name")
-        f_firstname.send_keys(lead_data['name'])
+        f_firstname.send_keys(first_name)
         f_lastname = browser.find_element(By.ID, "lead_last_name")
-        f_lastname.send_keys(lead_data['name'])
+        f_lastname.send_keys(last_name)
         f_mail = browser.find_element(
             By.XPATH, '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a')
         f_mail.click()
@@ -52,6 +55,7 @@ def akshaya(subproject, browser, site_data, lead_data,automate_path):
         return 1
 
     except Exception as e:
+        time.sleep(5)
         browser.save_screenshot(save_path[2])
         browser.close()
         return -1
@@ -60,7 +64,9 @@ def akshaya(subproject, browser, site_data, lead_data,automate_path):
 def brigade(subproject, browser, site_data, lead_data,automate_path):         
     try:    
         
-        fullname = lead_data['name']
+        save_path = automate_path
+        fullname=str(lead_data['name'])
+        first_name,last_name=getName(fullname)
         
     #browser# yield "on working"
         save_path=automate_path
@@ -127,14 +133,16 @@ def brigade(subproject, browser, site_data, lead_data,automate_path):
         print("brigage website work successfully")
         return 1
     except Exception as e:
+        time((5))
         browser.save_screenshot(save_path[2])
     
         return -1
 
 def fomra(subproject, browser, site_data, lead_data, automate_path):
     try:
-        save_path=automate_path
-        fullname = lead_data['name']
+        save_path = automate_path
+        fullname=str(lead_data['name'])
+        first_name,last_name=getName(fullname)
         browser.get(site_data['url'])
         f_name=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[2]/div/div/input[1]')
         f_name.send_keys(fullname)
@@ -153,23 +161,27 @@ def fomra(subproject, browser, site_data, lead_data, automate_path):
 
         
         browser.save_screenshot(save_path[0])    
-        # upload_an_attachment(lead_id, save_path1)
+    
 
-        # submit=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[9]/div/div/input').click()
-        browser.implicitly_wait(5)
+        submit=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[9]/div/div/input').click()
+        time.sleep(5)
+        # browser.implicitly_wait(5)
 
         
         browser.save_screenshot(save_path[1])
         browser.close()
         return 1
     except Exception as e:
+        time.sleep(5)
         browser.save_screenshot(save_path[2])
 
         return -1
 
 def alliance(subproject, browser, site_data, lead_data, automate_path):
     try:
-        save_path=automate_path
+        save_path = automate_path
+        fullname=str(lead_data['name'])
+        first_name,last_name=getName(fullname)
         browser.get(site_data["url"])
         fl_search=browser.find_element(By.ID,'email')
         fl_search.send_keys(site_data["email"])
@@ -211,9 +223,9 @@ def alliance(subproject, browser, site_data, lead_data, automate_path):
 
 def casagrand(subproject, browser, site_data, lead_data, automate_path):
     try:
-        save_path=automate_path
-        fullname=str(lead_data['name']).replace(" ","_")
-        firstname=""
+        save_path = automate_path
+        fullname=str(lead_data['name'])
+        first_name,last_name=getName(fullname)
         browser.get(site_data["url"])
         fl_email = browser.find_element(By.ID, "user_email")
         fl_email.send_keys(site_data["email"])
