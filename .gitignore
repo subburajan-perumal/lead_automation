@@ -26,3 +26,5 @@ geckodriver.log
 
 storage
 ngrok
+domain.crt
+.vscode/launch.json

@@ -23,6 +23,10 @@ async def home_page():
     try:
         start_time=time.time()
         data={}
+        print(request)
+        print(request.get_data())
+
+        # print(request.get_json())
         data=find_format(request)
         if data=={}: return Response("invalid request",200)
         if type(data) is list:
