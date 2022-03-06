@@ -28,3 +28,7 @@ storage
 ngrok
 domain.crt
 .vscode/launch.json
+domain.csr
+domain.key
+.vscode/launch.json
+.vscode/launch.json
