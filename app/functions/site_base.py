@@ -13,7 +13,6 @@ import app.functions.Config as Config
 
 
 
-
 # async def browsertimer(v_browser):
 #     time.sleep(100)
 #     v_browser.quit()
@@ -26,18 +25,18 @@ project_store = {
      "akshaya"    : akshaya,     #1
      "brigade"    : brigade,     #2
      "fomra"      : fomra,     #3
-     "adityaram"  : "adityaram", #4
+    #  "adityaram"  : "adityaram", #4
      "casagrand"  : casagrand, #5
-     "dra"        : "dra",       #6
-     "tvs"        : "tvs",       #7
-     "shriram"    : "shriram",   #8
-     "radiance"   : "radiance",  #9
-     "lifestyle"  : "lifestyle", #10
-     "hiranadgani": "hirandani", #11
-     "pragnya"    : "pragnya",   #12
-     "doshi"      : "doshi",     #13
-     "krishnagrp" : "krishnagrp",#14
-     "gsquare"    : "gsquare"    #15
+     "dra"        : dra,       #6
+     "tvs"        : tvs,       #7
+    #  "shriram"    : "shriram",   #8
+    #  "radiance"   : "radiance",  #9
+     "lifestyle"  : lifestyle, #10
+     "hiranandani": hiranandani, #11
+     "pragnya"    : pragnya,   #12
+     "doshi"      : doshi,     #13
+     "krishnagrp" : krishnagrp,#14
+     "gsquare"    : gsquare    #15
 
        }
 
