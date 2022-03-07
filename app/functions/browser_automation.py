@@ -489,7 +489,6 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
 
     except Exception as e:
         browser.save_screenshot(save_path[2])
-        browser.close()
         return -1
 def gsquare(subproject, browser, site_data, lead_data, path):
     try:
@@ -599,6 +598,96 @@ def dra(subproject, browser, site_data, lead_data, path):
         project.send_keys(subproject)
         project.send_keys(Keys.RETURN)
 
+
+        browser.save_screenshot(save_path[0])
+        browser.implicitly_wait(5)
+        browser.save_screenshot(save_path[1])
+        browser.close()
+        return 1
+
+    except Exception as e:
+        browser.save_screenshot(save_path[2])
+        return -1
+
+
+def radiance(subproject, browser, site_data, lead_data, path):
+    try:
+        save_path=path
+
+        browser.get(site_data["url"])
+
+        search=browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/fieldset[1]/input')
+        search.send_keys(site_data["email"])
+        
+        passo=browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/fieldset[2]/input')
+        passo.send_keys(site_data["pass"])
+        submit=browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/div/button')
+        submit.send_keys(Keys.RETURN)
+
+        time.sleep(1)
+        #open new tab
+        browser.find_element(By.TAG_NAME,'body').send_keys(Keys.COMMAND + 't')
+        browser.get(site_data["url2"])
+        
+        time.sleep(3)
+        name=browser.find_element(By.NAME,'lname')
+        name.send_keys(lead_data['name'])
+
+        ## COUNTRY
+        country = browser.find_element(By.XPATH, '//*[@id="select2-country-container"]')
+        country.click()
+        country2 = browser.find_element(By.XPATH, '/html/body/span/span/span[1]/input')
+        country2.send_keys(lead_data['country_name'])
+        country2.send_keys(Keys.RETURN)
+        time.sleep(3)
+
+        contact=browser.find_element(By.XPATH,'//*[@id="fmobileNo"]')
+        contact.send_keys(lead_data['phone'])
+        
+        email=browser.find_element(By.NAME,'email')
+        email.send_keys(lead_data['email'])
+
+        project=browser.find_element(By.XPATH,'//*[@id="basic-form-layouts"]/div/div/div/form/div/div[8]/div[3]/span/span[1]/span/span[2]').click()
+        project = browser.find_element(By.XPATH,'/html/body/span/span/span[1]/input')
+        project.send_keys(subproject)
+        project.send_keys(Keys.RETURN)
+
+
+        browser.save_screenshot(save_path[0])
+        browser.implicitly_wait(5)
+        browser.save_screenshot(save_path[1])
+        browser.close()
+        return 1
+
+    except Exception as e:
+        browser.save_screenshot(save_path[2])
+        return -1
+
+
+def adityaram(subproject, browser, site_data, lead_data, path):
+    try:
+        save_path=path
+
+        browser.get(site_data["url"])
+        #client name
+        name=browser.find_elements(By.XPATH,'/html/body/div[1]/div/form/div[2]/div/div/input')
+        name[0].send_keys(lead_data['name'])
+        #client email
+        email=browser.find_elements(By.XPATH,'/html/body/div[1]/div/form/div[3]/div/div/input')
+        email[0].send_keys(lead_data['email'])
+        #client contact
+        contact=browser.find_elements(By.XPATH,'/html/body/div[1]/div/form/div[4]/div/div/div/input')
+        contact[0].send_keys(lead_data['phone'])
+        #CPname
+        cpname1=Select(browser.find_element(By.XPATH,'/html/body/div[1]/div/form/div[5]/div[1]/div/select'))
+        cpname1.select_by_visible_text(site_data["cpname"])
+        #CPphone
+        cpphn1=browser.find_elements(By.XPATH,'/html/body/div[1]/div/form/div[5]/div[2]/div/input')
+        cpphn1[0].send_keys(site_data["cpphn"])
+        #Project
+        proj1=Select(browser.find_element(By.XPATH,'/html/body/div[1]/div/form/div[6]/div/div/select'))
+        proj1.select_by_visible_text(subproject)
+        time.sleep(3)
 
         browser.save_screenshot(save_path[0])
         browser.implicitly_wait(5)
