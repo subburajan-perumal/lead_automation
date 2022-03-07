@@ -53,6 +53,7 @@ def send_mail(lead_id, path, sub_project_name, name1):
 "MAILGUN_KEY":"REDACTED_SECRET_8",
 "FROM_MAIL":"mailgun@REDACTED_MAILGUN_DOMAIN",
 "TO_MAIL":["redacted@example.com","redacted@example.com"],
+# "TO_MAIL":["redacted@example.com","redacted@example.com"],
 "PASS":"REDACTED",
 "NAME":"Mailgun"}
     try:
@@ -60,11 +61,13 @@ def send_mail(lead_id, path, sub_project_name, name1):
         subject = "Error. {} - {}".format(name1, sub_project_name) 
         text = "Error. Lead registration failure. Lead ID: {} Project: {} Name: {}".format(lead_id, sub_project_name, name1)
         
-        curlurl = "curl -s --user 'api:{}' {} -F from='Automation Error <mailgun@{}>' -F to={} -F to={} -F subject='{}' -F text='{}' -F attachment=@'{}'".format(Mailgun['MAILGUN_KEY'], Mailgun['MAILGUN_URL'],Mailgun['MAILGUN_DOMAIN'], Mailgun['to_mail'][0], Mailgun['to_mail'][1], subject, text, path)
+        curlurl = "curl -s --user 'api:{}' {} -F from='Automation Error <mailgun@{}>' -F to={} -F to={} -F subject='{}' -F text='{}' -F attachment=@'{}'".format(Mailgun['MAILGUN_KEY'], Mailgun['MAILGUN_URL'],Mailgun['MAILGUN_DOMAIN'], Mailgun['TO_MAIL'][0], Mailgun['TO_MAIL'][1], subject, text, path)
         
         s , o = subprocess.getstatusoutput(curlurl)
+        print(s,o,sep="\n")
 
-    except:
+    except Exception as e:
+        print("Exception occured due to: ",str(e))
         print("Exception in sending mail...")
     
     return
@@ -109,3 +112,5 @@ def upload_an_attachment(lead_id, path):
         print("Failed to Upload...")  
 
     return
+# if __name__=="__main__":
+#     send_mail("123","/home/dinesh/LEAD_AUTOMATION/lead_automation/storage/akshaya/post_akshaya_Today_testin11.png","testing","niveth testing")
