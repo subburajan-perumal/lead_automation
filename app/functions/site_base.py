@@ -84,7 +84,7 @@ class SiteAutomator:
                 self.sub_project_name = Config.project_sub[sub_project_name]
 
                 #  db.Keyword.find({},{"Fomra Vayou":1})
-                # self.sub_project_name = self.DB["Keyword"].find({},{"_id":0,:sub_project_name:1})
+                # self.sub_project_namse = self.DB["Keyword"].find({},{"_id":0,:sub_project_name:1})
 
 
             filterdate=datetime.now()-timedelta(30)
