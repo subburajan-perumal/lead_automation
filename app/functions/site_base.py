@@ -25,12 +25,12 @@ project_store = {
      "akshaya"    : akshaya,     #1
      "brigade"    : brigade,     #2
      "fomra"      : fomra,     #3
-    #  "adityaram"  : "adityaram", #4
+     "adityaram"  : adityaram, #4
      "casagrand"  : casagrand, #5
      "dra"        : dra,       #6
      "tvs"        : tvs,       #7
     #  "shriram"    : "shriram",   #8
-    #  "radiance"   : "radiance",  #9
+     "radiance"   : radiance,  #9
      "lifestyle"  : lifestyle, #10
      "hiranandani": hiranandani, #11
      "pragnya"    : pragnya,   #12
