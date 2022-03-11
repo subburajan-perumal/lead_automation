@@ -9,9 +9,10 @@ import json
 from app.tasks import lead
 # from .. import tasks
 logging.basicConfig(
-    filemode= "request.log",
+    filemode= "/var/log/lead_automation_server.log",
     level= logging.INFO,
-    format= f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s'
+    format= f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
+    encoding='utf-8'
     )
 #blueprint for the app route
 home=Blueprint("home",__name__)
@@ -56,6 +57,7 @@ async def home_page():
 
     except Exception as e:
         print(str(e))
+        logging.info("invalid request received")
         return Response("something went wrong\n",status=400)
 
 
