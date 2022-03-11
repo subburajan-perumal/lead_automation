@@ -25,12 +25,12 @@ project_store = {
      "akshaya"    : akshaya,     #1
      "brigade"    : brigade,     #2
      "fomra"      : fomra,     #3
-    #  "adityaram"  : "adityaram", #4
+     "adityaram"  : adityaram, #4
      "casagrand"  : casagrand, #5
      "dra"        : dra,       #6
      "tvs"        : tvs,       #7
     #  "shriram"    : "shriram",   #8
-    #  "radiance"   : "radiance",  #9
+     "radiance"   : radiance,  #9
      "lifestyle"  : lifestyle, #10
      "hiranandani": hiranandani, #11
      "pragnya"    : pragnya,   #12
@@ -84,7 +84,7 @@ class SiteAutomator:
                 self.sub_project_name = Config.project_sub[sub_project_name]
 
                 #  db.Keyword.find({},{"Fomra Vayou":1})
-                # self.sub_project_name = self.DB["Keyword"].find({},{"_id":0,:sub_project_name:1})
+                # self.sub_project_namse = self.DB["Keyword"].find({},{"_id":0,:sub_project_name:1})
 
 
             filterdate=datetime.now()-timedelta(30)
@@ -123,9 +123,9 @@ class SiteAutomator:
                 self.path="./storage/"+self.SITE["name"]
                 if not os.path.exists(self.path):
                     os.mkdir(self.path)
-                automate_path=getsavePath(self.path,self.SITE['name'],self.sub_project_name,self.lead_data['name'])
+                self.automate_path=getsavePath(self.path,self.SITE['name'],self.sub_project_name,self.lead_data['name'])
                 v_automator = project_store[ self.SITE['name'] ]
-                self.result = v_automator(self.sub_project_name, self.browser , self.SITE , self.lead_data,automate_path)
+                self.result = v_automator(self.sub_project_name, self.browser , self.SITE , self.lead_data,self.automate_path)
         except Exception as e :
             self.result=2
 
@@ -136,7 +136,23 @@ class SiteAutomator:
         
         #ZOHO attachment
             if self.result ==1 or self.result==-1 :
-                upload_an_attachment(self.lead_data["lead_id"],self.path)
+                if self.result==1:
+                    
+                    upload_an_attachment(self.lead_data["lead_id"],os.path.abspath(self.automate_path[0]))
+                    upload_an_attachment(self.lead_data["lead_id"],os.path.abspath(self.automate_path[1]))
+                    print("uploaded file : ",os.path.abspath(self.automate_path[0]))
+                    print("uploaded file : ",self.automate_path[1])
+                    print("success lead uploaded")
+                if self.result==-1:
+                    if os.path.exists(self.automate_path[0]):
+                        upload_an_attachment(self.lead_data["lead_id"],os.path.abspath(self.automate_path[0]))
+                    upload_an_attachment(self.lead_data["lead_id"],os.path.abspath(self.automate_path[2]))
+                    print("uploaded file : ",self.path[0])
+                    print("uploaded file : ",self.path[2])
+                    print("failed  lead uploaded")
+                print("lead_id :",self.lead_data["lead_id"])
+                print("lead path : ",self.path)
+                print("attachments uploaded")
             if self.result ==2 or self.result==-1:
                 send_mail(self.lead_data['lead_id'],self.path,self.sub_project_name,self.lead_data['name'])
         #DB

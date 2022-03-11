@@ -4,7 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+     
         {
             "name": "Python: Flask",
             "type": "python",
@@ -16,7 +16,8 @@
             },
             "args": [
                 "run",
-                "-h","0.0.0.0",
+                "-h",
+                "0.0.0.0",
                 "--no-debugger"
             ],
             "jinja": true
@@ -33,7 +34,8 @@
                 "worker",
                 "-l",
                 "info",
-                "-c","1"
+                "-c",
+                "1"
             ]
         }
     ]

@@ -53,6 +53,7 @@ def send_mail(lead_id, path, sub_project_name, name1):
 "MAILGUN_KEY":"REDACTED_SECRET_8",
 "FROM_MAIL":"mailgun@REDACTED_MAILGUN_DOMAIN",
 "TO_MAIL":["redacted@example.com","redacted@example.com"],
+# "TO_MAIL":["redacted@example.com","redacted@example.com"],
 "PASS":"REDACTED",
 "NAME":"Mailgun"}
     try:
@@ -60,11 +61,13 @@ def send_mail(lead_id, path, sub_project_name, name1):
         subject = "Error. {} - {}".format(name1, sub_project_name) 
         text = "Error. Lead registration failure. Lead ID: {} Project: {} Name: {}".format(lead_id, sub_project_name, name1)
         
-        curlurl = "curl -s --user 'api:{}' {} -F from='Automation Error <mailgun@{}>' -F to={} -F to={} -F subject='{}' -F text='{}' -F attachment=@'{}'".format(Mailgun['MAILGUN_KEY'], Mailgun['MAILGUN_URL'],Mailgun['MAILGUN_DOMAIN'], Mailgun['to_mail'][0], Mailgun['to_mail'][1], subject, text, path)
+        curlurl = "curl -s --user 'api:{}' {} -F from='Automation Error <mailgun@{}>' -F to={} -F to={} -F subject='{}' -F text='{}' -F attachment=@'{}'".format(Mailgun['MAILGUN_KEY'], Mailgun['MAILGUN_URL'],Mailgun['MAILGUN_DOMAIN'], Mailgun['TO_MAIL'][0], Mailgun['TO_MAIL'][1], subject, text, path)
         
         s , o = subprocess.getstatusoutput(curlurl)
+        print(s,o,sep="\n")
 
-    except:
+    except Exception as e:
+        print("Exception occured due to: ",str(e))
         print("Exception in sending mail...")
     
     return
@@ -81,31 +84,43 @@ def upload_an_attachment(lead_id, path):
     "REFRESH_TOKEN":"REDACTED",
     "REDIRECT_URI":"https://example.com",
     "NAME":"Zoho"}
+    
+
     try:
         url = 'https://accounts.zoho.com/oauth/v2/token?client_id={}&client_secret={}&refresh_token={}&grant_type=refresh_token'.format(
         zoho['CLIENT_ID'], 
         zoho['CLIENT_SECRET'], 
-        zoho["REFRESH_TOKEN"])
+        zoho['REFRESH_TOKEN'])
 
         headers = CaseInsensitiveDict()
         headers["Content-Length"] = "0"
         resp = requests.post(url, headers=headers)
         output = resp.json()
+        print(output)
+        print("before :",os.environ.get("access-token"))
         access_token = output['access_token']
         os.environ["access_token"] = str(access_token)
-
+        
+        access_token = os.environ.get("access_token")
+        print("after :",access_token)
+        # print(os.get(['access_token']))
     except:
         try:
             access_token = os.environ.get("access_token")
-
+            print(access_token)
         except Exception as e:
             print("Failed to create Access token. \n" + str(e))
 
     try:
-        CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(lead_id, access_token, path)
-        _, _ = subprocess.getstatusoutput(CurlUrl)
-
+        CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(
+            lead_id,
+            access_token,
+            path)
+        out1,out2 = subprocess.getstatusoutput(CurlUrl)
+        print(out1,out2)
     except:
         print("Failed to Upload...")  
 
     return
+    # if __name__=="__main__":
+#     send_mail("123","/home/dinesh/LEAD_AUTOMATION/lead_automation/storage/akshaya/post_akshaya_Today_testin11.png","testing","niveth testing")

@@ -1,6 +1,6 @@
 from datetime import datetime
 from pymongo import MongoClient
-from app.functions.site_base import SiteAutomator
+from app.functions.site_base import SiteAutomator   
 import logging
 import os
 MONGO_DB="REDACTED"
@@ -56,31 +56,34 @@ def function_finder(lead_data):
                 for interested_site in lead_data["interested_properties"].split(";"):
                     project_name=interested_site
                     # print("working before using db")
+                    
                     site=SITE.find_one({"key_words":{"$in":[project_name]}})
-                    browser_automation = SiteAutomator( lead_data[ "phone" ] , lead_data[ "email" ],lead_data)
-                    browser_automation.projectCheck( site ['name'], interested_site,True)
-                    browser_automation.automated_flow()
-                    browser_automation.upload_data()
-                    browser_automation.teardown()
-                    del browser_automation
+                    if site is not None:
+                        browser_automation = SiteAutomator( lead_data[ "phone" ] , lead_data[ "email" ],lead_data)
+                        browser_automation.projectCheck( site ['name'], interested_site,True)
+                        browser_automation.automated_flow()
+                        browser_automation.upload_data()
+                        browser_automation.teardown()
+                        del browser_automation
 
         #interestlocaties
         if "interested_localities" in lead_data:
             if lead_data["interested_localities"]!= "":
                 for localities in lead_data['interested_localities'].split(";"):
                     site_list=SITE.find({"location.location_name":localities},{"name":1,"location.project_name":1})
-                    for single_site in site_list:
-                        # print()
+                    if site_list is not None:
+                        for single_site in site_list:
+                            # print()
                         # print(single_site['name'])
                         # print(single_site["location"][0]["project_name"])
-                        site_name=(single_site['name'])
-                        project=single_site["location"][0]["project_name"]
-                        browser_automation = SiteAutomator( lead_data[ "phone" ] , lead_data[ "email" ],lead_data)
-                        browser_automation.projectCheck(site_name,project,False)
-                        browser_automation.automated_flow()
-                        browser_automation.upload_data()
-                        browser_automation.teardown()
-                        del browser_automation
+                            site_name=(single_site['name'])
+                            project=single_site["location"][0]["project_name"]
+                            browser_automation = SiteAutomator( lead_data[ "phone" ] , lead_data[ "email" ],lead_data)
+                            browser_automation.projectCheck(site_name,project,False)
+                            browser_automation.automated_flow()
+                            browser_automation.upload_data()
+                            browser_automation.teardown()
+                            del browser_automation
 
                     
                 
