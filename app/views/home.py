@@ -1,3 +1,6 @@
+from asyncio.log import logger
+from cmath import log
+import logging
 from urllib import response
 from flask import Blueprint,Response,request
 from ..util.request_handler import find_format
@@ -5,7 +8,11 @@ import time
 import json
 from app.tasks import lead
 # from .. import tasks
-
+logging.basicConfig(
+    filemode= "request.log",
+    level= logging.INFO,
+    format= f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s'
+    )
 #blueprint for the app route
 home=Blueprint("home",__name__)
 
@@ -21,6 +28,7 @@ def test_page():
 @home.post("/")
 async def home_page():
     try:
+        logging.info(msg="request received")
         start_time=time.time()
         data={}
         print(request)
