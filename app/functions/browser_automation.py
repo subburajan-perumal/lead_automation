@@ -6,6 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.alert import Alert
 from app.util.utility import getName
+import phonenumbers as PN
+from phonenumbers import geocoder as GC
 
 
 
@@ -612,17 +614,19 @@ def dra(subproject, browser, site_data, lead_data, path):
 
 def radiance(subproject, browser, site_data, lead_data, path):
     try:
-        save_path=path
-
+        save_path= path
+        phone_no= PN.parse(lead_data['phone'])
+        country_name=GC.country_name_for_number(phone_no,'en')
+        country_code=phone_no.country_code
         browser.get(site_data["url"])
 
-        search=browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/fieldset[1]/input')
-        search.send_keys(site_data["email"])
+        fl_username= browser.find_element(By.XPATH, '/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/fieldset[1]/input')
+        fl_username.send_keys(site_data["email"])
         
-        passo=browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/fieldset[2]/input')
-        passo.send_keys(site_data["pass"])
-        submit=browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/div/button')
-        submit.send_keys(Keys.RETURN)
+        fl_password= browser.find_element(By.XPATH, '/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/fieldset[2]/input')
+        fl_password.send_keys(site_data["pass"])
+        fl_submit= browser.find_element(By.XPATH, '/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/div/button')
+        fl_submit.send_keys(Keys.RETURN)
 
         time.sleep(1)
         #open new tab
@@ -630,15 +634,15 @@ def radiance(subproject, browser, site_data, lead_data, path):
         browser.get(site_data["url2"])
         
         time.sleep(3)
-        name=browser.find_element(By.NAME,'lname')
-        name.send_keys(lead_data['name'])
+        f_name=browser.find_element(By.NAME, 'lname')
+        f_name.send_keys(lead_data['name'])
 
         ## COUNTRY
-        country = browser.find_element(By.XPATH, '//*[@id="select2-country-container"]')
-        country.click()
-        country2 = browser.find_element(By.XPATH, '/html/body/span/span/span[1]/input')
-        country2.send_keys(lead_data['country_name'])
-        country2.send_keys(Keys.RETURN)
+        f_country = browser.find_element(By.XPATH, '//*[@id="select2-country-container"]')
+        f_country.click()
+        f_country2 = browser.find_element(By.XPATH, '/html/body/span/span/span[1]/input')
+        f_country2.send_keys(country_name)
+        f_country2.send_keys(Keys.RETURN)
         time.sleep(3)
 
         contact=browser.find_element(By.XPATH,'//*[@id="fmobileNo"]')
@@ -666,7 +670,7 @@ def radiance(subproject, browser, site_data, lead_data, path):
 
 def adityaram(subproject, browser, site_data, lead_data, path):
     try:
-        save_path=path
+        save_path= path
 
         browser.get(site_data["url"])
         #client name
