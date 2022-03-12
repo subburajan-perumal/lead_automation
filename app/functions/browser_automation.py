@@ -58,7 +58,8 @@ def akshaya(subproject, browser, site_data, lead_data,automate_path):
         return 1
 
     except Exception as e:
-        time.sleep(5)
+        time.sleep(2)
+        print(str(e))
         browser.save_screenshot(save_path[2])
         browser.close()
         return -1
@@ -96,9 +97,9 @@ def brigade(subproject, browser, site_data, lead_data,automate_path):
         
         #client name
         f_firstname=browser.find_element(By.XPATH,'//*[@id="first_11"]')
-        f_firstname.send_keys(lead_data['name'])
+        f_firstname.send_keys(first_name)
         f_lastname = browser.find_element(By.ID,'last_11')
-        f_lastname.send_keys(lead_data['name'])
+        f_lastname.send_keys(last_name)
         
         #mobile number 1
         f_aph1c = browser.find_element(By.XPATH,'//*[@id="input_12_country"]')
@@ -135,8 +136,10 @@ def brigade(subproject, browser, site_data, lead_data,automate_path):
         browser.close()
         print("brigage website work successfully")
         return 1
+
     except Exception as e:
-        time((5))
+        print(str(e))
+        time(5)
         browser.save_screenshot(save_path[2])
     
         return -1
@@ -166,7 +169,7 @@ def fomra(subproject, browser, site_data, lead_data, automate_path):
         browser.save_screenshot(save_path[0])    
     
 
-        submit=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[9]/div/div/input').click()
+        f_submit=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[9]/div/div/input').click()
         time.sleep(5)
         # browser.implicitly_wait(5)
 
@@ -175,7 +178,8 @@ def fomra(subproject, browser, site_data, lead_data, automate_path):
         browser.close()
         return 1
     except Exception as e:
-        time.sleep(5)
+        print(str(e))
+        time.sleep(2)
         browser.save_screenshot(save_path[2])
         browser.close()
         return -1
@@ -219,6 +223,7 @@ def alliance(subproject, browser, site_data, lead_data, automate_path):
         browser.close()
         return 1
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
         return -1
 
@@ -276,6 +281,7 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
         browser.close()
         return 1
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
         return -1
 
@@ -283,45 +289,45 @@ def lifestyle(subproject, browser, site_data, lead_data, path):
     try:
         save_path=path
         fullname=str(lead_data['name'])
-        first_name,last_name=getName(fullname)
-        enquiry_owner = 'Lead Automation'
+        first_name, last_name = getName(fullname)
+        enquiry_owner= 'Lead Automation'
         browser.get(site_data["url"])
         
-        search=browser.find_element(By.ID,'username')
-        search.send_keys(site_data["email"])
-        passo=browser.find_element(By.ID,'password')
-        passo.send_keys(site_data["pass"])
-        submit=browser.find_element(By.CLASS_NAME,'signin-button').click()
+        fl_username= browser.find_element(By.ID, 'username')
+        fl_username.send_keys(site_data["email"])
+        fl_password= browser.find_element(By.ID, 'password')
+        fl_password.send_keys(site_data["pass"])
+        f_submit=browser.find_element(By.CLASS_NAME,'signin-button').click()
 
         #submit.send_keys(Keys.RETURN)
         time.sleep(2)
-        lead=browser.find_elements(By.ID,'menubar_item_Appointments')[1].click()
+        lead=browser.find_elements(By.ID, 'menubar_item_Appointments')[1].click()
         time.sleep(2)
 
-        adding=browser.find_element(By.CLASS_NAME,'icon-plus')
-        adding.click()
+        f_adding= browser.find_element(By.CLASS_NAME, 'icon-plus')
+        f_adding.click()
         time.sleep(2)
-        name  = browser.find_element(By.NAME, "contactname")
-        name.send_keys(lead_data['name'])
-        contact=browser.find_element(By.NAME,'mobile')
-        contact.send_keys(lead_data['phone'])
+        f_name= browser.find_element(By.NAME, "contactname")
+        f_name.send_keys(lead_data['name'])
+        f_contact= browser.find_element(By.NAME, 'mobile')
+        f_contact.send_keys(lead_data['phone'])
 
-        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[2]/div/span/div/a/div/b')
-        intrest_project.click()
-        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[2]/div/span/div/div/div/input')
-        new.send_keys(subproject)
-        new.send_keys(Keys.RETURN)
+        f_interest_project= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[2]/div/span/div/a/div/b')
+        f_interest_project.click()
+        f_new= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[2]/div/span/div/div/div/input')
+        f_new.send_keys(subproject)
+        f_new.send_keys(Keys.RETURN)
 
-        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/a/div/b')
-        intrest_project.click()
-        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/div/div/input')
-        new.send_keys(enquiry_owner)
-        new.send_keys(Keys.RETURN)
+        f_interest_project= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/a/div/b')
+        f_interest_project.click()
+        f_new= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/div/div/input')
+        f_new.send_keys(enquiry_owner)
+        f_new.send_keys(Keys.RETURN)
 
-        email=browser.find_element(By.NAME,'email')
-        email.send_keys(lead_data['email'])
+        f_email=browser.find_element(By.NAME,'email')
+        f_email.send_keys(lead_data['email'])
 
-        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[4]/td[4]/div/span/div/a/div/b')
+        f_intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[4]/td[4]/div/span/div/a/div/b')
         intrest_project.click()
         intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[5]/td[2]/div/span/div/a/div/b')
         intrest_project.click()
