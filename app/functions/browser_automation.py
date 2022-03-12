@@ -8,7 +8,16 @@ from selenium.webdriver.common.alert import Alert
 from app.util.utility import getName
 import phonenumbers as PN
 from phonenumbers import geocoder as GC
-
+import logging
+browserLog=logging.getLogger("browser_log")
+# browserLog.set
+logging.basicConfig(
+    filename= "browser.log",
+    level= logging.INFO,
+    format= f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
+    encoding='utf-8',
+    filemode="w"
+    )
 
 
 def akshaya(subproject, browser, site_data, lead_data,automate_path):
@@ -34,7 +43,9 @@ def akshaya(subproject, browser, site_data, lead_data,automate_path):
         f_lastname = browser.find_element(By.ID, "lead_last_name")
         f_lastname.send_keys(last_name)
         f_mail = browser.find_element(
-            By.XPATH, '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a')
+                                    By.XPATH, 
+                                    '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a'
+                                    )
         f_mail.click()
         f_mail1 = browser.find_element(By.XPATH, '/html/body/div[3]/div/input')
         f_mail1.click()
@@ -55,6 +66,7 @@ def akshaya(subproject, browser, site_data, lead_data,automate_path):
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
+        
         return 1
 
     except Exception as e:
@@ -347,6 +359,7 @@ def lifestyle(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
     
         return -1
@@ -385,6 +398,7 @@ def pragnya(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
     
         return -1
@@ -426,6 +440,7 @@ def tvs(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
     
         return -1
@@ -458,6 +473,7 @@ def krishnagrp(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
         
         return -1
@@ -496,6 +512,7 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
         return -1
 def gsquare(subproject, browser, site_data, lead_data, path):
@@ -528,6 +545,7 @@ def gsquare(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
         return -1
 
@@ -562,6 +580,7 @@ def doshi(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
         return -1
 
@@ -614,6 +633,7 @@ def dra(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
         return -1
 
@@ -670,6 +690,7 @@ def radiance(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
         return -1
 
@@ -706,5 +727,6 @@ def adityaram(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
+        print(str(e))
         browser.save_screenshot(save_path[2])
         return -1
