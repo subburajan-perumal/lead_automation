@@ -7,7 +7,7 @@ import json
 from app.tasks import lead
 # from .. import tasks
 logging.basicConfig(
-    filemode= "lead_automation_server.log",
+    filename= "lead_automation_server.log",
     level= logging.INFO,
     format= f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
     encoding='utf-8'
