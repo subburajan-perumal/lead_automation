@@ -20,6 +20,7 @@ MONGO_USER = "REDACTED"
 MONGO_PASSWORD = "REDACTED"
 DRIVER = "./geckodriver"
 MONGO_DB = "REDACTED"
+WEBDRIVER_LOG= "webdriver.log"
 project_store = {
      "alliance"   : alliance,
      "akshaya"    : akshaya,     #1
@@ -53,10 +54,12 @@ class SiteAutomator:
         firefox_service = Service(self.driver)
         opt = Options()
         opt.add_argument ( "--incognito" )
+
         # opt.add_argument("--headless")
         self.browser = webdriver.Firefox ( 
             options = opt ,
-            service = firefox_service
+            service = firefox_service,
+            service_log_path=WEBDRIVER_LOG
             )
     
 
