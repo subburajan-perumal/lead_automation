@@ -34,3 +34,6 @@ domain.key
 .vscode/launch.json
 test/zoho_upload.py
 t
+gunicorn.log
+gunicorn_error.log
+browser.log
