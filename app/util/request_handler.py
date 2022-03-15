@@ -1,7 +1,7 @@
 import json
 
-from flask import request
-def find_format(P_request):
+from flask import Request
+def find_format(P_request:Request):
     try:
 
         print("fomat finder working")
