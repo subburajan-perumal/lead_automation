@@ -1,5 +1,4 @@
 # from curses.ascii import isalnum, isalpha
-from unittest import result
 from celery import Celery
 from app.functions.finder import  function_finder
 from app.config import DevelopmentConfig
