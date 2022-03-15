@@ -38,19 +38,31 @@ project_store = {
      "doshi"      : doshi,     #13
      "krishnagrp" : krishnagrp,#14
      "gsquare"    : gsquare    #15
+    #  "vijayaraja" : "vijayaraja"#16
+    #  "dlf" : "dlf" #17
+    #   "lancor":"lancor"#18
 
        }
 
 class SiteAutomator:
-    def __init__ ( self , phone , email,lead_data) -> None:
+    def __init__ ( self , phone , email,lead_data,site_data) -> None:
         self.phone = phone 
         self.email = email
         self.lead_data = lead_data
-        self.SITE = ""
-        self.LEAD = ""
-        self.driver = DRIVER
+        self.path=""
         self.result=0
+        self.site_data=site_data
+        #DB
+        self.CONN=MongoClient(MONGO_DB)
+        self.DB = self.CONN['lead_automation']
         
+        self.LEAD = self.DB["leads"]
+        self.SITE = ""
+        # self.LEAD=self.DB['leads'] #collectioncursor
+        # self.SITE=self.DB['Site'].find_one({"name":project}) #dictnoi
+        
+        self.driver=DRIVER
+
         firefox_service = Service(self.driver)
         opt = Options()
         opt.add_argument ( "--incognito" )
@@ -67,13 +79,7 @@ class SiteAutomator:
         try:
         
             
-            CONN=MongoClient(MONGO_DB)
-            self.DB = CONN['lead_automation']
-            self.LEAD=self.DB['leads'] #collectioncursor
-            self.SITE=self.DB['Site'].find_one({"name":project}) #dictnoi
-            self.KEYWORD=self.DB['Keyword']
-
-            print(self.SITE['name'])
+            # print(self.SITE['name'])
             print("db working")
             
             self.sub_project_name = sub_project_name
@@ -123,12 +129,12 @@ class SiteAutomator:
         try:
             # if self.result=="failed":return
             if not self.projectexist:
-                self.path="./storage/"+self.SITE["name"]
+                self.path="./storage/"+self.site_data["name"]
                 if not os.path.exists(self.path):
                     os.mkdir(self.path)
-                self.automate_path=getsavePath(self.path,self.SITE['name'],self.sub_project_name,self.lead_data['name'])
-                v_automator = project_store[ self.SITE['name'] ]
-                self.result = v_automator(self.sub_project_name, self.browser , self.SITE , self.lead_data,self.automate_path)
+                self.automate_path=getsavePath(self.path,self.site_data['name'],self.sub_project_name,self.lead_data['name'])
+                v_automator = project_store[ self.site_data['name'] ]
+                self.result = v_automator(self.sub_project_name, self.browser , self.site_data , self.lead_data,self.automate_path)
         except Exception as e :
             self.result=2
 
@@ -160,7 +166,7 @@ class SiteAutomator:
                 send_mail(self.lead_data['lead_id'],self.path,self.sub_project_name,self.lead_data['name'])
         #DB
             lead_detail = { 
-                "projectname": self.SITE[ 'name' ],#akshaya
+                "projectname": self.site_data['name'],#akshaya
                 "subproject": self.sub_project_name ,#Tango
                 "applied_time": datetime.now() ,
                 "status": self.result,
