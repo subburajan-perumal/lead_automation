@@ -64,6 +64,8 @@ def akshaya(subproject, browser, site_data, lead_data,automate_path):
         f_project1.send_keys(Keys.RETURN)
 
         browser.save_screenshot(save_path[0])
+        f_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
+        f_save.click()
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
