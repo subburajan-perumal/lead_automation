@@ -36,18 +36,18 @@ def function_finder(lead_data):
             LEADS.insert_one(lead_creation)
         # Enquired site
         if "project_enquired_for" in lead_data:
-            project_name = lead_data.get("project_enquired_for")
+            project_keyword = lead_data.get("project_enquired_for")
             print("working before using db")
 
             # Enquriedsite
 
-            filter = {"project_list.keywords": project_name}
+            # filter = {"project_list.keywords": project_name}
             site_list=  DB.Site.aggregate(
                 [
                     {
                         "$match":
                             {
-                                "project_list.keywords":project_name,
+                                "project_list.keywords":project_keyword,
                                 "status":1
                             }
                     },
@@ -56,7 +56,7 @@ def function_finder(lead_data):
                         "$unwind":"$project_list"
                     },
                     {
-                        "$match":{"project_list.keywords":project_name}
+                        "$match":{"project_list.keywords":project_keyword}
                     }
                 ]
             )
@@ -68,11 +68,7 @@ def function_finder(lead_data):
                 # site=SITE.find_one({"project_list.keywords":project_name},{"name":1,"project_list.project_name.$":1})
                 # print(site)
                 # if site is not None:
-                browser_automation = SiteAutomator(
-                                                    lead_data["phone"],
-                                                    lead_data["email"],
-                                                    lead_data,site_data
-                                                )
+                browser_automation = SiteAutomator(lead_data["phone"], lead_data["email"],lead_data,site_data)
                 browser_automation.projectCheck(site_name, project_name, False)
                 browser_automation.automated_flow()
                 browser_automation.upload_data()
@@ -85,16 +81,35 @@ def function_finder(lead_data):
         if "interested_properties" in lead_data:
             if lead_data['interested_properties'] != "":
                 for interested_site in lead_data["interested_properties"].split(";"):
-                    project_name = interested_site
+                    interested_keyword=interested_site
                     # print("working before using db")
 
-                    site = SITE.find_one(
-                        {"key_words": {"$in": [project_name]}})
-                    if site is not None:
-                        browser_automation = SiteAutomator(
-                            lead_data["phone"], lead_data["email"], lead_data)
-                        browser_automation.projectCheck(
-                            site['name'], interested_site, True)
+
+                    site_list=  DB.Site.aggregate(
+                [
+                    {
+                        "$match":
+                            {
+                                "project_list.keywords":interested_keyword,
+                                "status":1
+                            }
+                    },
+                
+                    {
+                        "$unwind":"$project_list"
+                    },
+                    {
+                        "$match":{"project_list.keywords":interested_keyword}
+                    }
+                ]
+                )
+
+                for site_data in site_list:
+                        site_name = site_data["name"]
+                        project_name = site_data["project_list"]["project_name"]
+                    # if site is not None:
+                        browser_automation = SiteAutomator(lead_data["phone"], lead_data["email"], lead_data,site_data)
+                        browser_automation.projectCheck(site_data, interested_site,False)
                         browser_automation.automated_flow()
                         browser_automation.upload_data()
                         browser_automation.teardown()
@@ -104,25 +119,38 @@ def function_finder(lead_data):
         if "interested_localities" in lead_data:
             if lead_data["interested_localities"] != "":
                 for localities in lead_data['interested_localities'].split(";"):
-                    site_list = SITE.find({"location.location_name": localities}, {
-                                          "name": 1, "location.project_name": 1})
-                    if site_list is not None:
-                        for single_site in site_list:
-                            # print()
-                            # print(single_site['name'])
-                            # print(single_site["location"][0]["project_name"])
-                            site_name = (single_site['name'])
-                            project = single_site["location"][0]["project_name"]
-                            browser_automation = SiteAutomator(
-                                lead_data["phone"], lead_data["email"], lead_data)
-                            browser_automation.projectCheck(
-                                site_name, project, False)
-                            browser_automation.automated_flow()
-                            browser_automation.upload_data()
-                            browser_automation.teardown()
-                            del browser_automation
+                    location_keyword=localities
+                    site_list=  DB.Site.aggregate(
+                                [
+                                    {
+                                        "$match":
+                                            {
+                                                "project_list.location":location_keyword,
+                                                "status":1
+                                            }
+                                    },
+                                
+                                    {
+                                        "$unwind":"$project_list"
+                                    },
+                                    {
+                                        "$match":{"project_list.location":location_keyword}
+                                    }
+                                ]
+                            )
+                    
+                for site_data in site_list:
+                    site_name = site_data["name"]
+                    project_name = site_data["project_list"]["project_name"]
+                    
+                    browser_automation = SiteAutomator(lead_data["phone"], lead_data["email"], lead_data,site_data)
+                    browser_automation.projectCheck(site_name, project_name, False)
+                    browser_automation.automated_flow()
+                    browser_automation.upload_data()
+                    browser_automation.teardown()
+                    del browser_automation
 
-                    pass
+                    
         # # for place in lead_data["localities"]:
         #     # pass
         # #bylocalities
