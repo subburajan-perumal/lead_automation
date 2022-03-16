@@ -111,8 +111,9 @@ def function_finder(lead_data):
                         browser_automation = SiteAutomator(lead_data["phone"], lead_data["email"], lead_data,site_data)
                         browser_automation.projectCheck(site_data, interested_site,False)
                         browser_automation.automated_flow()
-                        browser_automation.upload_data()
                         browser_automation.teardown()
+                        browser_automation.upload_data()
+                        
                         del browser_automation
 
         # interestlocaties
@@ -146,8 +147,8 @@ def function_finder(lead_data):
                     browser_automation = SiteAutomator(lead_data["phone"], lead_data["email"], lead_data,site_data)
                     browser_automation.projectCheck(site_name, project_name, False)
                     browser_automation.automated_flow()
-                    browser_automation.upload_data()
                     browser_automation.teardown()
+                    browser_automation.upload_data()
                     del browser_automation
 
                     
