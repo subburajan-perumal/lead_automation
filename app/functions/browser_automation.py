@@ -305,7 +305,9 @@ def lifestyle(subproject, browser, site_data, lead_data, path):
         save_path=path
         fullname=str(lead_data['name'])
         first_name, last_name = getName(fullname)
-        enquiry_owner= 'Lead Automation'
+        phoneobj=PN.parse(lead_data['phone'])
+        phoneno=phoneobj.national_number
+        enquiry_owner= 'LeadAutomation'
         browser.get(site_data["url"])
         
         fl_username= browser.find_element(By.ID, 'username')
@@ -325,7 +327,7 @@ def lifestyle(subproject, browser, site_data, lead_data, path):
         f_name= browser.find_element(By.NAME, "contactname")
         f_name.send_keys(lead_data['name'])
         f_contact= browser.find_element(By.NAME, 'mobile')
-        f_contact.send_keys(lead_data['phone'])
+        f_contact.send_keys(phoneno)
 
         f_interest_project= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[2]/div/span/div/a/div/b')
         f_interest_project.click()
@@ -336,14 +338,14 @@ def lifestyle(subproject, browser, site_data, lead_data, path):
         f_interest_project= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/a/div/b')
         f_interest_project.click()
         f_new= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/div/div/input')
-        f_new.send_keys(enquiry_owner)
+        # f_new.send_keys(enquiry_owner)
         f_new.send_keys(Keys.RETURN)
 
         f_email=browser.find_element(By.NAME,'email')
         f_email.send_keys(lead_data['email'])
 
         f_intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[4]/td[4]/div/span/div/a/div/b')
-        intrest_project.click()
+        f_intrest_project.click()
         intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[5]/td[2]/div/span/div/a/div/b')
         intrest_project.click()
 
