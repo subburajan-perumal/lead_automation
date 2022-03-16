@@ -557,7 +557,7 @@ def gsquare(subproject, browser, site_data, lead_data, path):
 def doshi(subproject, browser, site_data, lead_data, path):
     try:
         save_path = path
-
+        browser.get(site_data["url"])
         search=browser.find_element(By.ID,'username')
         search.send_keys(site_data["email"])
         passo=browser.find_element(By.ID,'password')
