@@ -87,6 +87,7 @@
         "url": "https://partners.allianceprojects.in/login",
         "email": "redacted@example.com",
         "pass": "REDACTED",
+        "status":1,
         "project_list": [
             {
                 "project_name": "Alliance Galleria Residences",
@@ -186,6 +187,7 @@
         "aph1": "9",
         "aph2": "1",
         "aph3": "9000000000",
+        "status":1,
         "project_list": [
             {
                 "project_name": "Brigade Xanadu",
@@ -218,6 +220,7 @@
         "url": "http://cp.sell.do/users/sign_in",
         "email": "redacted@example.com",
         "pass": "REDACTED",
+        "status":1,
         "project_list": [
             {
                 "project_name": "CG Zenith",
@@ -284,9 +287,9 @@
                 "location": []
             },
             {
-                "project_name": "CG Crecendo Compact",
+                "project_name": "CG Crescendo Compact",
                 "keywords": [
-                    "Casagrand Crecendo Compact"
+                    "Casagrand Crescendo Compact"
                 ],
                 "location": []
             },
@@ -334,30 +337,7 @@
         "url2": "https://cplr.dlf.in/addlead",
         "email": "redacted@example.com",
         "pass": "REDACTED",
-        "key_words": [
-            "Adityaram",
-            "Radiance Smartville",
-            "Radiance Blossom",
-            "Radiance Sapphire",
-            "Courtyards",
-            "Amethyst",
-            "Sholinganallur",
-            "Navalur",
-            "Siruseri",
-            "Kelambakkam",
-            "OMR",
-            "Pudupakkam",
-            "Risington",
-            "Savoye",
-            "Godrej Azure",
-            "Olympia Opaline",
-            "Oragadam",
-            "Hirananandani Park",
-            "Alexandri",
-            "DLF Parc Estate",
-            "plot",
-            "villa"
-        ],
+        "status":0,
         "project_list": [
             {
                 "project_name": "DLF Parc Estate",
@@ -426,6 +406,7 @@
         "url": "http://cp.sell.do/users/sign_in",
         "email": "redacted@example.com",
         "pass": "REDACTED",
+        "status":1,
         "project_list": [
             {
                 "project_name": "D'Elite",
@@ -496,6 +477,7 @@
         "url": "http://www.fomrahousing.in/cp/?srd=5d1892be5e3c3067305fa1d2",
         "channel_phone_number": "9000000000",
         "partner_name": "Lead Automation",
+        "status":1,
         "project_list": [
             {
                 "project_name": "Hues",
@@ -529,6 +511,7 @@
         "name": "gsquare",
         "url": "https://cp.gsquarehousing.com",
         "partner_name": "Lead Automation",
+        "status":0,
         "project_list": [
             {
                 "project_name": "G Square Sands N Waves",
@@ -573,10 +556,11 @@
         "email": "LeadAutomation",
         "pass": "REDACTED",
         "partner_name": "Lead Automation",
+        "status":1,
         "project_list": [
             {
                 "project_name": "Hiranandani Parks",
-                "key_words": [
+                "keywords": [
                     "Hiranandani Parks",
                     "None (default)",
                     "VBHC"
@@ -591,7 +575,8 @@
         "name": "krishnagrp",
         "url": "https://krishnagroup.ventures/leadsubmission.php?srd=5f815f35c825616af32c6aba",
         "partner_name": "Lead Automation CP",
-        "key_words": [
+        "status":1,
+        "keywords": [
             "Krishna Mithila",
             "Krishna Meadows",
             "Krishna HeadQuarters",
@@ -644,6 +629,7 @@
         "url": "http://cp.sell.do/users/sign_in",
         "email": "redacted@example.com",
         "pass": "REDACTED",
+        "status":0,
         "project_list": [
             {
                 "project_name": "Lancor Lumina",
@@ -731,6 +717,7 @@
         "email": "LeadAutomation",
         "pass": "REDACTED",
         "channel_partner": "LeadAutomation",
+        "status":1,
         "project_list": [
             {
                 "project_name": "Lifestyle LeParadis",
@@ -784,7 +771,8 @@
         "email": "LeadAutomation",
         "pass": "REDACTED",
         "partner": "9000000000",
-        "key_words": [
+        "status":1,
+        "keywords": [
             "Eden Park",
             "House of Hiranandani",
             "Courtyards",
@@ -831,6 +819,7 @@
         "url2": "http://cp.radiancerealty.in/lead_add.php",
         "email": "redacted@example.com",
         "pass": "REDACTED",
+        "status":1,
         "project_list": [
             {
                 "project_name": "Radiance Elite",
@@ -916,6 +905,7 @@
         "url": "https://www.shriramproperties.com/synergy/",
         "email": "redacted@example.com",
         "pass": "",
+        "status":1,
         "mobile": "9000000000",
         "channel_partner": "Lead Automation",
         "project_list": [
@@ -977,6 +967,7 @@
         "pass": "",
         "cpname": "Lead Automation",
         "cpphn": "9000000000",
+        "status":1,
         "project_list": [
             {
                 "project_name": "TVS Green Acres",
@@ -1055,6 +1046,7 @@
         "url": "https://vijayrajacrmsite.secure.force.com/channelpartnerleadform",
         "partner_name": "Lead Automation",
         "partner_email": "redacted@example.com",
+        "status":0,
         "project_list": [
             {
                 "project_name": "VRX 360",
