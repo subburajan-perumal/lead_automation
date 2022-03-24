@@ -1,1068 +1,1133 @@
 [
-    {
-        "name":"akshaya",
-        "url": "http://cp.sell.do/users/sign_in",
-        "email": "redacted@example.com",
-        "pass": "REDACTED",
-        "status": 1,
-        "project_list": [
-            {
-                "project_name": "Tango",
-                "keywords": [
-                    "Akshaya Tango",
-                    "Alliance Galleria",
-                    "Casagrand Esquire",
-                    "Risland",
-                    "Courtyards",
-                    "Risington",
-                    "Brigade Residences",
-                    "House of Hiranandani",
-                    "Gardenia",
-                    "Tuxedo",
-                    "Olympia Opaline",
-                    "TCP Altura",
-                    "Elevate 21",
-                    "Anchorage",
-                    "Mandarin",
-                    "Alexandri"
-                ],
-                "location": [
-                    "Thoraipakkam",
-                    "Perungudi",
-                    "Sholinganallur",
-                    "Pallavaram"
-                ]
-            },
-            {
-                "project_name": "Republic",
-                "keywords": [
-                    "Akshaya Republic",
-                    "Woodside",
-                    "Green Enclave",
-                    "Emerald Peninsula",
-                    "Signature City"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Today",
-                "keywords": [
-                    "Akshaya Today",
-                    "Savoye",
-                    "Radiance Sapphire",
-                    "PBEL",
-                    "Godrej Azure"
-                ],
-                "location": [
-                    "Kelambakkam",
-                    "OMR",
-                    "Navalur"
-                ]
-            },
-            {
-                "project_name": "OrlandO",
-                "keywords": [
-                    "Akshaya OrlandO"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Earth",
-                "keywords": [
-                    "Akshaya Earth"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Shanti",
-                "keywords": [
-                    "Akshaya Shanti"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "alliance",
-        "url": "https://partners.allianceprojects.in/login",
-        "email": "redacted@example.com",
-        "pass": "REDACTED",
-        "status":1,
-        "project_list": [
-            {
-                "project_name": "Alliance Galleria Residences",
-                "keywords": [
-                    "Alliance Galleria",
-                    "None (default)",
-                    "LightHouse",
-                    "Light House",
-                    "Infinys",
-                    "Tango",
-                    "Shriram Park 63",
-                    "alliancegalleria",
-                    "Amethyst",
-                    "Winchester",
-                    "Radiance Pride",
-                    "Radiance The Pride",
-                    "Tuxedo",
-                    "Elevate 21",
-                    "Mandarin"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Alliance Eternity",
-                "keywords": [
-                    "Urbanrise Eternity",
-                    "Poonamal"
-                ],
-                "location": [
-                    "Porur"
-                ]
-            },
-            {
-                "project_name": "Jubilee Residences",
-                "keywords": [
-                    "Guduvanche",
-                    "Lumina"
-                ],
-                "location": [
-                    "Perungalathur"
-                ]
-            },
-            {
-                "project_name": "Villabelvedere",
-                "keywords": [
-                    "Adityaram",
-                    "Hamlet",
-                    "Hiranandani Parks",
-                    "VBHC"
-                ],
-                "location": [
-                    "Oragadam"
-                ]
-            },
-            {
-                "project_name": "Humming Gardens",
-                "keywords": [
-                    "Gardenia",
-                    "Adityaram",
-                    "Alliance Galleria",
-                    "Alliance Humming Gardens",
-                    "Hamlet"
-                ],
-                "location": [
-                    "Perungalathur"
-                ]
-            },
-            {
-                "project_name": "Alliance OMR Cluster",
-                "keywords": [
-                    "Zenith",
-                    "Courtyards",
-                    "Risington",
-                    "Amethyst",
-                    "None (default)",
-                    "Gold Standard"
-                ],
-                "location": [
-                    "Sholinganallur",
-                    "Siruseri",
-                    "Egattur",
-                    "Kelambakkam",
-                    "Padur",
-                    "OMR"
-                ]
-            }
-        ]
-    },
-    {
-        "name": "brigade",
-        "url": "https://form.jotform.com/202941029236047",
-        "email": "redacted@example.com",
-        "pass": "REDACTED",
-        "company": "Elite Lifespaces",
-        "agentf1": "Elite",
-        "agentl1": "Lifespaces",
-        "aph1": "9",
-        "aph2": "1",
-        "aph3": "9000000000",
-        "status":1,
-        "project_list": [
-            {
-                "project_name": "Brigade Xanadu",
-                "keywords": [
-                    "Brigade Xanadu",
-                    "None (default)",
-                    "Fomra Hues",
-                    "Emerald Peninsula",
-                    "Brigade Bonito",
-                    "brigade-",
-                    "Tudor",
-                    "Signature City"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "WTC Residences Chennai",
-                "keywords": [
-                    "Brigade Residences at WTC",
-                    "Brigade Residences",
-                    "Highliving",
-                    "ARC The Palm"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "casagrand",
-        "url": "http://cp.sell.do/users/sign_in",
-        "email": "redacted@example.com",
-        "pass": "REDACTED",
-        "status":1,
-        "project_list": [
-            {
-                "project_name": "CG Zenith",
-                "keywords": [
-                    "Casagrand Zenith",
-                    "Zenith"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Esquire",
-                "keywords": [
-                    "Casagrand Esquire"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Tudor",
-                "keywords": [
-                    "Casagrand Tudor",
-                    "Brigade Bonito",
-                    "Brigade Xanadu",
-                    "Signature City"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Savoye",
-                "keywords": [
-                    "Casagrand Savoye",
-                    "Godrej Azure",
-                    "Radiance Sapphire",
-                    "Olympia Opaline",
-                    "TCP Altura"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Supremus",
-                "keywords": [
-                    "Casagrand Supremus"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG ECR 14",
-                "keywords": [
-                    "Casagrand ECR 14"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Primera",
-                "keywords": [
-                    "Casagrand Primera"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Crescendo Elite",
-                "keywords": [
-                    "Casagrand Crescendo Elite"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Crescendo Compact",
-                "keywords": [
-                    "Casagrand Crescendo Compact"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Millenia",
-                "keywords": [
-                    "Casagrand Millenia"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Royale",
-                "keywords": [
-                    "Casagrand Royale"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Utopia",
-                "keywords": [
-                    "Casagrand Utopia",
-                    "Peninsula"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG Athens",
-                "keywords": [
-                    "Casagrand Athens"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "CG FirstCit",
-                "keywords": [
-                    "Casagrand FirstCity"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "dlf",
-        "url": "https://cplr.dlf.in/index",
-        "url2": "https://cplr.dlf.in/addlead",
-        "email": "redacted@example.com",
-        "pass": "REDACTED",
-        "status":0,
-        "project_list": [
-            {
-                "project_name": "DLF Parc Estate",
-                "keywords": [
-                    "Adityaram",
-                    "Radiance Smartville",
-                    "Radiance Blossom",
-                    "Radiance Sapphire",
-                    "Courtyards",
-                    "Amethyst",
-                    "Risington",
-                    "Savoye",
-                    "Godrej Azure",
-                    "Olympia Opaline",
-                    "Oragadam",
-                    "Hirananandani Park",
-                    "Alexandri",
-                    "DLF Parc Estate",
-                    "plot",
-                    "villa"
-                ],
-                "location": [
-                    "Sholinganallur",
-                    "Navalur",
-                    "Siruseri",
-                    "Kelambakkam",
-                    "OMR",
-                    "Pudupakkam"
-                ]
-            }
-        ]
-    },
-    {
-        "name": "doshi",
-        "url": "https://doshi.imerge.in/",
-        "email": "9000000000",
-        "pass": "REDACTED",
-        "partner": "Lead Automation",
-        "status": 1,
-        "project_list": [
-            {
-                "project_name": "SERENE COUNTY",
-                "keywords": [
-                    "Serene County"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "RISINGTON",
-                "keywords": [
-                    "Risington"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "FIRSTNEST",
-                "keywords": [
-                    "First Nest"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "dra",
-        "url": "http://cp.sell.do/users/sign_in",
-        "email": "redacted@example.com",
-        "pass": "REDACTED",
-        "status":1,
-        "project_list": [
-            {
-                "project_name": "D'Elite",
-                "keywords": [
-                    "Courtyards",
-                    "Amethyst",
-                    "Radiance Sapphire",
-                    "D Lite",
-                    "D ELite",
-                    "Savoye",
-                    "Risington",
-                    "Godrej Azure",
-                    "Olympia Opaline",
-                    "DRA DeLite",
-                    "TCP Altura",
-                    "Elevate 21"
-                ],
-                "location": [
-                    "Sholinganallur"
-                ]
-            },
-            {
-                "project_name": "Centralia",
-                "keywords": [
-                    "DRA Centralia",
-                    "Anchorage",
-                    "Godrej Azure",
-                    "Olympia Opaline",
-                    "Akshaya OrlandO",
-                    "Akshaya Today"
-                ],
-                "location": [
-                    "OMR",
-                    "Navalur",
-                    "Siruseri",
-                    "Kelambakkam"
-                ]
-            },
-            {
-                "project_name": "Truliv Navalur",
-                "keywords": [
-                    "DRA Truliv Navalur"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Truliv Navalur Commercial",
-                "keywords": [
-                    "DRA Truliv Navalur Commercial"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Truliv Porur",
-                "keywords": [
-                    "DRA Truliv Porur",
-                    "Porur",
-                    "Green Enclave",
-                    "Emerald Peninsula",
-                    "Signature City"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "fomra",
-        "url": "http://www.fomrahousing.in/cp/?srd=5d1892be5e3c3067305fa1d2",
-        "channel_phone_number": "9000000000",
-        "partner_name": "Lead Automation",
-        "status":1,
-        "project_list": [
-            {
-                "project_name": "Hues",
-                "keywords": [
-                    "Fomra Hues",
-                    "Green Enclave",
-                    "Emerald Peninsula",
-                    "Brigade Xanadu",
-                    "Brigade Bonito",
-                    "Signature City"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Celebration",
-                "keywords": [
-                    "Fomra Celebration"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Vayou",
-                "keywords": [
-                    "Fomra Vayou"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "gsquare",
-        "url": "https://cp.gsquarehousing.com",
-        "partner_name": "Lead Automation",
-        "status":0,
-        "project_list": [
-            {
-                "project_name": "G Square Sands N Waves",
-                "keywords": [
-                    "G Square Sands N Waves"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "G Square Sunnyvale",
-                "keywords": [
-                    "G Square Sunnyvale"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "G Square Blue Breeze",
-                "keywords": [
-                    "G Square Blue Breeze"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "G Square Seawoods",
-                "keywords": [
-                    "G Square Seawoods"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "G Square Beach Walk",
-                "keywords": [
-                    "G Square Beach Walk"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "hiranandani",
-        "url": "https://hiranandaniparkschennai.com/channelpartners/",
-        "email": "LeadAutomation",
-        "pass": "REDACTED",
-        "partner_name": "Lead Automation",
-        "status":1,
-        "project_list": [
-            {
-                "project_name": "Hiranandani Parks",
-                "keywords": [
-                    "Hiranandani Parks",
-                    "None (default)",
-                    "VBHC"
-                ],
-                "location": [
-                    "Oragadam"
-                ]
-            }
-        ]
-    },
-    {
-        "name": "krishnagrp",
-        "url": "https://krishnagroup.ventures/leadsubmission.php?srd=5f815f35c825616af32c6aba",
-        "partner_name": "Lead Automation CP",
-        "status":1,
+  {
+    "name": "adityaram",
+    "url": "http://www.adityaramproperties.com/channel-partner/index.html?srd=610a6509c825611af77aad37",
+    "cpname": "Lead Automation",
+    "cpphn": "9000000000",
+    "status": 0,
+    "project_list": [
+      {
+        "project_name": "Adityaram Nagar 5",
         "keywords": [
-            "Krishna Mithila",
-            "Krishna Meadows",
-            "Krishna HeadQuarters",
-            "Krishna Tivoli Gardens",
-            "Krishna Celesta",
-            "Medavakkam",
-            "Pallikaranai",
-            "Zenith",
-            "Risington"
+          "Adityaram Nagar Phase 5",
+          "None (default)",
+          "Hamlet",
+          "Emerald Hamlet",
+          "Sobha Gardenia",
+          "House of Hiranandani",
+          "Silver Springs",
+          "AadityaramTest"
         ],
-        "project_list": [
-            {
-                "project_name": "Mithila",
-                "keywords": [
-                    "Krishna Mithila"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Meadows",
-                "keywords": [
-                    "Krishna Meadows"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Tivoli Gardens",
-                "keywords": [
-                    "Krishna Tivoli Gardens"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Celesta",
-                "keywords": [
-                    "Krishna Celesta",
-                    "Zenith",
-                    "Risington",
-                    "Celesta"
-                ],
-                "location": [
-                    "Medavakkam",
-                    "Pallikaranai"
-                ]
-            }
-        ]
-    },
-    {
-        "name": "lancor",
-        "url": "http://cp.sell.do/users/sign_in",
-        "email": "redacted@example.com",
-        "pass": "REDACTED",
-        "status":0,
-        "project_list": [
-            {
-                "project_name": "Lancor Lumina",
-                "keywords": [
-                    "GreenAcres",
-                    "Green Acres",
-                    "Shriram Joy",
-                    "Park 63",
-                    "Lumina",
-                    "Guduvan",
-                    "Shriram Park",
-                    "Shriram Shankari",
-                    "Shriram Joy",
-                    "Shriram Lakeside"
-                ],
-                "location": [
-                    "Perungalathur"
-                ]
-            },
-            {
-                "project_name": "Lancor TCP Altura",
-                "keywords": [
-                    "Courtyards",
-                    "Risington",
-                    "Brigade Residences",
-                    "Thoraipakkam",
-                    "Perungudi",
-                    "Sholinganallur",
-                    "House of Hiranandani",
-                    "Akshaya OrlandO",
-                    "Akshaya Tango",
-                    "Akshaya Today",
-                    "Casagrand Esquire",
-                    "Risland",
-                    "Savoye",
-                    "Radiance Sapphire",
-                    "Amethyst",
-                    "House of Hiranandani",
-                    "PBEL",
-                    "Godrej Azure",
-                    "Olympia Opaline",
-                    "TCP Altura",
-                    "Elevate 21",
-                    "Anchorage",
-                    "Mandarin"
-                ],
-                "location": [
-                    "OMR",
-                    "Kelambakkam",
-                    "Sholinganallur",
-                    "Navalur"
-                ]
-            },
-            {
-                "project_name": "Lancor Infinys",
-                "keywords": [
-                    "Galleria",
-                    "Courtyards",
-                    "Risington",
-                    "Brigade Residences",
-                    "Gardenia",
-                    "Tuxedo",
-                    "Peninsula",
-                    "Akshaya Republic",
-                    "Akshaya Earth",
-                    "Akshaya Poongavanam",
-                    "Tuxedo",
-                    "Green Enclave",
-                    "LighHouse",
-                    "Light House",
-                    "Winchester",
-                    "Radiance The Pride"
-                ],
-                "location": [
-                    "Pallavaram",
-                    "Thoraipakkam",
-                    "Perungudi"
-                ]
-            }
-        ]
-    },
-    {
-        "name": "lifestyle",
-        "url": "https://lifestylehousing.co.in",
-        "email": "LeadAutomation",
-        "pass": "REDACTED",
-        "channel_partner": "LeadAutomation",
-        "status":1,
-        "project_list": [
-            {
-                "project_name": "Lifestyle LeParadis",
-                "keywords": [
-                    "Lifestyle LeParadis",
-                    "Emerald Peninsula",
-                    "Chlorophyll",
-                    "Green Enclave",
-                    "Utopia",
-                    "Peninsula",
-                    "None (default)",
-                    "Signature City"
-                ],
-                "location": [
-                    "Porur"
-                ]
-            },
-            {
-                "project_name": "Lifestyle Podium",
-                "keywords": [
-                    "Lifestyle Podium",
-                    "Podium",
-                    "Appaswamy Clover By The River",
-                    "Ceebros One 74",
-                    "Goodwood",
-                    "Olympia Good",
-                    "Good Wood",
-                    "Good wood"
-                ],
-                "location": [
-                    "Alwarpet",
-                    "T Nagar"
-                ]
-            },
-            {
-                "project_name": "Lifestyle Vardaan",
-                "keywords": [
-                    "Highliving",
-                    "Voora Ocean",
-                    "Vardaan",
-                    "Radiance Suprema",
-                    "SPR High"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "pragnya",
-        "url": "https://www.edenpark.net/register-your-leads/",
-        "email": "LeadAutomation",
-        "pass": "REDACTED",
-        "partner": "9000000000",
-        "status":1,
+        "location": []
+      },
+      {
+        "project_name": "Adityaram Signature City",
         "keywords": [
-            "Eden Park",
-            "House of Hiranandani",
-            "Courtyards",
-            "Sholinganallur",
-            "Siruseri",
-            "Amethyst",
-            "Risington",
-            "Godrej Azure",
-            "Olympia Opaline",
-            "TCP Altura",
-            "Elevate 21",
-            "Anchorage",
-            "Mandarin",
-            "Radiance Sap",
-            "Alexandri"
+          "Adityaram Signature City",
+          "Adityaram",
+          "OMR",
+          "Sholinganallur",
+          "Navalur",
+          "Siruseri",
+          "Kelambakkam"
         ],
-        "project_list": [
-            {
-                "project_name": "Pragnya Eden Park",
-                "keywords": [
-                    "House of Hiranandani",
-                    "Amethyst",
-                    "Courtyards",
-                    "Risington",
-                    "Eden Park",
-                    "Olympia Opaline",
-                    "TCP Altura",
-                    "Elevate 21",
-                    "Anchorage",
-                    "Mandarin",
-                    "Radiance Sap",
-                    "Alexandri"
-                ],
-                "location": [
-                    "Sholinganallur",
-                    "Siruseri"
-                ]
-            }
+        "location": []
+      },
+      { "project_name": "Adityaram Superstar", "keywords": [], "location": [] }
+    ]
+  },
+  {
+    "name": "akshaya",
+    "url": "http://cp.sell.do/users/sign_in",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "Tango",
+        "keywords": [
+          "Akshaya Tango",
+          "Alliance Galleria",
+          "Casagrand Esquire",
+          "Risland",
+          "Courtyards",
+          "Risington",
+          "Brigade Residences",
+          "Thoraipakkam",
+          "Perungudi",
+          "Sholinganallur",
+          "Pallavaram",
+          "House of Hiranandani",
+          "Gardenia",
+          "Tuxedo",
+          "Olympia Opaline",
+          "TCP Altura",
+          "Elevate 21",
+          "Anchorage",
+          "Mandarin",
+          "Alexandri",
+          "AkshayaTest"
+        ],
+        "location": [
+          "Thoraipakkam",
+          "Perungudi",
+          "Sholinganallur",
+          "Pallavaram"
         ]
-    },
-    {
-        "name": "radiance",
-        "url": "http://cp.radiancerealty.in/login.php",
-        "url2": "http://cp.radiancerealty.in/lead_add.php",
-        "email": "redacted@example.com",
-        "pass": "REDACTED",
-        "status":1,
-        "project_list": [
-            {
-                "project_name": "Radiance Elite",
-                "keywords": [
-                    "Radiance Elite"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Radiance Splendour",
-                "keywords": [
-                    "Radiance Splendour"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Radiance Blossom",
-                "keywords": [
-                    "Radiance Blossom"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Radiance Maraikayar Manor",
-                "keywords": [
-                    "Radiance Maraikayar Manor"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Radiance Smartville",
-                "keywords": [
-                    "Radiance Smartville",
-                    "Adityaram"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Radiance The Pride",
-                "keywords": [
-                    "Radiance The Pride",
-                    "Galleria"
-                ],
-                "location": [
-                    "Pallavaram"
-                ]
-            },
-            {
-                "project_name": "Radiance Suprema",
-                "keywords": [
-                    "Radiance Suprema",
-                    "Lokaa M",
-                    "Voora Ocean",
-                    "Vardaan",
-                    "SPR High",
-                    "Signature City"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Radiance Sapphire",
-                "keywords": [
-                    "Radiance Sapphire",
-                    "Courtyards",
-                    "Amethyst",
-                    "Olympia Opaline",
-                    "Risington",
-                    "Savoye",
-                    "Godrej Azure"
-                ],
-                "location": [
-                    "Sholinganallur",
-                    "Navalur",
-                    "Siruseri",
-                    "Kelambakkam",
-                    "OMR"
-                ]
-            }
+      },
+      {
+        "project_name": "Republic",
+        "keywords": [
+          "Akshaya Re   public",
+          "Woodside",
+          "Green Enclave",
+          "Emerald Peninsula",
+          "Signature City"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "Today",
+        "keywords": [
+          "Akshaya Today",
+          "Savoye",
+          "Radiance Sapphire",
+          "PBEL",
+          "Godrej Azure",
+          "Kelambakkam",
+          "OMR",
+          "Navalur"
+        ],
+        "location": ["Kelambakkam", "OMR", "Navalur"]
+      },
+      {
+        "project_name": "OrlandO",
+        "keywords": ["Akshaya OrlandO"],
+        "location": []
+      },
+      {
+        "project_name": "Earth",
+        "keywords": ["Akshaya Earth"],
+        "location": []
+      },
+      {
+        "project_name": "Shanti",
+        "keywords": ["Akshaya Shanti"],
+        "location": []
+      },
+      {
+        "project_name": "Poongavanam",
+        "keywords": ["Akshaya Poongavanam"],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "alliance",
+    "url": "https://partners.allianceprojects.in/login",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "Alliance Galleria Residences",
+        "keywords": [
+          "Alliance Galleria",
+          "None (default)",
+          "LightHouse",
+          "Light House",
+          "Infinys",
+          "Tango",
+          "Shriram Park 63",
+          "alliancegalleria",
+          "Amethyst",
+          "Winchester",
+          "Radiance Pride",
+          "Radiance The Pride",
+          "Tuxedo",
+          "Elevate 21",
+          "Mandarin",
+          "AllianceTest"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "Villabelvedere/Eternity",
+        "keywords": ["Urbanrise Eternity", "Poonamal", "Porur"],
+        "location": ["Porur"]
+      },
+      {
+        "project_name": "Jubilee Residences",
+        "keywords": ["Guduvanche", "Lumina", "Perungalathur"],
+        "location": ["Perungalathur"]
+      },
+      {
+        "project_name": "Villabelvedere",
+        "keywords": [],
+        "location": []
+      },
+      {
+        "project_name": "Humming Gardens",
+        "keywords": [
+          "Gardenia",
+          "Adityaram",
+          "Alliance Galleria",
+          "Alliance Humming Gardens",
+          "Hamlet",
+          "Perungalathur"
+        ],
+        "location": ["Perungalathur"]
+      },
+      {
+        "project_name": "OMR Cluster",
+        "keywords": [
+          "Zenith",
+          "Courtyards",
+          "Risington",
+          "Amethyst",
+          "None (default)",
+          "Gold Standard",
+          "Sholinganallur",
+          "Siruseri",
+          "Egattur",
+          "Kelambakkam",
+          "Padur",
+          "OMR"
+        ],
+        "location": [
+          "Sholinganallur",
+          "Siruseri",
+          "Egattur",
+          "Kelambakkam",
+          "Padur",
+          "OMR"
         ]
-    },
-    {
-        "name": "shriram",
-        "url": "https://www.shriramproperties.com/synergy/",
-        "email": "redacted@example.com",
-        "pass": "",
-        "status":1,
-        "mobile": "9000000000",
-        "channel_partner": "Lead Automation",
-        "project_list": [
-            {
-                "project_name": "Shriram Mangalam",
-                "keywords": [
-                    "Divine City"
-                ],
-                "location": [
-                    "Kovur",
-                    "Porur",
-                    "Mangadu",
-                    "Vanagaram"
-                ]
-            },
-            {
-                "project_name": "Shriram Joy",
-                "keywords": [
-                    "Shriram Joy",
-                    "Lumina",
-                    "GreenAcres",
-                    "Green Acres"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Shriram LR",
-                "keywords": [
-                    "Shriram Shankari lakeside",
-                    "Guduvancher",
-                    "Shriram Shankari"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Shriram One City",
-                "keywords": [
-                    "Shriram One City"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "Shriram Park 63",
-                "keywords": [
-                    "Shriram Park 63",
-                    "Alliance Galleria",
-                    "Park 63",
-                    "Winchester",
-                    "Shriramtest"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "tvs",
-        "url": "https://www.tvsemerald.com/lp/cp/?srd=5d08ad2d5e3c3009976bffa9",
-        "email": "",
-        "pass": "",
-        "cpname": "Lead Automation",
-        "cpphn": "9000000000",
-        "status":1,
-        "project_list": [
-            {
-                "project_name": "TVS Green Acres",
-                "keywords": [
-                    "Lumina",
-                    "TVS Emerald Green Acres",
-                    "GreenAcres",
-                    "Shriram Joy",
-                    "Park 63",
-                    "Shriram Park",
-                    "Shriram Shankari",
-                    "Lancor Lumina"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "TVS Green Enclave",
-                "keywords": [
-                    "TVS Emerald Green Enclave",
-                    "None (default)",
-                    "Green Enclave"
-                ],
-                "location": [
-                    "Porur"
-                ]
-            },
-            {
-                "project_name": "TVS LightHouse",
-                "keywords": [
-                    "LightHouse",
-                    "Alliance Galleria",
-                    "Light House",
-                    "Tuxedo",
-                    "Radiance The Pride",
-                    "Elevate 21"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "TVS Peninsula",
-                "keywords": [
-                    "TVS Emerald Peninsula",
-                    "Emerald Peninsula",
-                    "Manapakkam",
-                    "TVS Peninsula",
-                    "Chlorophyll",
-                    "Utopia",
-                    "Newry Sattva",
-                    "Sabari Sattva",
-                    "Bonito",
-                    "Xanadu",
-                    "Woodside",
-                    "Castle",
-                    "Signature City"
-                ],
-                "location": []
-            },
-            {
-                "project_name": "TVS Hamlet",
-                "keywords": [
-                    "Emerald Hamlet",
-                    "Adityaram",
-                    "Sobha Gardenia",
-                    "Amethyst",
-                    "House of Hiranandani",
-                    "Silver Springs",
-                    "Tango",
-                    "TCP Altura"
-                ],
-                "location": []
-            }
-        ]
-    },
-    {
-        "name": "vijayaraja",
-        "url": "https://vijayrajacrmsite.secure.force.com/channelpartnerleadform",
-        "partner_name": "Lead Automation",
-        "partner_email": "redacted@example.com",
-        "status":0,
-        "project_list": [
-            {
-                "project_name": "VRX 360",
-                "keywords": [
-                    "vrx",
-                    "poonamall",
-                    "Vijay Raja",
-                    "Hiranandani Park",
-                    "Shriram Divine"
-                ],
-                "location": [
-                    "Kovur",
-                    "Porur",
-                    "poonamallee"
-                ]
-            }
-        ]
+      }
+      ,{
+          "project_name":"Orchidspringss",
+          "keywords":[],
+          "location":[]
+      },
+      {
+        "project_name":"Codename Newporur",
+        "keywords":[],
+        "location":[]
     }
+    ]
+  },
+  {
+    "name": "brigade",
+    "url": "https://form.jotform.com/202941029236047",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "company": "Elite Lifespaces",
+    "agentf1": "Elite",
+    "agentl1": "Lifespaces",
+    "aph1": "9",
+    "aph2": "1",
+    "aph3": "9000000000",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "Brigade Xanadu",
+        "keywords": [
+          "Brigade Xanadu",
+          "None (default)",
+          "Fomra Hues",
+          "Emerald Peninsula",
+          "Brigade Bonito",
+          "brigade-",
+          "Tudor",
+          "Signature City"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "WTC Residences Chennai",
+        "keywords": [
+          "Brigade Residences at WTC",
+          "Brigade Residences",
+          "Highliving",
+          "ARC The Palm"
+        ],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "casagrand",
+    "url": "http://cp.sell.do/users/sign_in",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "CG Zenith",
+        "keywords": ["Casagrand Zenith", "Zenith"],
+        "location": []
+      },
+      {
+        "project_name": "CG Esquire",
+        "keywords": ["Casagrand Esquire"],
+        "location": []
+      },
+      {
+        "project_name": "CG Tudor",
+        "keywords": [
+          "Casagrand Tudor",
+          "Brigade Bonito",
+          "Brigade Xanadu",
+          "Signature City"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "CG Savoye",
+        "keywords": [
+          "Casagrand Savoye",
+          "Godrej Azure",
+          "Radiance Sapphire",
+          "Olympia Opaline",
+          "TCP Altura"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "CG Supremus",
+        "keywords": ["Casagrand Supremus"],
+        "location": []
+      },
+      {
+        "project_name": "CG ECR 14",
+        "keywords": ["Casagrand ECR 14"],
+        "location": []
+      },
+
+      {
+        "project_name": "CG Crescendo Elite",
+        "keywords": ["Casagrand Crescendo Elite"],
+        "location": []
+      },
+      {
+        "project_name": "CG Crescendo Compact",
+        "keywords": ["Casagrand Crescendo Compact"],
+        "location": []
+      },
+      {
+        "project_name": "CG Millenia",
+        "keywords": ["Casagrand Millenia"],
+        "location": []
+      },
+      {
+        "project_name": "CG Royale",
+        "keywords": ["Casagrand Royale"],
+        "location": []
+      },
+      {
+        "project_name": "CG Utopia",
+        "keywords": ["Casagrand Utopia", "Peninsula"],
+        "location": []
+      },
+      {
+        "project_name": "CG Athens",
+        "keywords": ["Casagrand Athens"],
+        "location": []
+      },
+      {
+        "project_name": "CG FirstCity",
+        "keywords": ["Casagrand FirstCity"],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "dlf",
+    "url": "https://cplr.dlf.in/index",
+    "url2": "https://cplr.dlf.in/addlead",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "status": 0,
+    "project_list": [
+      {
+        "project_name": "DLF Parc Estate",
+        "keywords": [
+          "Adityaram",
+          "Radiance Smartville",
+          "Radiance Blossom",
+          "Radiance Sapphire",
+          "Courtyards",
+          "Amethyst",
+          "Sholinganallur",
+          "Navalur",
+          "Siruseri",
+          "Kelambakkam",
+          "OMR",
+          "Pudupakkam",
+          "Risington",
+          "Savoye",
+          "Godrej Azure",
+          "Olympia Opaline",
+          "Oragadam",
+          "Hirananandani Park",
+          "Alexandri",
+          "DLF Parc Estate",
+          "plot",
+          "villa",
+          "DLFTest"
+        ],
+        "location": [
+          "Sholinganallur",
+          "Navalur",
+          "Siruseri",
+          "Kelambakkam",
+          "OMR",
+          "Pudupakkam"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "doshi",
+    "url": "https://doshi.imerge.in/",
+    "email": "9000000000",
+    "pass": "REDACTED",
+    "partner": "Lead Automation",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "SERENE COUNTY",
+        "keywords": ["Serene County"],
+        "location": []
+      },
+      {
+        "project_name": "RISINGTON",
+        "keywords": [],
+        "location": []
+      },
+      {
+        "project_name": "FIRSTNEST",
+        "keywords": ["First Nest"],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "dra",
+    "url": "http://cp.sell.do/users/sign_in",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "D'Elite",
+        "keywords": [
+          "Courtyards",
+          "Amethyst",
+          "Radiance Sapphire",
+          "D Lite",
+          "D ELite",
+          "Savoye",
+          "Risington",
+          "Godrej Azure",
+          "Olympia Opaline",
+          "DRA DeLite",
+          "TCP Altura",
+          "Elevate 21",
+          "Sholinganallur"
+        ],
+        "location": ["Sholinganallur"]
+      },
+      {
+        "project_name": "Centralia",
+        "keywords": [
+          "DRA Centralia",
+          "Anchorage",
+          "Godrej Azure",
+          "Olympia Opaline",
+          "Akshaya OrlandO",
+          "Akshaya Today",
+          "OMR",
+          "Navalur",
+          "Siruseri",
+          "Kelambakkam",
+          "DRATest"
+        ],
+        "location": ["OMR", "Navalur", "Siruseri", "Kelambakkam"]
+      },
+      {
+        "project_name": "Truliv Navalur",
+        "keywords": ["DRA Truliv Navalur"],
+        "location": []
+      },
+      {
+        "project_name": "Truliv Navalur Commercial",
+        "keywords": ["DRA Truliv Navalur Commercial"],
+        "location": []
+      },
+      {
+        "project_name": "Truliv Porur",
+        "keywords": [
+          "DRA Truliv Porur",
+          "Porur",
+          "Green Enclave",
+          "Emerald Peninsula",
+          "Signature City"
+        ],
+        "location": []
+      },
+      {
+          "project_name":"90 Degrees",
+          "keywords":[],
+          "location":[]
+      },
+      {
+          "project_name":"ASCOT",
+          "keywords":[],
+          "location":[]
+      },
+      {
+          "project_name":"Tuxedo Elite",
+          "keywords":[],
+          "location":[]
+      }
+    ]
+  },
+  {
+    "name": "fomra",
+    "url": "http://www.fomrahousing.in/cp/?srd=5d1892be5e3c3067305fa1d2",
+    "channel_phone_number": "9000000000",
+    "partner_name": "Lead Automation",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "Hues",
+        "keywords": [
+          "Fomra Hues",
+          "Green Enclave",
+          "Emerald Peninsula",
+          "Brigade Xanadu",
+          "Brigade Bonito",
+          "Signature City",
+          "FomraTest"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "Celebration",
+        "keywords": ["Fomra Celebration"],
+        "location": []
+      },
+      {
+        "project_name": "Vayou",
+        "keywords": ["Fomra Vayou"],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "gsquare",
+    "url": "https://cp.gsquarehousing.com",
+    "partner_name": "Lead Automation",
+    "status": 0,
+    "project_list": [
+      {
+        "project_name": "G Square Sands N Waves",
+        "keywords": ["G Square Sands N Waves"],
+        "location": []
+      },
+      {
+        "project_name": "G Square Sunnyvale",
+        "keywords": ["G Square Sunnyvale"],
+        "location": []
+      },
+      {
+        "project_name": "G Square Blue Breeze",
+        "keywords": ["G Square Blue Breeze"],
+        "location": []
+      },
+      {
+        "project_name": "G Square Seawoods",
+        "keywords": ["G Square Seawoods"],
+        "location": []
+      },
+      {
+        "project_name": "G Square Beach Walk",
+        "keywords": ["G Square Beach Walk"],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "hiranandani",
+    "url": "https://hiranandaniparkschennai.com/channelpartners/",
+    "email": "LeadAutomation",
+    "pass": "REDACTED",
+    "partner_name": "Lead Automation",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "Hiranandani Parks",
+        "keywords": [
+          "Hiranandani Parks",
+          "None (default)",
+          "Oragadam",
+          "VBHC",
+          "Shriram Shankari",
+          "Shriram Shankari lakeside",
+          "Lumina",
+          "HiranandaniTest"
+        ],
+        "location": ["Oragadam"]
+      }
+    ]
+  },
+  {
+    "name": "incor",
+    "url": "https://dashboard.reroot.in/business/login",
+    "url2": "https://dashboard.reroot.in/business/IncorGroup/quick-registration",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "status": 0,
+    "project_list": [
+      {
+        "project_name": "PBEL City - Phase II",
+        "keywords": [
+          "House of Hiranandani",
+          "Amethyst",
+          "Courtyards",
+          "Sholinganallur",
+          "Siruseri",
+          "Risington",
+          "Eden Park",
+          "Olympia Opaline",
+          "TCP Altura",
+          "Elevate 21",
+          "Anchorage",
+          "Mandarin",
+          "Radiance Sap",
+          "Alexandri",
+          "INCOR",
+          "PBEL",
+          "INNCORTest"
+        ],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "krishnagrp",
+    "url": "https://krishnagroup.ventures/leadsubmission.php?srd=5f815f35c825616af32c6aba",
+    "partner_name": "Lead Automation CP",
+    "status": 1,
+
+    "project_list": [
+      {
+        "project_name": "Mithila",
+        "keywords": ["Krishna Mithila"],
+        "location": []
+      },
+      {
+        "project_name": "Meadows",
+        "keywords": ["Krishna Meadows"],
+        "location": []
+      },
+      {
+        "project_name": "Tivoli Gardens",
+        "keywords": ["Krishna Tivoli Gardens"],
+        "location": []
+      },
+      {
+        "project_name": "Celesta",
+        "keywords": [
+          "Krishna Celesta",
+          "Medavakkam",
+          "Pallikaranai",
+          "Zenith",
+          "Risington",
+          "Celesta",
+          "KrishnaTest"
+        ],
+        "location": ["Medavakkam", "Pallikaranai"]
+      }
+    ]
+  },
+  {
+    "name": "lancor",
+    "url": "http://cp.sell.do/users/sign_in",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "status": 0,
+    "project_list": [
+      {
+        "project_name": "Lancor Lumina",
+        "keywords": [
+          "GreenAcres",
+          "Green Acres",
+          "Shriram Joy",
+          "Park 63",
+          "Lumina",
+          "Guduvan",
+          "Shriram Park",
+          "Shriram Shankari",
+          "Shriram Joy",
+          "Shriram Lakeside",
+          "Perungalathur",
+          "LancorTest"
+        ],
+        "location": ["Perungalathur"]
+      },
+      {
+        "project_name": "Lancor TCP Altura",
+        "keywords": [
+          "Courtyards",
+          "Risington",
+          "Brigade Residences",
+          "Thoraipakkam",
+          "Perungudi",
+          "Sholinganallur",
+          "House of Hiranandani",
+          "Akshaya OrlandO",
+          "Akshaya Tango",
+          "Akshaya Today",
+          "Casagrand Esquire",
+          "Risland",
+          "Savoye",
+          "Radiance Sapphire",
+          "Amethyst",
+          "House of Hiranandani",
+          "PBEL",
+          "Godrej Azure",
+          "Olympia Opaline",
+          "TCP Altura",
+          "Elevate 21",
+          "Anchorage",
+          "Mandarin",
+          "OMR",
+          "Kelambakkam",
+          "Sholinganallur",
+          "Navalur"
+        ],
+        "location": ["OMR", "Kelambakkam", "Sholinganallur", "Navalur"]
+      },
+      {
+        "project_name": "Lancor Infinys - Keelkattalai",
+        "keywords": [
+          "Galleria",
+          "Courtyards",
+          "Risington",
+          "Brigade Residences",
+          "Gardenia",
+          "Tuxedo",
+          "Peninsula",
+          "Akshaya Republic",
+          "Akshaya Earth",
+          "Akshaya Poongavanam",
+          "Tuxedo",
+          "Green Enclave",
+          "LighHouse",
+          "Light House",
+          "Winchester",
+          "Radiance The Pride",
+          "Pallavaram",
+          "Thoraipakkam",
+          "Perungudi"
+        ],
+        "location": ["Pallavaram", "Thoraipakkam", "Perungudi"]
+      }
+    ]
+  },
+  {
+    "name": "lifestyle",
+    "url": "https://lifestylehousing.co.in",
+    "email": "LeadAutomation",
+    "pass": "REDACTED",
+    "channel_partner": "LeadAutomation",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "Lifestyle LeParadis",
+        "keywords": [
+          "Lifestyle LeParadis",
+          "Emerald Peninsula",
+          "Chlorophyll",
+          "Green Enclave",
+          "Utopia",
+          "Peninsula",
+          "None (default)",
+          "Signature City",
+          "Porur",
+          "LifestyleTest"
+        ],
+        "location": ["Porur"]
+      },
+      {
+        "project_name": "Lifestyle Podium",
+        "keywords": [
+          "Lifestyle Podium",
+          "Podium",
+          "Appaswamy Clover By The River",
+          "Ceebros One 74",
+          "Goodwood",
+          "Olympia Good",
+          "Good Wood",
+          "Good wood",
+          "Alwarpet",
+          "T Nagar"
+        ],
+        "location": ["Alwarpet", "T Nagar"]
+      },
+      {
+        "project_name": "Lifestyle Vardaan",
+        "keywords": [
+          "Highliving",
+          "Voora Ocean",
+          "Vardaan",
+          "Radiance Suprema",
+          "SPR High"
+        ],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "pragnya",
+    "url": "https://www.edenpark.net/register-your-leads/",
+    "email": "LeadAutomation",
+    "pass": "REDACTED",
+    "partner": "9000000000",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "Pragnya Eden Park",
+        "keywords": [
+          "House of Hiranandani",
+          "Amethyst",
+          "Courtyards",
+          "Risington",
+          "Eden Park",
+          "Olympia Opaline",
+          "TCP Altura",
+          "Elevate 21",
+          "Anchorage",
+          "Mandarin",
+          "Radiance Sap",
+          "Alexandri",
+          "Sholinganallur",
+          "Siruseri",
+          "PragnyaTest"
+        ],
+        "location": ["Sholinganallur", "Siruseri"]
+      }
+    ]
+  },
+  {
+    "name": "radiance",
+    "url": "http://cp.radiancerealty.in/login.php",
+    "url2": "http://cp.radiancerealty.in/lead_add.php",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "Test Budigere",
+        "keywords": [],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Splendour",
+        "keywords": ["Radiance Splendour"],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Blossom",
+        "keywords": ["Radiance Blossom"],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Smartville",
+        "keywords": ["Radiance Smartville", "Adityaram"],
+        "location": []
+      },
+      {
+        "project_name": "Radiance The Pride",
+        "keywords": ["Radiance The Pride", "Galleria", "Pallavaram"],
+        "location": ["Pallavaram"]
+      },
+      {
+        "project_name": "Radiance Suprema",
+        "keywords": [
+          "Radiance Suprema",
+          "Lokaa M",
+          "Voora Ocean",
+          "Vardaan",
+          "SPR High",
+          "Signature City"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Sapphire",
+        "keywords": [
+          "Radiance Sapphire",
+          "Courtyards",
+          "Amethyst",
+          "Olympia Opaline",
+          "Risington",
+          "Savoye",
+          "Godrej Azure",
+          "Sholinganallur",
+          "Navalur",
+          "Siruseri",
+          "Kelambakkam",
+          "OMR"
+        ],
+        "location": [
+          "Sholinganallur",
+          "Navalur",
+          "Siruseri",
+          "Kelambakkam",
+          "OMR"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "radiance_phase_2",
+    "url": "https://channelpartner.force.com",
+    "url2": "https://channelpartner.force.com/radiancerealtyChannel/s/leads",
+    "email": "redacted@example.com",
+    "pass": "REDACTED",
+    "status": 0,
+    "project_list": [
+      {
+        "project_name": "Radiance Elite",
+        "keywords": ["Radiance Elite"],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Splendour",
+        "keywords": ["Radiance Splendour"],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Smartville",
+        "keywords": [
+          "Radiance Smartville",
+          "Adityaram",
+          "Oragadam",
+          "Hirananandani Park"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "Radiance The Pride",
+        "keywords": ["Pallavaram", "Radiance The Pride", "Galleria"],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Suprema",
+        "keywords": [
+          "Radiance Suprema",
+          "Lokaa M",
+          "Voora Ocean",
+          "Vardaan",
+          "SPR High",
+          "Signature City",
+          "Brigade Xanadu",
+          "Orchid Springs",
+          "RadianceTest"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Blossom",
+        "keywords": ["Radiance Blossom"],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Sapphire",
+        "keywords": [
+          "Radiance Sapphire",
+          "Courtyards",
+          "Amethyst",
+          "Sholinganallur",
+          "Navalur",
+          "Olympia Opaline",
+          "Siruseri",
+          "Kelambakkam",
+          "OMR",
+          "Risington",
+          "Savoye",
+          "Godrej Azure",
+          "Alexandri"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "Radiance Maraikayar Manor",
+        "keywords": ["Radiance Maraikayar Manor"],
+        "location": []
+      },
+      {
+          "project_name":"Radiance Prosper",
+          "keywords":[],
+          "location":[]
+      },
+      {
+          "project_name":"Radiance Residencia",
+          "keywords":[],
+          "location":[]
+      }
+    ]
+  },
+  {
+    "name": "shriram",
+    "url": "https://www.shriramproperties.com/synergy/",
+    "email": "redacted@example.com",
+    "pass": "",
+    "status": 0,
+    "mobile": "9000000000",
+    "channel_partner": "Lead Automation",
+    "project_list": [
+      {
+        "project_name": "Shriram Mangalam",
+        "keywords": ["Divine City", "Kovur", "Porur", "Mangadu", "Vanagaram"],
+        "location": ["Kovur", "Porur", "Mangadu", "Vanagaram"]
+      },
+      {
+        "project_name": "Shriram Joy",
+        "keywords": ["Shriram Joy", "Lumina", "GreenAcres", "Green Acres"],
+        "location": []
+      },
+      {
+        "project_name": "Shriram LR",
+        "keywords": [
+          "Shriram Shankari lakeside",
+          "Guduvancher",
+          "Shriram Shankari"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "Shriram One City",
+        "keywords": ["Shriram One City"],
+        "location": []
+      },
+      {
+        "project_name": "Shriram Park 63",
+        "keywords": [
+          "Shriram Park 63",
+          "Alliance Galleria",
+          "Park 63",
+          "Winchester",
+          "Shriramtest"
+        ],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "tvs",
+    "url": "https://www.tvsemerald.com/lp/cp/?srd=5d08ad2d5e3c3009976bffa9",
+    "email": "",
+    "pass": "",
+    "cpname": "Lead Automation",
+    "cpphn": "9000000000",
+    "status": 1,
+    "project_list": [
+      {
+        "project_name": "TVS Green Acres",
+        "keywords": [
+          "Lumina",
+          "TVS Emerald Green Acres",
+          "GreenAcres",
+          "Shriram Joy",
+          "Park 63",
+          "Shriram Park",
+          "Shriram Shankari",
+          "Lancor Lumina"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "TVS Green Enclave",
+        "keywords": [
+          "TVS Emerald Green Enclave",
+          "Porur",
+          "None (default)",
+          "Green Enclave"
+        ],
+        "location": ["Porur"]
+      },
+      {
+        "project_name": "TVS LightHouse",
+        "keywords": [
+          "LightHouse",
+          "Alliance Galleria",
+          "Light House",
+          "Tuxedo",
+          "Radiance The Pride",
+          "Elevate 21"
+        ],
+        "location": []
+      },
+      {
+        "project_name": "TVS Peninsula",
+        "keywords": [],
+        "location": []
+      },
+      {
+        "project_name": "TVS Hamlet",
+        "keywords": [
+          "Emerald Hamlet",
+          "Adityaram",
+          "Sobha Gardenia",
+          "Amethyst",
+          "House of Hiranandani",
+          "Silver Springs",
+          "Tango",
+          "TCP Altura"
+        ],
+        "location": []
+      }
+    ]
+  },
+  {
+    "name": "vijayaraja",
+    "url": "https://vijayrajacrmsite.secure.force.com/channelpartnerleadform",
+    "partner_name": "Lead Automation",
+    "partner_email": "redacted@example.com",
+    "status": 0,
+    "project_list": [
+      {
+        "project_name": "VRX 360",
+        "keywords": [
+          "vrx",
+          "poonamall",
+          "Vijay Raja",
+          "Hiranandani Park",
+          "Shriram Divine",
+          "Kovur",
+          "Porur",
+          "poonamallee"
+        ],
+        "location": ["Kovur", "Porur", "poonamallee"]
+      },
+      {
+          "project_name":"Exurb",
+          "keywords":[],
+          "location":[]
+      },
+      {
+        "project_name":"Classic",
+        "keywords":[],
+        "location":[]
+    },
+    {
+        "project_name":"Sanctuary",
+        "keywords":[],
+        "location":[]
+    }
+    ]
+  }
 ]
