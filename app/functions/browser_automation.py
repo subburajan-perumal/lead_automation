@@ -12,13 +12,6 @@ from phonenumbers import geocoder as GC
 import logging
 browserLog=logging.getLogger("browser_log")
 # browserLog.set
-logging.basicConfig(
-    filename= "browser.log",
-    level= logging.INFO,
-    format= f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
-    encoding= 'utf-8',
-    filemode= "w"
-    )
 
 
 def akshaya(subproject:str, browser, site_data:dict, lead_data:dict,automate_path:list):
@@ -190,7 +183,7 @@ def fomra(subproject, browser, site_data, lead_data, automate_path):
 
         
         browser.save_screenshot(save_path[1])
-        browser.close()
+        # browser.close()
         return 1
     except Exception as e:
         print(str(e))
@@ -419,8 +412,12 @@ def tvs(subproject, browser, site_data, lead_data, path):
         client_email.send_keys(lead_data['email'])
         client_phone=browser.find_element(By.XPATH,'//html/body/div/div/div/div/div/div/div/form/div[4]/div/div/div/input')
         client_phone.send_keys(lead_data['phone'])
-        project=Select(browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[5]/div/div/select'))
-        project.select_by_visible_text(subproject)
+        project=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[5]/div/div/select')
+        
+        # time.sleep(3)
+        project1=Select(project)
+        project.click()
+        project1.select_by_visible_text(subproject)
         channel_name=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[6]/div/div/input')
         channel_name.send_keys(site_data['cpname'])
         channel_phone=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[7]/div/div/input')
