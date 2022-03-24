@@ -26,22 +26,22 @@ project_store = {
     "akshaya": akshaya,  
     "brigade": brigade,
     "casagrand": casagrand,
-    # "dlf" : "dlf",
+    "dlf" : "dlf",
     "doshi": doshi,
     "dra": dra,  
     "fomra": fomra,  
     "gsquare": gsquare,  
     "hiranandani": hiranandani,
-    # "icor":icor,
+    # "incor":incor,
     "krishnagrp": krishnagrp,
     "lifestyle": lifestyle,
-    # "lancor":lancor, 
+    "lancor":lancor, 
     "pragnya": pragnya,  
     "radiance": radiance,
-    # "radiance_phase_2":radiance_phase_2,
-    # "shriram"    : "shriram",
+    "radiance_phase_2":radiance_,
+    "shriram"    : shriram,
     "tvs": tvs,
-    # "vijayaraja" : "vijayaraja" 
+    "vijayaraja" : vr 
 
 }
 
@@ -60,8 +60,7 @@ class SiteAutomator:
 
         self.LEAD = self.DB["leads"]
         self.SITE = ""
-        # self.LEAD=self.DB['leads'] #collectioncursor
-        # self.SITE=self.DB['Site'].find_one({"name":project}) #dictnoi
+        
 
         self.driver = DRIVER
 
