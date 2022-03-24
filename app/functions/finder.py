@@ -126,7 +126,7 @@ def function_finder(lead_data):
                                     {
                                         "$match":
                                             {
-                                                "project_list.location":location_keyword,
+                                                "project_list.keywords":location_keyword,
                                                 "status":1
                                             }
                                     },
@@ -135,7 +135,7 @@ def function_finder(lead_data):
                                         "$unwind":"$project_list"
                                     },
                                     {
-                                        "$match":{"project_list.location":location_keyword}
+                                        "$match":{"project_list.keywords":location_keyword}
                                     }
                                 ]
                             )
