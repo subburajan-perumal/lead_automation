@@ -1,7 +1,4 @@
-
-import imp
 import time
-from numpy import save
 from selenium.webdriver import Firefox 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -21,38 +18,44 @@ browserLog=logging.getLogger("browser_log")
 
 def adityaram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, path:list) :
     try:
+        browserLog.info("adiyaram executed")
         save_path= path
 
         browser.get(site_data["url"])
         #client name
-        name=browser.find_elements(By.XPATH,'/html/body/div[1]/div/form/div[2]/div/div/input')
+        
+        #client name
+        name=browser.find_elements(By.XPATH,'/html/body/div[1]/div/div/div/div/div/div/form/div[2]/div/div/input[1]')
         name[0].send_keys(lead_data['name'])
         #client email
-        email=browser.find_elements(By.XPATH,'/html/body/div[1]/div/form/div[3]/div/div/input')
+        email=browser.find_elements(By.XPATH,'/html/body/div[1]/div/div/div/div/div/div/form/div[3]/div/div/input')
         email[0].send_keys(lead_data['email'])
         #client contact
-        contact=browser.find_elements(By.XPATH,'/html/body/div[1]/div/form/div[4]/div/div/div/input')
+        contact=browser.find_elements(By.XPATH,'/html/body/div[1]/div/div/div/div/div/div/form/div[4]/div/div/div/input')
         contact[0].send_keys(lead_data['phone'])
         #CPname
-        cpname1=Select(browser.find_element(By.XPATH,'/html/body/div[1]/div/form/div[5]/div[1]/div/select'))
+        cpname1=Select(browser.find_element(By.XPATH,'/html/body/div[1]/div/div/div/div/div/div/form/div[5]/div[1]/div/select'))
         cpname1.select_by_visible_text(site_data["cpname"])
         #CPphone
-        cpphn1=browser.find_elements(By.XPATH,'/html/body/div[1]/div/form/div[5]/div[2]/div/input')
+        cpphn1=browser.find_elements(By.XPATH,'/html/body/div[1]/div/div/div/div/div/div/form/div[5]/div[2]/div/input')
         cpphn1[0].send_keys(site_data["cpphn"])
         #Project
-        proj1=Select(browser.find_element(By.XPATH,'/html/body/div[1]/div/form/div[6]/div/div/select'))
+        proj1=Select(browser.find_element(By.XPATH,'/html/body/div[1]/div/div/div/div/div/div/form/div[6]/div/div/select'))
         proj1.select_by_visible_text(subproject)
         time.sleep(3)
-
         browser.save_screenshot(save_path[0])
-        browser.implicitly_wait(5)
-        browser.save_screenshot(save_path[1])
-        browser.close()
-        return 1
 
+        add=browser.find_element(By.XPATH,'/html/body/div[1]/div/div/div/div/div/div/form/div[8]/div/div/input').click()
+        time.sleep(3)
+
+        browser.save_screenshot(save_path[1])    
+        browser.close()
+        browserLog.info("adityaram finised")
+    
     except Exception as e:
         print(str(e))
-        browser.save_screenshot(save_path[2])
+        browserLog.exception(str(e))
+        # browser.save_screenshot(save_path[2])
         return -1
 
 #working
@@ -117,6 +120,28 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
 #issue in handling subproject
 def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, automate_path:list):
     try:
+         # Villabelvedere/Eternity
+        if subproject=="Villabelvedere":
+            subproject="Villabelvedere/Eternity"
+            subproject_2="Villabelvedere"
+        
+        if subproject=="Urbanrise Eternity":
+            subproject="Villabelvedere/Eternity"
+            subproject_2="Urbanrise Eternity"
+        
+        # OMR Cluster - JS/CNCB,CNGS
+        if subproject=="Codename Chennai's Best":
+            subproject="OMR Cluster - JS/CNCB,CNGS"
+            subproject_2="Codename Chennai's Best"
+
+        if subproject=="Codename Gold Standard":
+            subproject="OMR Cluster - JS/CNCB,CNGS"
+            subproject_2="Codename Gold Standard"
+        
+        if subproject=="Jasmine springs":
+            subproject="OMR Cluster - JS/CNCB,CNGS"
+            subproject_2="Jasmine springs"
+
         save_path = automate_path
         fullname=str(lead_data['name'])
         first_name,last_name=getName(fullname)
@@ -139,7 +164,9 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         email.send_keys(lead_data['email'])
         project=Select(browser.find_element(By.ID,'select_project'))
         project.select_by_visible_text(subproject)
-
+        if subproject_2 :
+            projectsub=Select(browser.find_element(By.ID,'sub_project_select'))
+            projectsub.select_by_visible_text(subproject_2)
         browser.save_screenshot(save_path[0])    
 
         add=browser.find_element(By.ID,'lead_submit_btn').click()
@@ -445,6 +472,9 @@ def dra(subproject, browser, site_data, lead_data, path):
 
 
         browser.save_screenshot(save_path[0])
+        save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
+        save.click()
+
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
