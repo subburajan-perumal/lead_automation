@@ -250,7 +250,7 @@ def brigade(subproject:str, browser: Firefox, site_data:dict, lead_data:dict,aut
 
         browser.save_screenshot(save_path[0])    
 
-        # f_add=browser.find_element(By.XPATH,'//*[@id="input_2"]').click()
+        f_add=browser.find_element(By.XPATH,'//*[@id="input_2"]').click()
         browser.implicitly_wait(5)
         # time.sleep(10)
         browser.save_screenshot(save_path[1])
@@ -349,6 +349,7 @@ def doshi(subproject, browser, site_data, lead_data, path):
 
         browser.save_screenshot(save_path[0])
         browser.implicitly_wait(5)
+        add=browser.find_element(By.NAME,'leads_add').click()
         browser.save_screenshot(save_path[1])
         browser.close()
         return 1
@@ -589,6 +590,8 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
         new.select_by_index(3)      
 
         browser.save_screenshot(save_path[0])
+        add=browser.find_element(By.XPATH,'/html/body/div[3]/div/div/div/form/button').click()
+
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
@@ -620,7 +623,16 @@ def krishnagrp(subproject, browser, site_data, lead_data, path):
         channelname = browser.find_element_by_xpath('//*[@id="tab-one"]/div/div[2]/div/div/div/form/div[7]/div/div/select')
         channelname.click()
 
+        cpname=browser.find_element_by_xpath('/html/body/section/div/div/div[2]/div/div/div/div[2]/div/div/div/form/div[7]/div/div/select/option[32]')
+        cpname.click()
+        time.sleep(1)                        
+        
         browser.save_screenshot(save_path[0])
+        
+        submit = browser.find_element_by_xpath('/html/body/section/div/div/div[2]/div/div/div/div[2]/div/div/div/form/div[9]/div/div/ input')
+        submit.click()
+
+
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
@@ -746,6 +758,7 @@ def lifestyle(subproject, browser, site_data, lead_data, path):
 
 
         browser.save_screenshot(save_path[0])
+        add=browser.find_element(By.XPATH,'/html/body/div[2]/div[3]/div/div[2]/div[2]/form/div[2]/div[1]/button/strong').click()
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
@@ -785,6 +798,9 @@ def pragnya(subproject, browser, site_data, lead_data, path):
             pass
 
         browser.save_screenshot(save_path[0])
+        add=browser.find_element(By.XPATH,'/html/body/section[3]/div/div/div[2]/div/form/input[6]')
+        add.click()
+
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
@@ -854,7 +870,7 @@ def radiance(subproject, browser, site_data, lead_data, path):
         project_list.click()
         
         # fs_button=browser.find_element(By.XPATH,'/html/body/div[4]/div/div[2]/section/div/div/div/form/div/center/button')
-        
+        browser.save_screenshot(save_path[0])
         try:
             fs_button=browser.find_element(By.XPATH,'/html/body/div[4]/div/div[2]/section/div/div/div/form/div/center/button')
             fs_button.click()    
@@ -863,7 +879,7 @@ def radiance(subproject, browser, site_data, lead_data, path):
             fs_button.click()
            
 
-        browser.save_screenshot(save_path[0])
+        
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
