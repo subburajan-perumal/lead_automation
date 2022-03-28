@@ -39,3 +39,4 @@ gunicorn_error.log
 browser.log
 execution.log
 lead_automation_v1.zip
+Site_col.json

@@ -120,6 +120,7 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
 #issue in handling subproject
 def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, automate_path:list):
     try:
+        subproject_2=""
          # Villabelvedere/Eternity
         if subproject=="Villabelvedere":
             subproject="Villabelvedere/Eternity"
@@ -164,7 +165,7 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         email.send_keys(lead_data['email'])
         project=Select(browser.find_element(By.ID,'select_project'))
         project.select_by_visible_text(subproject)
-        if subproject_2 :
+        if subproject_2 != "" :
             projectsub=Select(browser.find_element(By.ID,'sub_project_select'))
             projectsub.select_by_visible_text(subproject_2)
         browser.save_screenshot(save_path[0])    
