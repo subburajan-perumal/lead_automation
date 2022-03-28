@@ -1,3 +1,4 @@
+import email
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
@@ -98,6 +99,7 @@ class SiteAutomator:
             self.projectexist = self.LEAD.find_one(
                 {
                     "email": self.lead_data["email"],
+                    # "email": self.lead_data["email"],
                     "project": {
                         "$elemMatch":
                         {

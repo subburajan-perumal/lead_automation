@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint,Response,request
+from flask import Blueprint,Response,request,current_app
 from ..util.request_handler import find_format
 import time
 import json
@@ -26,6 +26,7 @@ def task_response():
 @home.route("/test")
 def test_page():
     return "site working"
+
 
 
 @home.post("/")

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container m-5">
+<form action="{{url_for('site.site_delete')}}" method="post" class="col-8 mx-auto">
+<select name="delete_name" id="">
+    <option value="" selected>select</option>
+{% for i in data %}
+<option value="{{i._id}}">{{i.name}}</option>
+{% endfor %}
+
+</select>
+<div class="form-group mt-3 text-center">
+    <input type="submit" class="btn theme_color text-light ">
+</div>
+</form>
+</div>
+{% endblock %}
