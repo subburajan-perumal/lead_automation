@@ -47,7 +47,7 @@ def function_finder(lead_data):
                     {
                         "$match":
                             {
-                                "project_list.keywords":project_keyword,
+                                "project_list.keywords":{"$regex":project_keyword,"$options":"i"},
                                 "status":1
                             }
                     },
@@ -56,7 +56,7 @@ def function_finder(lead_data):
                         "$unwind":"$project_list"
                     },
                     {
-                        "$match":{"project_list.keywords":project_keyword}
+                        "$match":{"project_list.keywords":{"$regex":project_keyword,"$options":"i"}}
                     }
                 ]
             )
@@ -90,7 +90,7 @@ def function_finder(lead_data):
                                     {
                                         "$match":
                                             {
-                                                "project_list.keywords":interested_keyword,
+                                                "project_list.keywords":{"$regex":interested_keyword,"$options":"i"},
                                                 "status":1
                                             }
                                     },
@@ -99,7 +99,7 @@ def function_finder(lead_data):
                                         "$unwind":"$project_list"
                                     },
                                     {
-                                        "$match":{"project_list.keywords":interested_keyword}
+                                        "$match":{"project_list.keywords":{"$regex":interested_keyword,"$options":"i"}}
                                     }
                                 ]
                             )
