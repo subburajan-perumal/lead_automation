@@ -1,4 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
+
+<div class="container">
+<div>
 <h1>view site</h1>
+</div>
+<a href="{{ url_for('site.site_add') }}">add</a>
+<a href="">delete</a>
+<a href="">update</a>
+<!-- {{ data }} -->
+<table class="table">
+    <thead class="table-light">
+        <tr>
+            <th>S No</th>
+            <th>Name</th>
+            <th>No of project</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    
+
+    <tbody>
+        {% for i in data %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ i.name }}</td>
+            
+            <td>{{ i.projectlist  }}</td>
+            <td>{{ i.status }}</td>
+            
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+</div>
 {% endblock %}
