@@ -1,31 +1,39 @@
 from datetime import datetime
 from pymongo import MongoClient
 from app.functions.site_base import SiteAutomator
-import logging
-import os
+from celery.utils.log import get_task_logger
+
+
+logger = get_task_logger("finder")
 MONGO_DB = "REDACTED"
 
 
-def function_finder(lead_data):
+def function_finder(lead_data: dict):
+    """This function process the request data and generate into lead
+
+    Args:
+        lead_data (dict):  it have lead details from the request
+
+    Returns:
+        string :  return the success and failed message of the execution
+    """
     try:
-        #     logging.basicConfig("")
-        #     logger=logging.getLogger()
-        #     logger.level
         CONN = MongoClient(MONGO_DB)
         DB = CONN['lead_automation']
         LEADS = DB['leads']
-        SITE = DB['Site']
+        # SITE= DB['Site']
         # print(SITE)
         # print("db working")
 
-    except Exception as e:
-        print("Error occured due to "+str(e))
+    except Exception:
+        logger.exception("db connection failure")
 
     try:
+        logger.info("check for existing user in db")
         user_detail = LEADS.find_one(
             {"email": lead_data["email"], "phone": lead_data["phone"]})
         print(user_detail)
-        fullname = lead_data['first_name']+lead_data['last_name']
+        fullname = lead_data['first_name'] + lead_data['last_name']
         if user_detail is None:
             lead_creation = {"name": fullname,
                              "phone": lead_data["phone"],
@@ -34,131 +42,85 @@ def function_finder(lead_data):
                              "modified_time": datetime.now()
                              }
             LEADS.insert_one(lead_creation)
+            logger.info("new user created")
         # Enquired site
-        if "project_enquired_for" in lead_data:
-            project_keyword = lead_data.get("project_enquired_for")
-            print("working before using db")
-
-            # Enquriedsite
-
-            # filter = {"project_list.keywords": project_name}
-            site_list=  DB.Site.aggregate(
-                [
+        site_keywords = []
+        project_enquired = lead_data.get("project_enquired_for", "").split(";")
+        interested_project = lead_data.get("interest_properties", "").split(";")
+        interested_localities = lead_data.get("interested_localities", "").split(";")
+        site_keywords.extend(project_enquired)
+        site_keywords.extend(interested_project)
+        site_keywords.extend(interested_localities)
+        logger.debug(site_keywords)
+        logger.info("search for the keywords in db")
+        site_list = DB.Site.aggregate(
+            [
+                {
+                    "$match":
                     {
-                        "$match":
-                            {
-                                "project_list.keywords":{"$regex":project_keyword,"$options":"i"},
-                                "status":1
-                            }
-                    },
-                
-                    {
-                        "$unwind":"$project_list"
-                    },
-                    {
-                        "$match":{"project_list.keywords":{"$regex":project_keyword,"$options":"i"}}
+                        "$or":
+                            [
+                                {
+                                    "project_list.keywords":
+                                    {
+                                        "$in": site_keywords
+                                    },
+                                    "status": 1
+                                }
+                            ]
                     }
-                ]
-            )
-
-            for site_data in site_list:
-                site_name = site_data["name"]
-                project_name = site_data["project_list"]["project_name"]
-
-                # site=SITE.find_one({"project_list.keywords":project_name},{"name":1,"project_list.project_name.$":1})
-                # print(site)
-                # if site is not None:
-                browser_automation = SiteAutomator(lead_data["phone"], lead_data["email"],lead_data,site_data)
-                browser_automation.projectCheck(site_name, project_name, False)
-                browser_automation.automated_flow()
-                browser_automation.upload_data()
-                browser_automation.teardown()
-                del browser_automation
-
-        storage = "./storage/"
-
-        # Interestsite
-        if "interested_properties" in lead_data:
-            if lead_data['interested_properties'] != "":
-                for interested_site in lead_data["interested_properties"].split(";"):
-                    interested_keyword=interested_site
-                    # print("working before using db")
-
-
-                    site_list=  DB.Site.aggregate(
-                                [
-                                    {
-                                        "$match":
-                                            {
-                                                "project_list.keywords":{"$regex":interested_keyword,"$options":"i"},
-                                                "status":1
-                                            }
-                                    },
-                                
-                                    {
-                                        "$unwind":"$project_list"
-                                    },
-                                    {
-                                        "$match":{"project_list.keywords":{"$regex":interested_keyword,"$options":"i"}}
-                                    }
-                                ]
-                            )
-
-                    for site_data in site_list:
-                            site_name = site_data["name"]
-                            project_name = site_data["project_list"]["project_name"]
-                        # if site is not None:
-                            browser_automation = SiteAutomator(lead_data["phone"], lead_data["email"], lead_data,site_data)
-                            browser_automation.projectCheck(site_data, project_name,False)
-                            browser_automation.automated_flow()
-                            browser_automation.teardown()
-                            browser_automation.upload_data()
-                            
-                            del browser_automation
-
-        # interestlocaties
-        if "interested_localities" in lead_data:
-            if lead_data["interested_localities"] != "":
-                for localities in lead_data['interested_localities'].split(";"):
-                    location_keyword=localities
-                    site_list=  DB.Site.aggregate(
-                                [
-                                    {
-                                        "$match":
-                                            {
-                                                "project_list.keywords":location_keyword,
-                                                "status":1
-                                            }
-                                    },
-                                
-                                    {
-                                        "$unwind":"$project_list"
-                                    },
-                                    {
-                                        "$match":{"project_list.keywords":location_keyword}
-                                    }
-                                ]
-                            )
-                    
-                for site_data in site_list:
-                    site_name = site_data["name"]
-                    project_name = site_data["project_list"]["project_name"]
-                    
-                    browser_automation = SiteAutomator(lead_data["phone"], lead_data["email"], lead_data,site_data)
-                    browser_automation.projectCheck(site_name, project_name, False)
-                    browser_automation.automated_flow()
-                    browser_automation.teardown()
-                    browser_automation.upload_data()
-                    del browser_automation
-
-                    
-        # # for place in lead_data["localities"]:
-        #     # pass
-        # #bylocalities
-
-            # omr-akshaya tango
+                },
+                {
+                    "$unwind":
+                    {
+                        "path": "$project_list",
+                        "preserveNullAndEmptyArrays": False
+                    }
+                },
+                {
+                    "$match":
+                    {
+                        "$or":
+                        [
+                            {
+                                "project_list.keywords":
+                                {
+                                    "$in": site_keywords
+                                },
+                                # "project_list.projectStatus":1,
+                                "status": 1
+                            }
+                        ]
+                    }
+                },
+                # {
+                #     "$project":
+                #     {"project_list.project_name":1}
+                # },
+                # {
+                #     # "$sort":{
+                #     #     "project_list.project_name":1
+                #     # }
+                # }
+            ]
+        )
+        for _site in site_list:
+            logger.info(f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}")
+            site_name = _site['name']
+            site_projectname = _site['project_list']['project_name']
+            browserAutomation = SiteAutomator(lead_data["phone"],
+                                              lead_data["email"],
+                                              lead_data,
+                                              site_data=_site)
+            browserAutomation.projectCheck(site_name, site_projectname)
+            browserAutomation.automated_flow()
+            browserAutomation.upload_data()
+            browserAutomation.teardown()
+        logger.info("task completed")
         return "success"
-    except Exception as e:
-        print("error occured in function_finder", str(e))
+
+    except Exception:
+        logger.exception("exception occured")
+        # print("error occured in function_finder", str(e))
         # print(os.getcwd())
         return "failed"
