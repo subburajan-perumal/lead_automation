@@ -1,33 +1,34 @@
-import email
+from asyncio import tasks
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
-from selenium.common.exceptions import NoAlertPresentException
-from selenium.common.exceptions import NoSuchElementException
 from pymongo import MongoClient
 from app.functions.browser_automation import *
 from app.util.utility import getTime, getsavePath, send_mail, upload_an_attachment
-import time
 import os
 from datetime import datetime, timedelta
-import app.functions.Config as Config
+from celery.utils.log import get_task_logger
 
+logger=get_task_logger(__name__)
 
 # async def browsertimer(v_browser):
 #     time.sleep(100)
 #     v_browser.quit()
 MONGO_USER = "REDACTED"
 MONGO_PASSWORD = "REDACTED"
-DRIVER = "./geckodriver"
+print(os.curdir)
+DRIVER ="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
+
 MONGO_DB = "REDACTED"
 WEBDRIVER_LOG = "webdriver.log"
+
 project_store = {
     "adityaram": adityaram,
     "alliance": alliance,
     "akshaya": akshaya,  
     "brigade": brigade,
     "casagrand": casagrand,
-    "dlf" : "dlf",
+    "dlf" : dlf,
     "doshi": doshi,
     "dra": dra,  
     "fomra": fomra,  
@@ -55,8 +56,7 @@ class SiteAutomator:
         self.path = ""
         self.result = 0
         self.site_data = site_data
-        # DB
-        self.CONN = MongoClient(MONGO_DB)
+        self.CONN = MongoClient(os.getenv("MONGO_DB",MONGO_DB))
         self.DB = self.CONN['lead_automation']
 
         self.LEAD = self.DB["leads"]
@@ -76,21 +76,19 @@ class SiteAutomator:
             service_log_path=WEBDRIVER_LOG
         )
 
-    def projectCheck(self, project, sub_project_name, keyword_search):
+    def projectCheck(self, project, sub_project_name):
         try:
 
             # print(self.SITE['name'])
-            print("db working")
+            print("check for existing project working")
 
             self.sub_project_name = sub_project_name
 
-            if keyword_search == True:
                 # key_value=self.KEYWORD.find_one({},{sub_project_name:1})
                 # if key_value:
                 #     temp_data=dict(*key_value)
                 #     self.sub_project_name=temp_data[sub_project_name]
                 # else:
-                self.sub_project_name = Config.project_sub[sub_project_name]
 
                 #  db.Keyword.find({},{"Fomra Vayou":1})
                 # self.sub_project_namse = self.DB["Keyword"].find({},{"_id":0,:sub_project_name:1})
@@ -195,8 +193,8 @@ class SiteAutomator:
                 })
 
             print("lead uploaded")
-        except Exception as e:
-            print(e)
+        except Exception :
+            logger.exception("error occured in automation")
 
     def teardown(self):
         self.browser.quit()
