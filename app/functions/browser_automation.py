@@ -1,4 +1,3 @@
-import time
 from selenium.webdriver import Firefox 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -11,7 +10,9 @@ from app.util.utility import getName
 import phonenumbers as PN
 from phonenumbers import geocoder as GC
 import logging
+import time
 browserLog=logging.getLogger("browser_log")
+
 # browserLog.set
 
 
@@ -701,54 +702,125 @@ def lancor(subproject:str, browser:Firefox, site_data:dict, lead_data: dict, pat
         return -1
 
 #working
-def lifestyle(subproject, browser, site_data, lead_data, path):
+def lifestyle(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, path:list):
+    save_path=path
+
+    phone=PN.parse(lead_data['phone'])
+    phone_no = phone.national_number
+    alternet_contact = phone.national_number
+    whatsapp = phone.national_number
+    remark = "NIL"
+    project_intrested = subproject
+    #flat_type = '1 BHK'
+    enquiry_sourse = 'Channel Partner'
+    enquiry_owner  = 'LeadAutomation'
+    #location = 'A'
+    #budget = 'Below 5'
+    #enquiry_Medium = 'Server Call'
+    #channel_partner = 'LeadAutomation'
+    
+    # save_paths = getsavePath(path, name1, phone, sub_project_name) 
+    # save_path1 = save_paths[1]
+    # save_path = save_paths[0]
+    # save_path2 = save_paths[2]
+
+
+
     try:
-        save_path=path
-        fullname=str(lead_data['name'])
-        first_name, last_name = getName(fullname)
-        phoneobj=PN.parse(lead_data['phone'])
-        phoneno=phoneobj.national_number
-        enquiry_owner= 'LeadAutomation'
         browser.get(site_data["url"])
-        
-        fl_username= browser.find_element(By.ID, 'username')
-        fl_username.send_keys(site_data["email"])
-        fl_password= browser.find_element(By.ID, 'password')
-        fl_password.send_keys(site_data["pass"])
-        f_submit=browser.find_element(By.CLASS_NAME,'signin-button').click()
+        search=browser.find_element(By.ID,'username')
+        search.send_keys(site_data["email"])
+        passo=browser.find_element(By.ID,'password')
+        passo.send_keys(site_data["pass"])
+        submit=browser.find_element(By.CLASS_NAME,'signin-button').click()
 
         #submit.send_keys(Keys.RETURN)
         time.sleep(2)
-        lead=browser.find_elements(By.ID, 'menubar_item_Appointments')[1].click()
+        lead=browser.find_elements(By.ID,'menubar_item_Appointments')[1].click()
         time.sleep(2)
 
-        f_adding= browser.find_element(By.CLASS_NAME, 'icon-plus')
-        f_adding.click()
+        adding=browser.find_element(By.CLASS_NAME,'icon-plus')
+        adding.click()
         time.sleep(2)
-        f_name= browser.find_element(By.NAME, "contactname")
-        f_name.send_keys(lead_data['name'])
-        f_contact= browser.find_element(By.NAME, 'mobile')
-        f_contact.send_keys(phoneno)
+        name  = browser.find_element(By.NAME, "contactname")
+        name.send_keys(lead_data["name"])
+        contact=browser.find_element(By.NAME,'mobile')
+        contact.send_keys(phone_no)
 
-        f_interest_project= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[2]/div/span/div/a/div/b')
-        f_interest_project.click()
-        f_new= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[2]/div/span/div/div/div/input')
-        f_new.send_keys(subproject)
-        f_new.send_keys(Keys.RETURN)
+        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[2]/div/span/div/a/div/b')
+        intrest_project.click()
+        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[2]/div/span/div/div/div/input')
+        new.send_keys(project_intrested)
+        new.send_keys(Keys.RETURN)
 
-        f_interest_project= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/a/div/b')
-        f_interest_project.click()
-        f_new= browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/div/div/input')
-        # f_new.send_keys(enquiry_owner)
-        f_new.send_keys(Keys.RETURN)
+        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/a/div/b')
+        intrest_project.click()
+        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[2]/td[4]/div/span/div/div/div/input')
+        new.send_keys(enquiry_owner)
+        new.send_keys(Keys.RETURN)
 
-        f_email=browser.find_element(By.NAME,'email')
-        f_email.send_keys(lead_data['email'])
+        '''
+        alt_contact = browser.find_element(By.NAME, 'altmobile')
+        alt_contact.send_keys(alternet_contact)
+        '''
+        
+        email=browser.find_element(By.NAME,'email')
+        email.send_keys(lead_data["email"])
 
-        f_intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[4]/td[4]/div/span/div/a/div/b')
-        f_intrest_project.click()
+        '''
+        whatsapp_contact = browser.find_element(By.NAME, 'whatsapp')
+        whatsapp_contact.send_keys(whatsapp)
+        '''
+
+        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[4]/td[4]/div/span/div/a/div/b')
+        intrest_project.click()
+
+        '''
+        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[4]/td[4]/div/span/div/div/div/input')
+        new.send_keys(location)
+        new.send_keys(Keys.RETURN)
+        '''
+
         intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[5]/td[2]/div/span/div/a/div/b')
         intrest_project.click()
+
+        '''
+        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[5]/td[2]/div/span/div/div/div/input')
+        new.send_keys(flat_type)
+        new.send_keys(Keys.RETURN)
+        '''
+
+        '''
+        #Budget
+        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[5]/td[4]/div/span/div/a/div/b')
+        intrest_project.click()
+        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[5]/td[4]/div/span/div/div/div/input')
+        new.send_keys(budget)
+        new.send_keys(Keys.RETURN)
+        '''
+
+        '''
+        #Enqiry Souce
+        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[6]/td[2]/div/span/div/a/div/b')
+        intrest_project.click()
+        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[6]/td[2]/div/span/div/div/div/input')
+        new.send_keys(enquiry_sourse)
+        new.send_keys(Keys.RETURN)
+
+        #Enqiry Medium
+        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[6]/td[4]/div/span/div/a/div/b')
+        intrest_project.click()
+        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[6]/td[4]/div/span/div/div/div/input')
+        new.send_keys(enquiry_Medium)
+        new.send_keys(Keys.RETURN)
+
+        #Enqiry Status
+        intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[7]/td[2]/div/span/div/a/div/b')
+        intrest_project.click()
+        new = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[7]/td[2]/div/span/div/div/div/input')
+        new.send_keys(enquiry_Medium)
+        new.send_keys(Keys.RETURN)
+        '''
 
         #Channel Partner
         intrest_project = browser.find_element(By.XPATH, '/html/body/div[2]/div[3]/div/div[2]/div[2]/form/table[1]/tbody/tr[7]/td[4]/div/span/div/a/div/b')
@@ -757,18 +829,33 @@ def lifestyle(subproject, browser, site_data, lead_data, path):
         new.send_keys(site_data["channel_partner"])
         new.send_keys(Keys.RETURN)
 
-
+        #project=Select(browser.find_element(By.XPATH,'//*[@id="Appointments_editView_fieldName_description"]'))
+        #project.select_by_visible_text(remark)
+        
+        
+        # browser.save_screenshot(save_path1)    
+        # upload_an_attachment(lead_id, save_path1)
         browser.save_screenshot(save_path[0])
-        add=browser.find_element(By.XPATH,'/html/body/div[2]/div[3]/div/div[2]/div[2]/form/div[2]/div[1]/button/strong').click()
-        browser.implicitly_wait(5)
+        add=browser.find_element(By.XPATH,"/html/body/div[2]/div[3]/div/div[2]/div[2]/form/div[1]/span/button").click()
+        time.sleep(7)
         browser.save_screenshot(save_path[1])
-        browser.close()
-        return 1
 
+        # browser.save_screenshot(save_path)    
+        # browser.quit()
+        # upload_an_attachment(lead_id, save_path)
+        
+        return 1
+        # lead = Lead(name=name1, props= sub_project_name, phone = phone, email = email1, status = req, created_at =  dt_string, attachments = save_path)
+        # db.session.add(lead)
+        # db.session.commit()
+        # print('Successfully added' + str(lead.id) + ' ' + str(sub_project_name) + ' ' + str(lead.status))
+    
     except Exception as e:
         print(str(e))
         browser.save_screenshot(save_path[2])
-    
+
+        # browser.save_screenshot(save_path2)
+        # browser.quit()
         return -1
 
 #working
@@ -1026,51 +1113,139 @@ def shriram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, pat
 
 
 #working
-def tvs(subproject, browser, site_data, lead_data, path):
+def tvs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list):
     try:
         save_path=path
-
         browser.get(site_data["url"])
-        client_name=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[2]/div/div/input[1]')
-        client_name.send_keys(lead_data['name'])
-        client_email=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[3]/div/div/input')
-        client_email.send_keys(lead_data['email'])
-        client_phone=browser.find_element(By.XPATH,'//html/body/div/div/div/div/div/div/div/form/div[4]/div/div/div/input')
-        client_phone.send_keys(lead_data['phone'])
-        project=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[5]/div/div/select')
+        phone_no= PN.parse(lead_data['phone'])    
+        #search=browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/fieldset[1]/input')
+        search=browser.find_element(By.XPATH,'//*[@id="user_login"]')        
+        search.send_keys(site_data["email"])
+        #time.sleep(3)
         
-        # time.sleep(3)
-        project1=Select(project)
-        project.click()
-        project1.select_by_visible_text(subproject)
-        channel_name=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[6]/div/div/input')
-        channel_name.send_keys(site_data['cpname'])
-        channel_phone=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[7]/div/div/input')
-        channel_phone.send_keys(site_data['cpphn'])
-        comment=browser.find_element(By.XPATH,'/html/body/div/div/div/div/div/div/div/form/div[8]/div/div/textarea')
-        comment.send_keys('Nil')
+        #name  = browser.find_element(By.NAME, "Pname")
+        #name.send_keys(name1)        
+        
+        time.sleep(1)
+        pwdd=browser.find_element(By.XPATH,'//*[@id="user_password"]')
+        pwdd.send_keys(site_data["pass"])
+        
+        #passo=browser.find_element(By.XPATH,'/html/body/div[1]/div[1]/div/div/div[2]/div[3]/form/input[1]')
+        #passo.send_keys(all_sites.sites[site_name]["pass"])
+        time.sleep(1)        
+        submit=browser.find_element(By.XPATH,'/html/body/section/div/div/div[1]/div/form[2]/div[4]/input')
+        submit.send_keys(Keys.RETURN)
 
+        time.sleep(6)
+        #open new tab
+        #browser.find_element(By.TAG_NAME,'body').send_keys(Keys.COMMAND + 't')
+        browser.get(site_data["url2"])
+
+        time.sleep(3)
+        addlead=browser.find_element(By.XPATH,'/html/body/div[1]/section/div/div/div[2]/div/a')
+        addlead.send_keys(Keys.RETURN)
+        time.sleep(3)
+        
+        firstnamelead=browser.find_element(By.XPATH,'//*[@id="lead_first_name"]')
+        firstnamelead.send_keys(lead_data['name'])
+        time.sleep(1)
+
+        lastnamelead=browser.find_element(By.XPATH,'//*[@id="lead_last_name"]')
+        lastnamelead.send_keys(lead_data['name'])
+        time.sleep(1)
+
+        emaillead=browser.find_element(By.XPATH,'//*[@id="lead_email"]')
+        emaillead.send_keys(lead_data['email'])
+        time.sleep(1)                
+
+        #projectlead=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/div/lightning-combobox/div[1]/lightning-base-combobox/div/div[1]/button')
+        #projectlead=Select(browser.find_element(By.ID,'combobox-button-618'))
+        #projectlead.select_by_visible_text("Radiance Maraikayar Manor")        
+        #time.sleep(5) 
+
+        #projectlead2=browser.find_element_by_xpath('/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/div/lightning-combobox/div/lightning-base-combobox/div/div[1]/button/span/text()')
+	#/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/div/lightning-combobox/div/lightning-base-combobox/div/div[1]/button
+        #projectlead2=browser.find_element_by_data-value(sub_project_name)    
+        #projectlead2.click()            
+        #time.sleep(5)       
+
+        #namelead=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[1]/div/div/div/input')
+        #namelead.send_keys(name1)
+        #time.sleep(1)
+
+        #namelead=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[1]/div/div/div/input')
+        #namelead.send_keys(name1)
+        #time.sleep(1)
+
+        ## COUNTRY        
+        #country2 = browser.find_element(By.XPATH, '/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[2]/div[2]/div[1]/div/lightning-combobox/div/lightning-base-combobox/div/div[1]/button')
+        #country2.click()
+        #time.sleep(1)        
+        #country2.send_keys(country_name)
+        #time.sleep(1)        
+        #country2.send_keys(Keys.RETURN)
+        #time.sleep(1)
+
+        contact=browser.find_element(By.XPATH,'//*[@id="lead_phone"]')
+        time.sleep(1)        
+        contact.click()        
+        time.sleep(1)
+        contact.send_keys(Keys.BACKSPACE)
+        time.sleep(1)
+        contact.send_keys(Keys.BACKSPACE)
+        time.sleep(1)
+        contact.send_keys(Keys.BACKSPACE)
+        time.sleep(1)
+        contact.send_keys(Keys.BACKSPACE)
+        time.sleep(1)        
+        contact.send_keys(lead_data['phone'])         
+        
+        #contact.send_keys(phone)
+        time.sleep(1)
+
+        projectlead=browser.find_element(By.XPATH,'/html/body/div[3]/form/div/div/div/div[2]/div/div[2]/div[4]/div/div/div/div[1]')
+        #projectlead=browser.find_element_by_xpath('/html/body/div[3]/form/div/div/div/div[2]/div/div[2]/div[4]/div/div/div/div[1]/div')        
+        #time.sleep(5)        
+        projectlead.click()
+        #projectlead.send_keys("E")                
+        #time.sleep(2) 
+        #projectlead.send_keys(Keys.DOWN)        
+        #projectlead.send_keys(sub_project_name)        
+        #time.sleep(1)
+        
+        #projectlead.send_keys("Hello")
+        #Smart Homes @ Green Enclave
+        projectlead=browser.find_element(By.ID,'lead_project_id-selectized')
+        projectlead.send_keys(subproject)                
+        #time.sleep(10)        
+        #projectlead.send_keys(Keys.ENTER)
+        projectlead.send_keys(Keys.RETURN)        
+        time.sleep(1)
+
+      
         browser.save_screenshot(save_path[0])
-        submit = browser.find_element(By.XPATH, '/html/body/div/div/div/div/div/div/div/form/div[9]/div/div/input')
-        submit.click()
-        time.sleep(4)
-
-        try:
-            alert = Alert(browser)
-            #print(alert.text)
-            alert.accept()
-        except:
-            print("Exception")
-        
+        submitbutton = browser.find_element(By.XPATH,'/html/body/div[3]/form/div/div/div/div[3]/input')
+        submitbutton.click()
+        #browser.execute_script("arguments[0].click();", button)
         browser.save_screenshot(save_path[1])
-        browser.close()
-        return 1
+        time.sleep(10)
 
+        # browser.save_screenshot(save_path)    
+        # browser.quit()
+        # upload_an_attachment(lead_id, save_path)
+        
+        return 1
+        # lead = Lead(name=name1, props= sub_project_name, phone = phone, email = email1, status = req, created_at =  dt_string, attachments = save_path)
+        # db.session.add(lead)
+        # db.session.commit()
+        # print('Successfully added' + str(lead.id) + ' ' + str(sub_project_name) + ' ' + str(lead.status))
+    
+    
     except Exception as e:
         print(str(e))
         browser.save_screenshot(save_path[2])
-    
         return -1
+        
 
 def vr(subproject, browser, site_data, lead_data, path):
 
