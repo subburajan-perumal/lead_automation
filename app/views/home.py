@@ -1,6 +1,6 @@
 import logging
-
-from flask import Blueprint,Response,request,current_app
+from celery.result import AsyncResult
+from flask import Blueprint,Response, jsonify,request,current_app
 from ..util.request_handler import find_format
 import time
 import json
@@ -17,10 +17,18 @@ logging.basicConfig(
 #blueprint for the app route
 home=Blueprint("home",__name__)
 
-@home.get("/tasks/")
-def task_response():
-    taskid=request.args.get('taskid')
-    return Response(taskid,200)
+@home.get("/tasks/<task_id>")
+def task_response(task_id):
+    task_result=AsyncResult(task_id)
+    result={"task_id":task_id,
+    #it have some error
+    # "task_status":task_result.status,
+    # "task result" :task_result.result
+    }
+    print(result)
+
+
+    return jsonify(result),200
 
 
 @home.route("/test")
@@ -30,12 +38,13 @@ def test_page():
 
 
 @home.post("/")
-async def home_page():
+def home_page():
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
         start_time=time.time()
         data={}
+        out="{}"
         print(request)
         print(request.get_data())
 
@@ -47,16 +56,16 @@ async def home_page():
         
         elif type(data) is dict:
             print(data)
-            taskid=lead.apply_async(kwargs=data)   
-            print("task executed succesfully")      
-        
+            result=lead.apply_async(kwargs=data)   
+            print("task executed succesfully")     
+            # print(result.task_id) 
+            # out={"task id" : result.task_id}
         else:
             print(data)
-       
+
         end_time=time.time()
-       
         print(f"Response time {end_time-start_time}")
-        return Response("success",status=200)     
+        return Response("received",200)
         
 
     except Exception as e:
