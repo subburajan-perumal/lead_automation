@@ -1,21 +1,37 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 
 <!-- <select onchange="test(this)">
     {% for i in data %}
     <option value="{{i.name}}">{{i.name}}</option>
     {% endfor %}
 </select> -->
-<div class="container m-5 ">
-<h3 class="text-center" >Add lead</h3>
-<form action="{{url_for('site.site_data')}}" method="post"  class="col-8 mx-auto"  >
-<div class="form-group mt-3">
-<textarea name="others"  class="form-control w-100 h-50" placeholder="{ &quot key &quot = &quot value &quot }" >
-</textarea>
-</div>
-<div class="form-group mt-3 text-center">
-    <input type="submit" class="btn theme_color text-light">
-</div>
-</form>
+<div class="container m-3">
+    <h3 class="text-center">Add lead</h3>
+    <form action="{{url_for('site.site_add')}}" method="post" class="col-8 mx-auto">
+        <div class="form-group mt-3">
+            <!-- <label class="" for="s_name">Site name</label> -->
+            {{ form.f_sitename.label(class="")}}
+            <input class="form-control" id="f_name" name="site_name" placeholder="Sitename" required />
+        </div>
+        <div class="form-group mt-3">
+            <label class="" for="f_uri">URI</label>
+            <input class="form-control" id="f_uri" name="uri" value="https://test.com"
+                placeholder="https://www.example.com" required />
+        </div>
+        <div class="form-group mt-3">
+            <label class="" for="f_siteData">Site data :</label>
+
+            <textarea name="sitedata" id="f_siteData" class="form-control w-100 h-25"
+                placeholder="{ &quot key &quot = &quot value &quot }"></textarea>
+        </div>
+        <div class="form-group mt-3">
+            <label class="" for="f_siteData">Project list :</label>
+            <textarea name="projectlist" class="form-control w-100 h-50"
+                placeholder="{ &quot key &quot = &quot value &quot }" id="f_projectlist"></textarea>
+        </div>
+        <div class="form-group mt-3 text-center">
+            <input type="submit" class="btn theme_color text-light" />
+        </div>
+    </form>
 </div>
 {% endblock %}
