@@ -4,7 +4,8 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
+
+
 
         {
             "name": "Python: Gunicorn",
@@ -47,7 +48,7 @@
             "console": "integratedTerminal",
             "args": [
                 "-A",
-                "app.tasks.celery_app",
+                "app.celery",
                 "worker",
                 "-l",
                 "info",
