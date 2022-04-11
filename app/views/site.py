@@ -32,6 +32,11 @@ class SiteForm(Form):
     f_uri = URLField(label="site_url")
 
 
+@site.route("/test")
+def site_test():
+    message="site working"
+    return render_template("/site/message.html",message=message)
+
 @site.route("/")
 def view_site():
     """
