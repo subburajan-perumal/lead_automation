@@ -2,11 +2,10 @@
 This module contain the flask  webpages and error handling site
 and creata a app
 """
+
 from flask import Flask
-from flask_pymongo import PyMongo
 from celery import Celery
-import sentry_sdk
-from app.tasks import make_celery
+# from app.backup_tasks import make_celery
 from app.views.home import home
 from app.views.error_handler import errorHandler
 from config import config
@@ -14,13 +13,11 @@ from config import CeleryConfig
 from app.views.site import site
 import logging
 import os
-from sentry_sdk.integrations.celery import CeleryIntegration  
 # import tasks
 logging.basicConfig(level=logging.DEBUG)
 
 celery=Celery(__name__, broker=CeleryConfig.BROKER_URL, result_backend=CeleryConfig.RESULT_BACKEND)
-
-sentry_sdk.init(dsn="https://redacted@example.com/6320262",integrations=[CeleryIntegration()],traces_sample_rate=1.0)
+# sentry_sdk.init(dsn="https://redacted@example.com/6320262",integrations=[CeleryIntegration()],traces_sample_rate=1.0)
 
 def create_app(config_name=None):
 
@@ -44,6 +41,7 @@ def create_app(config_name=None):
     # print(celery.conf)
     # mongo=PyMongo(app)
     # celery_app=make_celery(app)
+    # init_logging(app)
     
     app.config.from_object(config[config_name])
     app.register_blueprint(home)
@@ -52,6 +50,11 @@ def create_app(config_name=None):
     # app.register_error_handler(errorHandler,badrequest_handler)
     return app
 
-def configure_logging(app):
-    pass
-
+# def init_logging(app):
+#     import sentry_sdk
+#     from sentry_sdk.integrations.flask import FlaskIntegration
+#     from sentry_sdk.integrations.celery import CeleryIntegration
+#     sentry_sdk.init(
+#         dsn=app.config.get("FLASK_SENTRY_DSN",""),
+#         integrations=[FlaskIntegration(),CeleryIntegration()]   
+#     )
