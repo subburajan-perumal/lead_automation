@@ -176,7 +176,7 @@ class SiteAutomator:
                 "applied_time": datetime.now(),
                 "status": self.result,
             }
-            self.LEAD.update_one(
+            dbresult=self.LEAD.update_one(
                 {
                     "email": self.lead_data["email"],
                     "phone": self.lead_data["phone"]
@@ -193,8 +193,10 @@ class SiteAutomator:
                 })
 
             print("lead uploaded")
+            return dbresult.upserted_id
         except Exception :
             logger.exception("error occured in automation")
-
+            dbresult=-1
+            return dbresult
     def teardown(self):
         self.browser.quit()
