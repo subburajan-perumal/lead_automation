@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            
+            "label": "task|renameConsolePre",
+            "command": "${input:renameConsolePre}"
+        },
+        {
+            /* TASK_#2 */
+            "label": "task|renameConsolePost",
+            "command": "${input:renameConsolePost}"
+        }
+    ]
+    ,
+    "inputs": [
+        {
+            "id": "renameConsolePre",
+            "type": "command",
+            "command": "workbench.action.terminal.renameWithArg",
+            "args": {
+                /* NAME OF CONSOLE WHEN DEBUGGER IS ACTIVE */
+                "name": "${2:Launch Program}" 
+            }
+        },
+        {
+             /* INPUT FOR TASK_#2 */
+             "id": "renameConsolePost",
+             "type": "command",
+             "command": "workbench.action.terminal.renameWithArg",
+             "args": {
+                 /* NAME OF CONSOLE WHEN DEBUGGER IS INACTIVE */
+                 "name": "BASH" 
+             }
+        }
+    ]
+}
