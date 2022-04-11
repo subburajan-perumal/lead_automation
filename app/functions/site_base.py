@@ -1,4 +1,5 @@
 from asyncio import tasks
+from cmath import log
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
@@ -81,8 +82,8 @@ class SiteAutomator:
         try:
 
             # print(self.SITE['name'])
-            print("check for existing project working")
-
+            # print("check for existing project working")
+            logger.info("checking for existing project in db")
             self.sub_project_name = sub_project_name
 
                 # key_value=self.KEYWORD.find_one({},{sub_project_name:1})
@@ -117,7 +118,8 @@ class SiteAutomator:
 
             if self.projectexist:
                 self.result = 0
-                print("lead already exist")
+                logger.info("lead already exist")
+                # print("lead already exist")
 
         except Exception as e:
             print("Error occured due to "+str(e))
@@ -138,6 +140,7 @@ class SiteAutomator:
                     self.sub_project_name, self.browser, self.site_data, self.lead_data, self.automate_path)
         except Exception as e:
             self.result = 2
+            logger.exception("automte flow error")
 
     def upload_data(self):
 
@@ -145,31 +148,36 @@ class SiteAutomator:
 
             # ZOHO attachment
             if self.result == 1 or self.result == -1:
-                if self.result == 1:
-
-                    upload_an_attachment(
-                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[0]))
-                    upload_an_attachment(
-                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[1]))
-                    print("uploaded file : ", os.path.abspath(
-                        self.automate_path[0]))
-                    print("uploaded file : ", self.automate_path[1])
-                    print("success lead uploaded")
-                if self.result == -1:
-                    if os.path.exists(self.automate_path[0]):
-                        upload_an_attachment(
-                            self.lead_data["lead_id"], os.path.abspath(self.automate_path[0]))
+                upload_an_attachment(
+                    self.lead_data["lead_id"], os.path.abspath(self.automate_path[0]))
+                upload_an_attachment(
+                    self.lead_data["lead_id"], os.path.abspath(self.automate_path[1]))
+                # print("upload lead working")
+                # 
+                logger.info(f"upload file{ self.automate_path[0] }")
+                # print("uploaded file : ", os.path.abspath(self.automate_path[0]))
+                logger.info(f"upload file{ self.automate_path[1] }")
+                # print("uploaded file : ", self.automate_path[1])
+                # print("success lead uploaded")
+                if self.result == 2:
+                #     if os.path.exists(self.automate_path[0]):
+                #     upload_an_attachment(
                     upload_an_attachment(
                         self.lead_data["lead_id"], os.path.abspath(self.automate_path[2]))
-                    print("uploaded file : ", self.path[0])
-                    print("uploaded file : ", self.path[2])
-                    print("failed  lead uploaded")
-                print("lead_id :", self.lead_data["lead_id"])
-                print("lead path : ", self.path)
-                print("attachments uploaded")
+                    logger.info(f"upload file{ self.automate_path[2] }")
+                # print("uploaded file : ", self.path[0])
+
+                # print("uploaded file : ", self.path[2])
+                # print("failed  lead uploaded")
+                logger.info(f"lead_id :{self.lead_data['lead_id']}")
+                print("lead path :  {self.path}")
+                # print("lead_id :", self.lead_data["lead_id"])
+                logger.info("attachments uploaded")
+                # print("attachments uploaded")
             if self.result == 2 or self.result == -1:
                 send_mail(self.lead_data['lead_id'], self.path,
                           self.sub_project_name, self.lead_data['name'])
+                logger.info("mail sent")
         # DB
             lead_detail = {
                 "projectname": self.site_data['name'],  # akshaya
@@ -192,8 +200,8 @@ class SiteAutomator:
                         "project": lead_detail
                     }
                 })
-
-            print("lead uploaded")
+            logger.info("lead uploaded")
+            # print("lead uploaded")
             return dbresult.upserted_id
         except Exception :
             logger.exception("error occured in automation")
@@ -201,3 +209,4 @@ class SiteAutomator:
             return dbresult
     def teardown(self):
         self.browser.quit()
+        logger.info("browser quit")

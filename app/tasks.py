@@ -12,8 +12,9 @@ from app.functions.site_base import SiteAutomator
 import time
 import json
 import os
-
+from celery.utils.log import get_task_logger
 # MONGODB="mongodb://REDACTED_MONGO_URI"
+logger=get_task_logger("task_logger")
 celery_app= Celery(__name__, broker=CeleryConfig.BROKER_URL,backend=CeleryConfig.RESULT_BACKEND)
 # celery_app.conf(DevelopmentConfig())
 # celery_app.conf.update(celery.co)
@@ -31,7 +32,8 @@ def lead(**lead_data):
         # lead_sender.generate_lead("location")
     try:
         # print(os.getenv())
-        print("celery started")
+        # print("celery started")
+        logger.info("lead automator started")
         # result=function_finder(lead_data)
         LA=LeadAutomator(lead_data=lead_data)
         LA.create_lead()
@@ -45,13 +47,16 @@ def lead(**lead_data):
         LA.get_keywords("None (default)",";")
         site_list=LA.search_by_keyword()
         site_list= json.loads(json_util.dumps(site_list))
-        print(site_list)
+        # print(site_list)
         task_list=[]
 
         # print(loads(dumps(site_list)))
         for _site in site_list:
+            
             site_name = _site['name']
             site_projectname = _site['project_list']['project_name']
+            logger.info(f"Site:{site_name}; Project: {site_projectname}")
+
             task_list.append(browserAutomate.s(_site,lead_data))
             # browserAutomation = SiteAutomator(lead_data["phone"],
             #                             lead_data["email"],
@@ -67,7 +72,7 @@ def lead(**lead_data):
         output=job.apply_async(queue="browser")
         print(output)
         result="success"
-    
+        logger.info("task sent to browser queue")
         return result
     except Exception as e:
         print(str(e))
@@ -76,9 +81,12 @@ def lead(**lead_data):
 # @celery_app.task
 @shared_task
 def browserAutomate(_site,lead_data):
-    print("automation working")
+    # print("automation working")
+    logger.info("browser started")
     site_name = _site['name']
+    
     site_projectname = _site['project_list']['project_name']
+    logger.info(f"Site:{site_name}; Project: {site_projectname}")
     browserAutomation = SiteAutomator(lead_data["phone"],
                                         lead_data["email"],
                                         lead_data,
@@ -88,7 +96,7 @@ def browserAutomate(_site,lead_data):
     upload_result=browserAutomation.upload_data()
     print(f"data upload :{upload_result}")
     browserAutomation.teardown()
-    return upload_result
+    return "success"
 
 
 @shared_task
