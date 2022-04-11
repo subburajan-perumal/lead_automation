@@ -1,7 +1,6 @@
-from ast import keyword
 from pymongo import MongoClient
 from datetime import datetime
-from app.functions.site_base import SiteAutomator
+# from app.functions.site_base import SiteAutomator
 from config import Config
 MONGO_DB = Config.MONGO_URI
 class LeadAutomator:
@@ -99,13 +98,13 @@ class LeadAutomator:
         # result=list(self.site_list)
         return list(self.site_list)
     
-    def generate_lead(self, by):
-        for site in self.site_list:
-            browser_automation = SiteAutomator( self.lead_data[ "phone" ] , self.lead_data[ "email" ],self.lead_data)
-            browser_automation.projectCheck( site ['name'], self.project_name,keyword_search=True)
-            browser_automation.automated_flow()
-            browser_automation.upload_data()
-            browser_automation.teardown()
+    # def generate_lead(self, by):
+    #     for site in self.site_list:
+    #         browser_automation = SiteAutomator( self.lead_data[ "phone" ] , self.lead_data[ "email" ],self.lead_data)
+    #         browser_automation.projectCheck( site ['name'], self.project_name,keyword_search=True)
+    #         browser_automation.automated_flow()
+    #         browser_automation.upload_data()
+    #         browser_automation.teardown()
 
         
         # if by=="interested":
