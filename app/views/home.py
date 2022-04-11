@@ -1,3 +1,4 @@
+from distutils.command.config import config
 import logging
 from celery.result import AsyncResult
 from flask import Blueprint,Response, jsonify,request,current_app
@@ -5,9 +6,10 @@ from ..util.request_handler import find_format
 import time
 import json
 from app.tasks import lead
+from config import Config
 # from .. import tasks
 logging.basicConfig(
-    filename= "lead_automation_server.log",
+    # filename= Config.LOG_PATH+"lead_automation.log",
     level= logging.INFO,
     format= f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
     encoding='utf-8'
@@ -56,7 +58,7 @@ def home_page():
         
         elif type(data) is dict:
             print(data)
-            result=lead.apply_async(kwargs=data)   
+            result=lead.apply_async(kwargs=data,queue="lead")   
             print("task executed succesfully")     
             # print(result.task_id) 
             # out={"task id" : result.task_id}
