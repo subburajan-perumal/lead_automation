@@ -56,7 +56,7 @@ def adityaram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, p
     except Exception as e:
         print(str(e))
         browserLog.exception(str(e))
-        # browser.save_screenshot(save_path[2])
+        browser.save_screenshot(save_path[2])
         return -1
 
 #working
