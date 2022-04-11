@@ -4,15 +4,57 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        {
+            "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+            "name": "Launch Extension",
+            "outFiles": ["${workspaceFolder}/out/**/*.js"],
+            "request": "launch",
+            "type": "pwa-extensionHost",
+            /* "Pre-hook is assigned TASK #1" */   
+            "preLaunchTask": "task|renameConsolePre",
 
-
-
+            /* "Post-Hook is assigned TASK #2" */ 
+            "postDebugTask": "task|renameConsolePost"
+        },
+        {
+            "name": "Python: flower",
+            "type": "python",
+            "request": "launch",
+            "module": "celery",
+            "justMyCode": true,
+            "args": ["-A","app.celery","flower"]
+        },
+        {
+            "name": "Python: selenium_worker",
+            "type": "python",
+            "request": "launch",
+            "module": "celery",
+            "justMyCode": true,
+            "console": "integratedTerminal",
+            "args": [
+                "-A",
+                "app.celery",
+                "worker",
+                "-l",
+                "info",
+                "-c",
+                "2",
+                "-Q",
+                "browser,celery",
+                "-n",
+                "browser@%h"
+            ]
+        },
         {
             "name": "Python: Gunicorn",
             "type": "python",
             "request": "launch",
             "module": "gunicorn",
-            "args":["-c","gunicorn.conf.py"],
+            "args": [
+                "-c",
+                "gunicorn.conf.py"
+            ],
+           
             "justMyCode": true
         },
         {
@@ -41,7 +83,7 @@
             "jinja": true
         },
         {
-            "name": "Python: Celery",
+            "name": "Python: lead_worker",
             "type": "python",
             "request": "launch",
             "module": "celery",
@@ -53,7 +95,11 @@
                 "-l",
                 "info",
                 "-c",
-                "1"
+                "2",
+                "-Q",
+                "default,lead,celery",
+                "-n",
+                "leadworker@%h"
             ]
         }
     ]
