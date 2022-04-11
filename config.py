@@ -1,12 +1,27 @@
-
 import os 
 from dotenv import load_dotenv
 load_dotenv()
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+required_field=['name',"phone","email","lead_id"]
+keyword_field=[
+    {
+        "field":"project_enquired_for",
+        "seperator":";"
+    },
+    {
+        "field":"interested_project",
+        "seperator":";"
+    },
+    {
+        "field":"interested_localities",
+        "seperator":";"
+    }
+]
 #Dont touch 
 class Config(object):
+    
     LOG_PATH=basedir+"/logs/"
     DEBUG = False
     TESTING = False
@@ -23,11 +38,11 @@ class Config(object):
 class ProductionConfig(Config):
     ENV = "Production"
     DEBUG = False
-    LOG_PATH="/var/log/lead_automation/production/"
+    LOG_PATH=basedir+"/logs/"
 class DevelopmentConfig(Config):
     ENV = "Development"
     DEBUG = True
-    LOG_PATH="/var/log/lead_automation/Development/"
+    LOG_PATH=basedir+"testing/logs/"
 class TestingConfig(Config):
     ENV="Tesing"
     DEBUG = True
@@ -36,10 +51,11 @@ class TestingConfig(Config):
 class CeleryConfig(Config):
     BROKER_URL = 'REDACTED'
     RESULT_BACKEND = 'redis://REDACTED_REDIS_URI'
-    TASK_QUEUES={
-                    "app.tasks.lead":
+    TASK_ROUTES={
+                    "app.tasks.*":
                     {   
-                        "queue":"lead"
+                        "queue":"lead",
+                        "queue":"browser"
                     }
     }
 
