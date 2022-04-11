@@ -1,4 +1,3 @@
-from distutils.command.config import config
 import logging
 from celery.result import AsyncResult
 from flask import Blueprint,Response, jsonify,request,current_app
@@ -20,17 +19,14 @@ logging.basicConfig(
 home=Blueprint("home",__name__)
 
 @home.get("/tasks/<task_id>")
-def task_response(task_id):
-    task_result=AsyncResult(task_id)
-    result={"task_id":task_id,
-    #it have some error
-    # "task_status":task_result.status,
-    # "task result" :task_result.result
+def get_status(task_id):
+    task_result = AsyncResult(task_id)
+    result = {
+        "task_id": task_id,
+        # "task_status": task_result.status,
+        # "task_result": task_result.result
     }
-    print(result)
-
-
-    return jsonify(result),200
+    return jsonify(result), 200
 
 
 @home.route("/test")
