@@ -1,5 +1,5 @@
 import json
-
+from config import required_field
 from flask import Request
 def find_format(P_request:Request):
     try:
@@ -30,6 +30,7 @@ def find_format(P_request:Request):
             if(type(P_request.get_json()) is dict):
                 req_data=P_request.get_json()
                 if 'phone' in req_data and 'email' in req_data and 'lead_id'  in req_data and 'name' in req_data:
+                # if all(required_field in key for key in P_request.get_json()):
                     return req_data
                 else:
                     req_data={}
@@ -44,7 +45,8 @@ def find_format(P_request:Request):
             req_data={}
         return req_data
     
-    except:
+    except Exception as e:
+        print(str(e))
         print("problem in finding data type")
         req_data={}
         return req_data
