@@ -40,3 +40,6 @@ browser.log
 execution.log
 lead_automation_v1.zip
 Site_col.json
+phase_2/mongo_schema
+phase_2/query
+backup_celery_worker.py
