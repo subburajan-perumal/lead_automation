@@ -21,7 +21,7 @@ keyword_field=[
 ]
 #Dont touch 
 class Config(object):
-    
+    WEB_DRIVER=basedir+"gechodriver"
     LOG_PATH=basedir+"/logs/"
     DEBUG = False
     TESTING = False

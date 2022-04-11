@@ -8,6 +8,7 @@ from app.util.utility import getTime, getsavePath, send_mail, upload_an_attachme
 import os
 from datetime import datetime, timedelta
 from celery.utils.log import get_task_logger
+from config import Config
 
 logger=get_task_logger(__name__)
 
@@ -17,7 +18,7 @@ logger=get_task_logger(__name__)
 MONGO_USER = "REDACTED"
 MONGO_PASSWORD = "REDACTED"
 print(os.curdir)
-DRIVER ="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
+# DRIVER ="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
 
 MONGO_DB = "REDACTED"
 WEBDRIVER_LOG = "webdriver.log"
@@ -63,7 +64,7 @@ class SiteAutomator:
         self.SITE = ""
         
 
-        self.driver = DRIVER
+        self.driver = Config.WEB_DRIVER
 
         firefox_service = Service(self.driver)
         opt = Options()
