@@ -21,8 +21,8 @@ def check_celery():
     print("celery working")
 
 
-@celery_app.task(bind=True,autoretry_for=(Exception,),max_retries=3,)
-def lead(**lead_data):
+@celery_app.task(bind=True,max_retries=3)
+def lead(self,**lead_data):
     try:
         logger.info("lead automator started")
         LA = LeadAutomator(lead_data=lead_data)
@@ -50,8 +50,8 @@ def lead(**lead_data):
         return "failed"
 
 
-@shared_task(bind=True,autoretry_for=(Exception,),max_retries=3,)
-def browserAutomate(_site, lead_data):
+@shared_task(bind=True,max_retries=5)
+def browserAutomate(self,_site, lead_data):
     logger.info("browser started")
     site_name = _site['name']
     site_projectname = _site['project_list']['project_name']
