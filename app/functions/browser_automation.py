@@ -568,7 +568,7 @@ def gsquare(subproject, browser, site_data, lead_data, path):
 def hiranandani(subproject, browser, site_data, lead_data, path):
     try:
         save_path=path
-
+        phone=PN.parse(lead_data.get(['phone']))
         browser.get(site_data["url"])
         tem = browser.find_element(By.CLASS_NAME, 'reffer-btn').click()
 
@@ -576,7 +576,7 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
         name.send_keys(lead_data['name'])
 
         contact=browser.find_element(By.NAME,'pmob')
-        contact.send_keys(lead_data['phone'])
+        contact.send_keys(phone.national_number)
 
         intrest_project = browser.find_element(By.NAME, 'interested')
         new = Select(intrest_project)
