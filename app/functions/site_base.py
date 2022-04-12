@@ -159,7 +159,7 @@ class SiteAutomator:
                 logger.info(f"upload file{ self.automate_path[1] }")
                 # print("uploaded file : ", self.automate_path[1])
                 # print("success lead uploaded")
-                if self.result == 2:
+                if self.result == 2 or self.result==-1:
                 #     if os.path.exists(self.automate_path[0]):
                 #     upload_an_attachment(
                     upload_an_attachment(
