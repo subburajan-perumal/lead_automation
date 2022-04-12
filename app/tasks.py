@@ -1,4 +1,5 @@
 from celery import Celery
+from numpy import maximum
 from config import CeleryConfig
 from config import keyword_field
 from celery import shared_task, group
@@ -20,7 +21,7 @@ def check_celery():
     print("celery working")
 
 
-@celery_app.task
+@celery_app.task(bind=True,autoretry_for=(Exception,),max_retries=3,)
 def lead(**lead_data):
     try:
         logger.info("lead automator started")
@@ -49,7 +50,7 @@ def lead(**lead_data):
         return "failed"
 
 
-@shared_task
+@shared_task(bind=True,autoretry_for=(Exception,),max_retries=3,)
 def browserAutomate(_site, lead_data):
     logger.info("browser started")
     site_name = _site['name']
