@@ -12,6 +12,21 @@ class LeadAutomator:
         self.SITE=self.DB['Site']
         self.keywords=[]
         self.site_list={}
+        self.keywords_all=[]
+
+
+
+
+        keyword_search=self.DB.Site.aggregate(
+                            [
+                                { "$unwind":"$project_list"},
+                                {"$group": {"_id": "$project_list.keywords"}}
+                            ])
+        
+        for i in keyword_search:
+            self.keywords_all.extend(i["_id"])
+        
+        
     
     def create_lead(self):
         self.user_detail = self.LEADS.find_one( {"email": self.lead_data["email"], "phone": self.lead_data["phone"]} )
@@ -29,8 +44,21 @@ class LeadAutomator:
     def get_keywords(self,field:str,splitBy:str):
         print("get by keyword")
         try:
+        
             temp=field.split(splitBy)
-            self.keywords.extend(temp)
+            temp_keyword=[]
+            temp_projectkeyword=[]
+            for line in temp:
+                temp_keyword=[i for i in self.keywords_all if i in line]
+                # project_keywords=list(set(temp_keyword))
+                temp_projectkeyword.extend(temp_keyword)
+
+            temp_projectkeyword.extend(self.keywords)
+            project_keywords=list(set(temp_projectkeyword))
+
+            self.keywords=project_keywords
+        
+        
         except Exception as e:
             print(str(e))
 
