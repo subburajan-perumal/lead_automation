@@ -692,13 +692,13 @@ def lancor(subproject:str, browser:Firefox, site_data:dict, lead_data: dict, pat
         save.click()
         
         time.sleep(5)
-        browser.save_screenshot[1]
+        browser.save_screenshot(save_path[1])
 
         return 1
 
     except Exception as e:
         print(str(e))
-        browser.save_screenshot[2]
+        browser.save_screenshot(save_path[2])
         return -1
 
 #working
