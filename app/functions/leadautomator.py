@@ -49,7 +49,7 @@ class LeadAutomator:
             temp_keyword=[]
             temp_projectkeyword=[]
             for line in temp:
-                temp_keyword=[i for i in self.keywords_all if i in line]
+                temp_keyword=[i for i in self.keywords_all if i.upper() in line.upper()]
                 # project_keywords=list(set(temp_keyword))
                 temp_projectkeyword.extend(temp_keyword)
 
