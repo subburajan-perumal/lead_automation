@@ -1,6 +1,6 @@
 import logging
 from celery.result import AsyncResult
-from flask import Blueprint,Response, jsonify,request,current_app
+from flask import Blueprint,Response, jsonify,request
 from ..util.request_handler import find_format
 import time
 import json
@@ -36,7 +36,7 @@ def test_page():
 
 
 @home.post("/")
-def home_page():
+def homepage_post():
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
