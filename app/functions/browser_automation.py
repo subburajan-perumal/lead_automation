@@ -1116,6 +1116,7 @@ def shriram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, pat
 def tvs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list):
     try:
         save_path=path
+        first_name,last_name=getName(lead_data['name'])
         browser.get(site_data["url"])
         phone_no= PN.parse(lead_data['phone'])    
         #search=browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/section/div[1]/div/div[2]/div/form/fieldset[1]/input')
@@ -1147,11 +1148,11 @@ def tvs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list
         time.sleep(3)
         
         firstnamelead=browser.find_element(By.XPATH,'//*[@id="lead_first_name"]')
-        firstnamelead.send_keys(lead_data['name'])
+        firstnamelead.send_keys(first_name)
         time.sleep(1)
 
         lastnamelead=browser.find_element(By.XPATH,'//*[@id="lead_last_name"]')
-        lastnamelead.send_keys(lead_data['name'])
+        lastnamelead.send_keys(last_name)
         time.sleep(1)
 
         emaillead=browser.find_element(By.XPATH,'//*[@id="lead_email"]')
