@@ -170,7 +170,7 @@ class SiteAutomator:
                 # print("uploaded file : ", self.path[2])
                 # print("failed  lead uploaded")
                 logger.info(f"lead_id :{self.lead_data['lead_id']}")
-                print("lead path :  {self.path}")
+                print(f"lead path :  {self.path}")
                 # print("lead_id :", self.lead_data["lead_id"])
                 logger.info("attachments uploaded")
                 # print("attachments uploaded")
