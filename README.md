@@ -1,55 +1,91 @@
-# Real-estate lead automation
+<h1 align="center"> Real-estate lead automation</h1>
 
-## Dependencies
-wsgi= gunicorn 20.1.0
-web = flask_2.0.2
-worker = celery_5.2.3 
-message_broker = redis_6.0.16
-storage_location = ./storage
-browser = firefox 97.0.1
-webdriver= geckodriver 30.x
-database = mongodb atlas free tier
-https_tunnel=ngrok
-
-Mongodb collection:
-        - Site
-        - leads
+## Requirements
+* WSGI = [gunicorn 20.1.0](https://gunicorn.org/)<br>
+Web_Server = [flask_2.0.2](https://flask.palletsprojects.com/en/2.1.x/)<br>
+Worker = [celery_5.2.3](https://docs.celeryq.dev/en/stable/)<br> 
+Message_broker = [redis_6.0.16](https://redis.io)<br>
+Storage_location = ./storage<br>
+Browser = firefox 97.0.1<br>
+Webdriver= geckodriver 30.x<br>
+Database = Mongodb Atlas M0<br>
+HTTPS_tunnel = ngrok<br>
 
 ## Installation:
-
+### Step 1:
+> clone code from   git repo
+```sh
 git clone https://github.com/subburajan-perumal/lead_automation.git
 
+```
+
+```sh
 cd lead_automation
-
-git fetch
-
+```
+> switch to latest branch
+```sh
 git checkout origin/release_2.1
+```
 
+### Step 2:
+
+for activate virtual enivironment
+```sh
 source genv/bin/activate
+```
+### Step 3:
 
+install python dependencies
+```sh
 pip install -r requirements.txt
+```
+### Step 4:
 
-set ssl certifcate and key in gunicorn.conf.py
-//certfile=<certificatefile>
-//keyfile=<keyfile>
+set ssl certifcate and key file  in gunicorn.conf.py
+
+```py
+#gunicorn.conf.py<br>
+certfile=certificatefile
+keyfile=keyfile
+```
+### Step 6:
+
+## HTTPS tunnel
+```sh
+#for first time
+$ ngrok authtoken <authkey>
 
 
-### start server and worker:
+$ ./ngrok http 443
+```
 
-terminal 1: gunicorn -c gunicorn
-terminal 2: celery -A app.celery worker -l info -c 1 -Q default,lead,celery -n leadworker@%h -f logs/%n-%i.log
-terminal 3: celery -A app.celery worker -l info -c 2 -Q default,browser,celery -n selenium_worker@%h -f logs/%n-%i.log
-terminal 4: celery -A app.celery flower
+## Server 
 
-### start ngrok for https tunnel
+Start flask server
+```sh
+$ gunicorn -c gunicorn.conf.py
+```
 
-cmd: ngrok authtoken <authkey>
+## Leadworker
+Start lead worker
+```sh
+$ celery -A app.celery worker -l info -c 1 -Q default,lead,celery -n leadworker@%h -f logs/%n-%i.log
+```
 
-cmd: ./ngrok http 443
 
-### zoho crm 
-> settings-> workflow Rules  
-> search for production workflow
-> view configuration of workflow 
-> click instance action
-> place the new ngrok link
+## Selenium worker
+Start selenium worker
+```sh
+$ celery -A app.celery worker -l info -c 2 -Q default,browser,celery -n selenium_worker@%h -f logs/%n-%i.log
+```
+
+## Monitoring tool
+Start monitoring tool
+```sh
+$ celery -A app.celery flower
+```
+
+
+<footer>
+
+<footer>
