@@ -13,7 +13,7 @@ import json
 from celery.utils.log import get_task_logger
 
 
-logger = get_task_logger("task_logger")
+celery_logger = get_task_logger(__name__)
 celery_app = Celery(__name__,
                     broker=CeleryConfig.BROKER_URL,
                     backend=CeleryConfig.RESULT_BACKEND)
@@ -27,8 +27,11 @@ def check_celery():
 @celery_app.task()
 def lead(**lead_data):
     try:
-        logger.info("lead automator started")
+        celery_logger.info("lead automator started")
         lead_data["phone"]=getPhonenumber([lead_data[field] for field in phone_field])
+        if lead_data['phone'] is None:
+            return "phonenumber not found"
+
         LA = LeadAutomator(lead_data=lead_data)
         LA.create_lead()
         for _ in keyword_field:
@@ -40,26 +43,26 @@ def lead(**lead_data):
         for _site in site_list:
             site_name = _site['name']
             site_projectname = _site['project_list']['project_name']
-            logger.info(f"Site: {site_name}; Project: {site_projectname}")
+            celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
 
             task_list.append(browserAutomate.s(_site, lead_data))
         job = group(task_list)
         output = job.apply_async(queue="browser")
         print(output)
         result = "success"
-        logger.info("task sent to browser queue")
+        celery_logger.info("task sent to browser queue")
         return result
     except Exception as e:
-        print(str(e))
-        return "failed"
+        celery_logger.exception("problem in sending lead")
+        return "problem in sending lead"
 
 
 @shared_task()
 def browserAutomate(_site, lead_data):
-    logger.info("browser started")
+    celery_logger.info("browser started")
     site_name = _site['name']
     site_projectname = _site['project_list']['project_name']
-    logger.info(f"Site: {site_name}; Project: {site_projectname}")
+    celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
     browserAutomation = SiteAutomator(
                                     lead_data["email"],
                                     lead_data,
