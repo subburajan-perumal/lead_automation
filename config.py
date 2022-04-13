@@ -11,12 +11,16 @@ keyword_field = [
         "seperator": ";"
     },
     {
-        "field": "interested_project",
+        "field": "interested_properties",
         "seperator": ";"
     },
     {
         "field": "interested_localities",
         "seperator": ";"
+    },
+    {
+        "field":"initial_enquiry_particulars_automation",
+        "seperator":";"
     }
 ]
 phone_field=["phone","mobile","alt_phone"]
