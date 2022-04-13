@@ -61,7 +61,6 @@ def browserAutomate(_site, lead_data):
     site_projectname = _site['project_list']['project_name']
     logger.info(f"Site: {site_name}; Project: {site_projectname}")
     browserAutomation = SiteAutomator(
-                                    lead_data["phone"],
                                     lead_data["email"],
                                     lead_data,
                                     site_data=_site)
