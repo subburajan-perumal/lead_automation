@@ -1,5 +1,3 @@
-from asyncio import tasks
-from cmath import log
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
@@ -48,11 +46,52 @@ project_store = {
     "vijayaraja" : vr 
 
 }
+required_store={
+    "adityaram":{"function":adityaram,"required_field":["phone","email"]},
+    "alliance":{"function":alliance,"required_field":["phone"]},
+    "akshaya":{"function":akshaya,"required_field":["phone"]},
+    "brigade":{"function":brigade,"required_field":["email","phone"]},
+    "casagrand":{"function":casagrand,"required_field":["phone"]},
+    
+    #country cod also need for dlf
+    "dlf":{"function":dlf,"required_field":["phone"]},
+    "doshi":{"function":doshi,"required_field":["phone"]},
+    "dra":{"function":dra,"required_field":["phone"]},
+    "fomra":{"function":fomra,"required_field":["email","phone"]},
+    "gsquare":{"function":gsquare,"required_field":["email","phone"]},
+
+    #countrycode not required
+    "hiranandani":{"function":hiranandani,"required_field":["email","phone"]},
+    "krishnagrp":{"function":krishnagrp,"required_field":["email"]}
+
+}    
+    # "alliance": ["phone"],
+    # "akshaya": akshaya,  
+    # "brigade": brigade,
+    # "casagrand": casagrand,
+    # "dlf" : dlf,
+    # "doshi": doshi,
+    # "dra": dra,  
+    # "fomra": fomra,  
+    # "gsquare": gsquare,  hiranandani
+    # "": hiranandani,
+    # # "incor":incor,
+    # "krishnagrp": krishnagrp,
+    # "lifestyle": lifestyle,
+    # "lancor":lancor, 
+    # "pragnya": pragnya,  
+    # "radiance": radiance,
+    # "radiance_phase_2":radiance_,
+    # "shriram"    : shriram,
+    # "tvs": ["phone","email"],
+    # "vijayaraja" : vr
+
 
 
 class SiteAutomator:
-    def __init__(self, phone, email, lead_data, site_data) -> None:
-        self.phone = phone
+
+
+    def __init__(self, email, lead_data, site_data) -> None:
         self.email = email
         self.lead_data = lead_data
         self.path = ""
@@ -63,7 +102,7 @@ class SiteAutomator:
 
         self.LEAD = self.DB["leads"]
         self.SITE = ""
-        
+        self.field_flag=None
 
         self.driver = Config.WEB_DRIVER
 
@@ -137,10 +176,13 @@ class SiteAutomator:
                     self.path, self.site_data['name'], self.sub_project_name, self.lead_data['name'])
                 v_automator = project_store[self.site_data['name']]
                 self.result = v_automator(
-                    self.sub_project_name, self.browser, self.site_data, self.lead_data, self.automate_path)
+                   self.sub_project_name, self.browser, self.site_data, self.lead_data, self.automate_path)
         except Exception as e:
             self.result = 2
             logger.exception("automte flow error")
+
+        finally:
+                self.upload_data()
 
     def upload_data(self):
 

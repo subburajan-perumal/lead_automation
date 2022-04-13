@@ -1,7 +1,10 @@
 from celery import Celery
 from numpy import maximum
+import phonenumbers
+from app.util.utility import getPhonenumber
 from config import CeleryConfig
-from config import keyword_field
+
+from config import keyword_field,phone_field
 from celery import shared_task, group
 from bson import json_util
 from app.functions.leadautomator import LeadAutomator
@@ -25,6 +28,7 @@ def check_celery():
 def lead(**lead_data):
     try:
         logger.info("lead automator started")
+        lead_data["phone"]=getPhonenumber([lead_data[field] for field in phone_field])
         LA = LeadAutomator(lead_data=lead_data)
         LA.create_lead()
         for _ in keyword_field:
@@ -63,8 +67,8 @@ def browserAutomate(_site, lead_data):
                                     site_data=_site)
     browserAutomation.projectCheck(site_name, site_projectname)
     browserAutomation.automated_flow()
-    upload_result = browserAutomation.upload_data()
-    print(f"data upload :{upload_result}")
+    # upload_result = browserAutomation.upload_data()
+    # print(f"data upload :{upload_result}")
     browserAutomation.teardown()
     return "success"
 

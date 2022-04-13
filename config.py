@@ -19,6 +19,7 @@ keyword_field = [
         "seperator": ";"
     }
 ]
+phone_field=["phone","mobile","alt_phone"]
 
 
 # Dont touch

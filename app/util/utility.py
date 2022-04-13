@@ -13,6 +13,26 @@ def getTime():
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             return dt_string
 
+def getPhonenumber(numberlist:list):
+    import phonenumbers as PN
+    filter_number=[]
+    numberstring="".join(str(i) for i in numberlist)
+    numbertext=PN.PhoneNumberMatcher(str(numberlist),None)
+    # print(numbertext.has_next())
+
+    for number in numbertext:
+        print(filter_number.append(number.raw_string))
+   
+    
+    for number in numberlist:
+        if len(number)==10:
+            filter_number.append("+91"+number)
+            print("filtered_array : ",filter_number)
+    if len(filter_number)>0:
+        return(filter_number[0])
+    else:
+        return None
+
 
 def getName(name):
     splited_name=name.split(" ")
