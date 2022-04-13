@@ -8,18 +8,19 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.alert import Alert
 from app.util.utility import getName
 import phonenumbers as PN
+from celery.utils.log import get_task_logger
 from phonenumbers import geocoder as GC
 import logging
 import time
-browserLog=logging.getLogger("browser_log")
-
+# browserLog=logging.getLogger("browser_log")
+browserLog=get_task_logger(__name__)
 # browserLog.set
 
 
 
 def adityaram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, path:list) :
     try:
-        browserLog.info("adiyaram executed")
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path= path
 
         browser.get(site_data["url"])
@@ -52,16 +53,17 @@ def adityaram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, p
         browser.save_screenshot(save_path[1])    
         browser.close()
         browserLog.info("adityaram finised")
-    
+        return 1
     except Exception as e:
-        print(str(e))
-        browserLog.exception(str(e))
+        # print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
 #working
 def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,automate_path:list):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path = automate_path
         fullname=str(lead_data['name'])
         first_name,last_name=getName(fullname)
@@ -108,12 +110,11 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
-        
         return 1
 
     except Exception as e:
-        time.sleep(2)
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
+        # print(str(e))
         browser.save_screenshot(save_path[2])
         browser.close()
         return -1
@@ -121,6 +122,7 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
 #issue in handling subproject
 def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, automate_path:list):
     try:
+
         subproject_2=""
          # Villabelvedere/Eternity
         if subproject=="Villabelvedere":
@@ -143,6 +145,8 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         if subproject=="Jasmine springs":
             subproject="OMR Cluster - JS/CNCB,CNGS"
             subproject_2="Jasmine springs"
+
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
 
         save_path = automate_path
         fullname=str(lead_data['name'])
@@ -183,14 +187,14 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         browser.close()
         return 1
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
 #working
 def brigade(subproject:str, browser: Firefox, site_data:dict, lead_data:dict,automate_path:list):         
     try:    
-        
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path = automate_path
         fullname= str(lead_data['name'])
         first_name, last_name = getName(fullname)
@@ -261,15 +265,14 @@ def brigade(subproject:str, browser: Firefox, site_data:dict, lead_data:dict,aut
         return 1
 
     except Exception as e:
-        print(str(e))
-        time(5)
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
-    
         return -1
 
 #working
 def casagrand(subproject, browser, site_data, lead_data, automate_path):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path = automate_path
         fullname=str(lead_data['name'])
         first_name,last_name=getName(fullname)
@@ -320,13 +323,14 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
         browser.close()
         return 1
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
 
 def doshi(subproject, browser, site_data, lead_data, path):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path = path
         browser.get(site_data["url"])
         search=browser.find_element(By.ID,'username')
@@ -357,7 +361,7 @@ def doshi(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
@@ -365,6 +369,7 @@ def doshi(subproject, browser, site_data, lead_data, path):
 def dlf(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, path:list):
     
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
         locationname="Siruseri"
         phone=PN.parse(lead_data['phone'])
@@ -428,13 +433,14 @@ def dlf(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, path:li
         return 1        
     
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
 #working
 def dra(subproject, browser, site_data, lead_data, path):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
 
         browser.get(site_data["url"])
@@ -484,13 +490,14 @@ def dra(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
 #error occur at the end of selenium
 def fomra(subproject:str, browser, site_data:dict, lead_data:dict, automate_path:list):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path = automate_path
         fullname= str(lead_data['name'])
         first_name, last_name = getName(fullname)
@@ -523,8 +530,7 @@ def fomra(subproject:str, browser, site_data:dict, lead_data:dict, automate_path
         browser.close()
         return 1
     except Exception as e:
-        print(str(e))
-        time.sleep(2)
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         browser.close()
         return -1
@@ -532,6 +538,7 @@ def fomra(subproject:str, browser, site_data:dict, lead_data:dict, automate_path
 
 def gsquare(subproject, browser, site_data, lead_data, path):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
 
         browser.get(site_data["url"])
@@ -560,15 +567,16 @@ def gsquare(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
 #working
 def hiranandani(subproject, browser, site_data, lead_data, path):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
-        phone=PN.parse(lead_data.get(['phone']))
+        phone=PN.parse(lead_data['phone'])
         browser.get(site_data["url"])
         tem = browser.find_element(By.CLASS_NAME, 'reffer-btn').click()
 
@@ -600,13 +608,14 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
 #working
 def krishnagrp(subproject, browser, site_data, lead_data, path):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
 
         browser.get(site_data["url"])
@@ -641,7 +650,7 @@ def krishnagrp(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         
         return -1
@@ -649,6 +658,7 @@ def krishnagrp(subproject, browser, site_data, lead_data, path):
 #working
 def lancor(subproject:str, browser:Firefox, site_data:dict, lead_data: dict, path:list):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path = path
         first_name,last_name= getName(lead_data['name'])
         browser.get(site_data["url"])
@@ -697,23 +707,13 @@ def lancor(subproject:str, browser:Firefox, site_data:dict, lead_data: dict, pat
         return 1
 
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
 #working
 def lifestyle(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, path:list):
-    save_path=path
-
-    phone=PN.parse(lead_data['phone'])
-    phone_no = phone.national_number
-    alternet_contact = phone.national_number
-    whatsapp = phone.national_number
-    remark = "NIL"
-    project_intrested = subproject
-    #flat_type = '1 BHK'
-    enquiry_sourse = 'Channel Partner'
-    enquiry_owner  = 'LeadAutomation'
+    
     #location = 'A'
     #budget = 'Below 5'
     #enquiry_Medium = 'Server Call'
@@ -727,6 +727,18 @@ def lifestyle(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, p
 
 
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
+        save_path=path
+
+        phone=PN.parse(lead_data['phone'])
+        phone_no = phone.national_number
+        alternet_contact = phone.national_number
+        whatsapp = phone.national_number
+        remark = "NIL"
+        project_intrested = subproject
+        #flat_type = '1 BHK'
+        enquiry_sourse = 'Channel Partner'
+        enquiry_owner  = 'LeadAutomation'
         browser.get(site_data["url"])
         search=browser.find_element(By.ID,'username')
         search.send_keys(site_data["email"])
@@ -851,7 +863,7 @@ def lifestyle(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, p
         # print('Successfully added' + str(lead.id) + ' ' + str(sub_project_name) + ' ' + str(lead.status))
     
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
 
         # browser.save_screenshot(save_path2)
@@ -861,6 +873,7 @@ def lifestyle(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, p
 #working
 def pragnya(subproject, browser, site_data, lead_data, path):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
 
         browser.get(site_data["url"])
@@ -895,7 +908,7 @@ def pragnya(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
     
         return -1
@@ -903,6 +916,7 @@ def pragnya(subproject, browser, site_data, lead_data, path):
 #working
 def radiance(subproject, browser, site_data, lead_data, path):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path= path
         phone_no= PN.parse(lead_data['phone'])
         country_name=GC.country_name_for_number(phone_no,'en')
@@ -974,13 +988,14 @@ def radiance(subproject, browser, site_data, lead_data, path):
         return 1
 
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
 def radiance_(subproject, browser, site_data, lead_data, path):
     
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
         phone=PN.parse(lead_data['phone'])
         phoneno=phone.national_number
@@ -1029,12 +1044,13 @@ def radiance_(subproject, browser, site_data, lead_data, path):
         return 1
     
     except Exception as e:
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
-        print(str(e))
         return -1
 
 def shriram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, path:list):   
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
         browser.get(site_data["url"])
         phone=PN.parse(lead_data['phone'])
@@ -1098,7 +1114,7 @@ def shriram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, pat
             # end=browser.find_element(By.XPATH,"/html/body/div[3]/div/div/div[3]/button")
             # end.click()
         except Exception as e:
-            print(str(e))
+            pass
         
         time.sleep(1)
         browser.save_screenshot(save_path[1])
@@ -1107,7 +1123,7 @@ def shriram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, pat
 
 
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
 
@@ -1115,6 +1131,7 @@ def shriram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, pat
 #working
 def tvs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list):
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
         first_name,last_name=getName(lead_data['name'])
         browser.get(site_data["url"])
@@ -1243,7 +1260,7 @@ def tvs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list
     
     
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
         
@@ -1251,6 +1268,7 @@ def tvs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list
 def vr(subproject, browser, site_data, lead_data, path):
 
     try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
         browser.get(site_data["url"])
 
@@ -1286,7 +1304,7 @@ def vr(subproject, browser, site_data, lead_data, path):
         
     
     except Exception as e:
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
 
         return -1        
