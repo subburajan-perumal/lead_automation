@@ -1,6 +1,6 @@
 name: flask_applcation
 on:
- pull_request:
+ push:
    branches:
      - "release_2.1"
      
