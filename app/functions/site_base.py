@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from celery.utils.log import get_task_logger
 from config import Config
 
-logger=get_task_logger(__name__)
+logger = get_task_logger(__name__)
 
 # async def browsertimer(v_browser):
 #     time.sleep(100)
@@ -25,71 +25,47 @@ WEBDRIVER_LOG = "webdriver.log"
 project_store = {
     "adityaram": adityaram,
     "alliance": alliance,
-    "akshaya": akshaya,  
+    "akshaya": akshaya,
     "brigade": brigade,
-    "casagrand": casagrand,
-    "dlf" : dlf,
+    "dlf": dlf,
     "doshi": doshi,
-    "dra": dra,  
-    "fomra": fomra,  
-    "gsquare": gsquare,  
+    "dra": dra,
+    "fomra": fomra,
+    "gsquare": gsquare,
     "hiranandani": hiranandani,
     # "incor":incor,
     "krishnagrp": krishnagrp,
     "lifestyle": lifestyle,
-    "lancor":lancor, 
-    "pragnya": pragnya,  
+    "lancor": lancor,
+    "pragnya": pragnya,
     "radiance": radiance,
-    "radiance_phase_2":radiance_,
-    "shriram"    : shriram,
+    "radiance_phase_2": radiance_,
+    "shriram": shriram,
     "tvs": tvs,
-    "vijayaraja" : vr 
+    "vijayaraja": vr
 
 }
-required_store={
-    "adityaram":{"function":adityaram,"required_field":["phone","email"]},
-    "alliance":{"function":alliance,"required_field":["phone"]},
-    "akshaya":{"function":akshaya,"required_field":["phone"]},
-    "brigade":{"function":brigade,"required_field":["email","phone"]},
-    "casagrand":{"function":casagrand,"required_field":["phone"]},
-    
-    #country cod also need for dlf
-    "dlf":{"function":dlf,"required_field":["phone"]},
-    "doshi":{"function":doshi,"required_field":["phone"]},
-    "dra":{"function":dra,"required_field":["phone"]},
-    "fomra":{"function":fomra,"required_field":["email","phone"]},
-    "gsquare":{"function":gsquare,"required_field":["email","phone"]},
+required_store = {
+    "adityaram": {"function": adityaram, "required_field": ["phone", "email"]},
+    "alliance": {"function": alliance, "required_field": ["phone"]},
+    "akshaya": {"function": akshaya, "required_field": ["phone"]},
+    "brigade": {"function": brigade, "required_field": ["email", "phone"]},
+    "casagrand": {"function": casagrand, "required_field": ["phone"]},
 
-    #countrycode not required
-    "hiranandani":{"function":hiranandani,"required_field":["email","phone"]},
-    "krishnagrp":{"function":krishnagrp,"required_field":["email"]}
+    # country cod also need for dlf
+    "dlf": {"function": dlf, "required_field": ["phone"]},
+    "doshi": {"function": doshi, "required_field": ["phone"]},
+    "dra": {"function": dra, "required_field": ["phone"]},
+    "fomra": {"function": fomra, "required_field": ["email", "phone"]},
+    "gsquare": {"function": gsquare, "required_field": ["email", "phone"]},
 
-}    
-    # "alliance": ["phone"],
-    # "akshaya": akshaya,  
-    # "brigade": brigade,
-    # "casagrand": casagrand,
-    # "dlf" : dlf,
-    # "doshi": doshi,
-    # "dra": dra,  
-    # "fomra": fomra,  
-    # "gsquare": gsquare,  hiranandani
-    # "": hiranandani,
-    # # "incor":incor,
-    # "krishnagrp": krishnagrp,
-    # "lifestyle": lifestyle,
-    # "lancor":lancor, 
-    # "pragnya": pragnya,  
-    # "radiance": radiance,
-    # "radiance_phase_2":radiance_,
-    # "shriram"    : shriram,
-    # "tvs": ["phone","email"],
-    # "vijayaraja" : vr
-
+    # countrycode not required
+    "hiranandani": {"function": hiranandani, "required_field": ["email", "phone"]},
+    "krishnagrp": {"function": krishnagrp, "required_field": ["email"]}
+}
 
 
 class SiteAutomator:
-
 
     def __init__(self, email, lead_data, site_data) -> None:
         self.email = email
@@ -97,12 +73,12 @@ class SiteAutomator:
         self.path = ""
         self.result = 0
         self.site_data = site_data
-        self.CONN = MongoClient(os.getenv("MONGO_DB",MONGO_DB))
+        self.CONN = MongoClient(os.getenv("MONGO_DB", MONGO_DB))
         self.DB = self.CONN['lead_automation']
 
         self.LEAD = self.DB["leads"]
         self.SITE = ""
-        self.field_flag=None
+        self.field_flag = None
 
         self.driver = Config.WEB_DRIVER
 
@@ -120,25 +96,13 @@ class SiteAutomator:
     def projectCheck(self, project, sub_project_name):
         try:
 
-            # print(self.SITE['name'])
-            # print("check for existing project working")
             logger.info("checking for existing project in db")
             self.sub_project_name = sub_project_name
-
-                # key_value=self.KEYWORD.find_one({},{sub_project_name:1})
-                # if key_value:
-                #     temp_data=dict(*key_value)
-                #     self.sub_project_name=temp_data[sub_project_name]
-                # else:
-
-                #  db.Keyword.find({},{"Fomra Vayou":1})
-                # self.sub_project_namse = self.DB["Keyword"].find({},{"_id":0,:sub_project_name:1})
 
             filterdate = datetime.now()-timedelta(30)
             self.projectexist = self.LEAD.find_one(
                 {
                     "email": self.lead_data["email"],
-                    # "email": self.lead_data["email"],
                     "project": {
                         "$elemMatch":
                         {
@@ -177,12 +141,12 @@ class SiteAutomator:
                 v_automator = project_store[self.site_data['name']]
                 self.result = v_automator(
                    self.sub_project_name, self.browser, self.site_data, self.lead_data, self.automate_path)
-        except Exception as e:
+        except Exception:
             self.result = 2
             logger.exception("automte flow error")
 
         finally:
-                self.upload_data()
+            self.upload_data()
 
     def upload_data(self):
 
@@ -195,15 +159,14 @@ class SiteAutomator:
                 upload_an_attachment(
                     self.lead_data["lead_id"], os.path.abspath(self.automate_path[1]))
                 # print("upload lead working")
-                # 
                 logger.info(f"upload file{ self.automate_path[0] }")
                 # print("uploaded file : ", os.path.abspath(self.automate_path[0]))
                 logger.info(f"upload file{ self.automate_path[1] }")
                 # print("uploaded file : ", self.automate_path[1])
                 # print("success lead uploaded")
-                if self.result == 2 or self.result==-1:
-                #     if os.path.exists(self.automate_path[0]):
-                #     upload_an_attachment(
+                if self.result == 2 or self.result == -1:
+                    # if os.path.exists(self.automate_path[0]):
+                    # upload_an_attachment(
                     upload_an_attachment(
                         self.lead_data["lead_id"], os.path.abspath(self.automate_path[2]))
                     logger.info(f"upload file{ self.automate_path[2] }")
@@ -227,7 +190,7 @@ class SiteAutomator:
                 "applied_time": datetime.now(),
                 "status": self.result,
             }
-            dbresult=self.LEAD.update_one(
+            dbresult = self.LEAD.update_one(
                 {
                     "email": self.lead_data["email"],
                     "phone": self.lead_data["phone"]
@@ -245,10 +208,11 @@ class SiteAutomator:
             logger.info("lead uploaded")
             # print("lead uploaded")
             return dbresult.upserted_id
-        except Exception :
+        except Exception:
             logger.exception("error occured in automation")
-            dbresult=-1
+            dbresult = -1
             return dbresult
+
     def teardown(self):
         self.browser.quit()
         logger.info("browser quit")

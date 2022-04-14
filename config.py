@@ -19,11 +19,11 @@ keyword_field = [
         "seperator": ";"
     },
     {
-        "field":"initial_enquiry_particulars_automation",
-        "seperator":";"
+        "field": "initial_enquiry_particulars_automation",
+        "seperator": ";"
     }
 ]
-phone_field=["phone","mobile","alt_phone"]
+phone_field = ["phone", "mobile", "alt_phone"]
 
 
 # Dont touch
@@ -67,8 +67,7 @@ class CeleryConfig(Config):
     TASK_ROUTES = {
                     "app.tasks.*":
                     {
-                        "queue": "lead",
-                        "queue": "browser"
+                        "queue": "lead,celery"
                     }
                     # "celery_worker.*":{
                     #     "queue":"lead",

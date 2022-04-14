@@ -1,10 +1,7 @@
 from celery import Celery
-from numpy import maximum
-import phonenumbers
 from app.util.utility import getPhonenumber
 from config import CeleryConfig
-
-from config import keyword_field,phone_field
+from config import keyword_field, phone_field
 from celery import shared_task, group
 from bson import json_util
 from app.functions.leadautomator import LeadAutomator
@@ -28,7 +25,7 @@ def check_celery():
 def lead(**lead_data):
     try:
         celery_logger.info("lead automator started")
-        lead_data["phone"]=getPhonenumber([lead_data[field] for field in phone_field])
+        lead_data["phone"] = getPhonenumber([lead_data[field] for field in phone_field])
         if lead_data['phone'] is None:
             return "phonenumber not found"
 
@@ -52,7 +49,7 @@ def lead(**lead_data):
         result = "success"
         celery_logger.info("task sent to browser queue")
         return result
-    except Exception as e:
+    except Exception:
         celery_logger.exception("problem in sending lead")
         return "problem in sending lead"
 
