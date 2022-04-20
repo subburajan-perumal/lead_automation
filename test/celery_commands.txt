@@ -1,0 +1,17 @@
+# systemctl
+systemctl restart lead_automation_server.service
+
+
+#start
+
+genv/bin/celery multi start  leadworker selenium -E -A app.celery -c 1 -c:selenium 4  -Q:leadworker lead,celery,default -Q:selenium browser,default,celery --pidfile=/run/celery/%N.pid 
+
+#restart
+genv/bin/celery multi restart  leadworker selenium -E -A app.celery -c 1 -c:selenium 4  -Q:leadworker lead,celery,default -Q:selenium browser,default,celery --pidfile=/run/celery/%N.pid
+
+#stop
+genv/bin/celery multi stop  leadworker selenium 
+
+
+# Flower
+genv/bin/celery -A app.celery flower
