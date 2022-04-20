@@ -11,7 +11,7 @@ from app.tasks import lead
 logging.basicConfig(
     # filename= Config.LOG_PATH+"lead_automation.log",
     level=logging.INFO,
-    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
+    # format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
     encoding='utf-8'
     )
 
