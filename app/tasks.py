@@ -33,7 +33,7 @@ def lead(**lead_data):
         LA.create_lead()
         for _ in keyword_field:
             LA.get_keywords(lead_data.get(_["field"], ""), ";")
-        if len(keyword_field) == 0:
+        if len(LA.keywords) == 0:
             LA.get_keywords("None (default)", ";")
         site_list = LA.search_by_keyword()
         site_list = json.loads(json_util.dumps(site_list))
