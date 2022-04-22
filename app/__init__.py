@@ -3,6 +3,7 @@ This module contain the flask  webpages and error handling site
 and creata a app
 """
 
+from database import mongo
 from flask import Flask
 from celery import Celery
 from app.views.home import home
@@ -10,6 +11,7 @@ from app.views.error_handler import errorHandler
 from config import config
 from config import CeleryConfig
 from app.views.site import site
+from app.views.lead import lead
 import logging
 import os
 logging.basicConfig(level=logging.DEBUG)
@@ -36,4 +38,5 @@ def create_app(config_name=None):
     app.register_blueprint(home)
     app.register_blueprint(errorHandler)
     app.register_blueprint(site)
+    app.register_blueprint(lead)
     return app
