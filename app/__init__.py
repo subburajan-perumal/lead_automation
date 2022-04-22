@@ -3,7 +3,7 @@ This module contain the flask  webpages and error handling site
 and creata a app
 """
 
-from database import mongo
+from app.database import mongo
 from flask import Flask
 from celery import Celery
 from app.views.home import home
@@ -32,9 +32,11 @@ def create_app(config_name=None):
     if config_name is None:
         config_name = os.getenv("FLASK_CONFIG", "development")
     app = Flask(__name__)
+    
     app.config.from_object(config[config_name])
     app.logger.info("Lead Automation App created ")
-    app.config.from_object(config[config_name])
+    # app.config.from_object(config[config_name])
+    mongo.init_app(app)
     app.register_blueprint(home)
     app.register_blueprint(errorHandler)
     app.register_blueprint(site)

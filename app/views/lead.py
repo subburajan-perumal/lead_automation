@@ -23,8 +23,10 @@ def lead_today():
     
     try:
         db=mongo.db;
+        print(db)
         ls=[]
         lead_all = db.leads.find({"project":{"$exists":"true"}},{"_id":0}).sort("_id",-1).limit(50)
+        # for i in lead_all: print(i)
         # print(lead_all)
         # for i in lead_all:
         #     ls.append(i)
