@@ -25,6 +25,7 @@ def check_celery():
 def lead(**lead_data):
     try:
         celery_logger.info("lead automator started")
+        lead_data["email"] = str(lead_data).lower()
         lead_data["phone"] = getPhonenumber([lead_data[field] for field in phone_field])
         if lead_data['phone'] is None:
             return "phonenumber not found"
