@@ -187,7 +187,7 @@ class SiteAutomator:
             lead_detail = {
                 "projectname": self.site_data['name'],  # akshaya
                 "subproject": self.sub_project_name,  # Tango
-                "applied_time": datetime.now(),
+                "applied_time": getTime(),
                 "status": self.result,
             }
             dbresult = self.LEAD.update_one(
@@ -198,7 +198,7 @@ class SiteAutomator:
                 {
                     "$set":
                     {
-                        "modified_time": datetime.now()
+                        "modified_time": getTime()
                     },
                     "$push":
                     {

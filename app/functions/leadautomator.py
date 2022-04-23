@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from app.util.utility import getTime
 from datetime import datetime
 # from app.functions.site_base import SiteAutomator
 from config import Config
@@ -38,8 +39,8 @@ class LeadAutomator:
                             "name": fullname,
                             "phone": self.lead_data["phone"],
                             "email": self.lead_data["email"],
-                            "created_at": datetime.now(),
-                            "modified_time": datetime.now()
+                            "created_at": getTime(),
+                            "modified_time": getTime()
                             }
             self.LEADS.insert_one(lead_creation)
 

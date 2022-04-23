@@ -1,3 +1,7 @@
+import os
+from datetime import datetime
+import pytz
+
 def cmpstring(string1, string2):
     str1 = "".join([i for i in string1 if i.isalpha()])
     str2 = "".join([i for i in string2 if i.isalpha()])
@@ -5,18 +9,19 @@ def cmpstring(string1, string2):
 
 
 def getTime():
-    from datetime import datetime
-    import pytz
-    now = datetime.now(pytz.timezone('Asia/Kolkata'))
+    IST=pytz.timezone('Asia/Kolkata')
+    now = datetime.now(IST)
     # print("now =", now)
     # dd/mm/YY H:M:S
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    return dt_string
+    # dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    return now
 
 
 def getPhonenumber(numberlist: list):
     import phonenumbers as PN
+    # default_number=os.environ.get("")
     filter_number = []
+
     # numberstring = "".join(str(i) for i in numberlist)
     numbertext = PN.PhoneNumberMatcher(str(numberlist), None)
     # print(numbertext.has_next())
@@ -29,6 +34,7 @@ def getPhonenumber(numberlist: list):
             filter_number.append("+91"+number)
             print("filtered_array : ", filter_number)
     if len(filter_number) > 0:
+        
         return(filter_number[0])
     else:
         return None
