@@ -28,7 +28,7 @@ class LeadAutomator:
     def create_lead(self):
         self.user_detail = self.LEADS.find_one(
                                 {
-                                    "email": self.lead_data["email"],
+                                    "email": str(self.lead_data["email"]).lower(),
                                     "phone": self.lead_data["phone"]
                                 })
         # print(user_detail)
