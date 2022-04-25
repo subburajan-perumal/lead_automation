@@ -1,3 +1,4 @@
+import phonenumbers
 from selenium.webdriver import Firefox 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -149,6 +150,10 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
 
         save_path = automate_path
+        phone=PN.parse(lead_data['phone'])
+        phoneno=phone.raw_input
+        if str(lead_data['phone']).startswith(+91):
+            phoneno=phone.national_number
         fullname=str(lead_data['name'])
         first_name,last_name=getName(fullname)
         browser.get(site_data["url"])
@@ -341,7 +346,6 @@ def doshi(subproject, browser, site_data, lead_data, path):
         time.sleep(2)
         lead=browser.find_elements(By.CLASS_NAME,'icon-plus')[0].click()
         time.sleep(2)
-
         name  = browser.find_element(By.NAME, "leads_name")
         name.send_keys(lead_data['name'])
         contact=browser.find_element(By.NAME,'leads_mobile_number')
