@@ -100,8 +100,8 @@ class LeadAutomator:
                                 {
                                     "$in": self.keywords
                                 },
-                                # "project_list.projectStatus":1,
-                                "status": 1
+                                "project_list.projectStatus":1,
+                                # "status": 1
                             }
                         ]
                     }
