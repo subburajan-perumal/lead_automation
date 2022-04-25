@@ -27,6 +27,7 @@ project_store = {
     "alliance": alliance,
     "akshaya": akshaya,
     "brigade": brigade,
+    "casagrand": casagrand,
     "dlf": dlf,
     "doshi": doshi,
     "dra": dra,
