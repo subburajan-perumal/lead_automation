@@ -123,9 +123,8 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
 #issue in handling subproject
 def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, automate_path:list):
     try:
-
         subproject_2=""
-         # Villabelvedere/Eternity
+        # Villabelvedere/Eternity
         if subproject=="Villabelvedere":
             subproject="Villabelvedere/Eternity"
             subproject_2="Villabelvedere"
@@ -147,15 +146,13 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
             subproject="OMR Cluster - JS/CNCB,CNGS"
             subproject_2="Jasmine springs"
 
-        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
 
         save_path = automate_path
-        phone=PN.parse(lead_data['phone'])
-        phoneno=phone.raw_input
-        if str(lead_data['phone']).startswith(+91):
-            phoneno=phone.national_number
         fullname=str(lead_data['name'])
-        first_name,last_name=getName(fullname)
+        phone=PN.parse(lead_data["phone"])
+        phoneno=PN.format_number(phone,PN.PhoneNumberFormat.E164)
+        #testting
+        first_name,last_name=lead_data['first_name'],lead_data['last_name']
         browser.get(site_data["url"])
         fl_search=browser.find_element(By.ID,'email')
         fl_search.send_keys(site_data["email"])
@@ -170,7 +167,9 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         f_name=browser.find_element(By.NAME,'name')
         f_name.send_keys(lead_data['name'])
         contact=browser.find_element(By.NAME,'contact')
-        contact.send_keys(lead_data['phone'])
+        contact.send_keys(phoneno)
+        contact.clear()
+        contact.send_keys(phone.national_number)
         email=browser.find_element(By.NAME,'email')
         email.send_keys(lead_data['email'])
         project=Select(browser.find_element(By.ID,'select_project'))
@@ -178,7 +177,9 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         if subproject_2 != "" :
             projectsub=Select(browser.find_element(By.ID,'sub_project_select'))
             projectsub.select_by_visible_text(subproject_2)
-        browser.save_screenshot(save_path[0])    
+
+
+        # browser.save_screenshot(save_path[0])    
 
         add=browser.find_element(By.ID,'lead_submit_btn').click()
         aa = WebDriverWait(browser, 10).until(
@@ -187,15 +188,15 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         # browser.save_screenshot(save_path[0])
         aa.click()
         
-        time.sleep(5) ## FOR CHANGING WAIT TIME
+        time.sleep(3) ## FOR CHANGING WAIT TIME
         browser.save_screenshot(save_path[1])
         browser.close()
         return 1
+
     except Exception as e:
         browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
         return -1
-
 #working
 def brigade(subproject:str, browser: Firefox, site_data:dict, lead_data:dict,automate_path:list):         
     try:    
