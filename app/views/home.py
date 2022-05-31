@@ -71,3 +71,25 @@ def homepage_post():
         print(str(e))
         logging.info("invalid request received")
         return Response("something went wrong\n", status=400)
+
+
+@home.get("/99acres")
+def get_99acres():
+    return {"message":"99 acres endpoint working"}
+
+
+
+@home.post("/99acres")
+def webhook_99acres():
+    try:
+        secret_key="REDACTED_FLASK_SECRET"
+        if request.headers["token"] == secret_key:
+            print(request.headers)
+
+            print(request.get_data())
+            print(request.get_json())
+            return {"message":"99 acres request received"}
+        else:
+            return {"message":"Invalid token"}
+    except:
+        return  {"message":"invalid request"}

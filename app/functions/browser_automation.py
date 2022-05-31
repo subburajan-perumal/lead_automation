@@ -186,7 +186,7 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         aa = WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located((By.XPATH,"//*[@id='kt_table_1']/tbody/tr[1]/td[7]"))
         )
-        # browser.save_screenshot(save_path[0])
+        browser.save_screenshot(save_path[0])
         aa.click()
         
         time.sleep(3) ## FOR CHANGING WAIT TIME
