@@ -24,7 +24,7 @@ browserLog=logging.getLogger("selenium_log")
 # browserLog.setLevel=logging.INFO
 
 
-driver="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
+driver="./geckodriver"
 firefox_service = Service(driver)
 opt = Options()
 opt.add_argument ( "--incognito" )
@@ -75,11 +75,12 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
 
         intrest_project = browser.find_element(By.NAME, 'cname')
         new = Select(intrest_project)
-        new.select_by_index(3)      
+        new.select_by_index(13)      
 
         # browser.save_screenshot(save_path[0])
         browser.implicitly_wait(5)
         # browser.save_screenshot(save_path[1])
+        time.sleep(10)
         browser.close()
         browserLog.info("hiranandani Executed Successfully")
         return 1
