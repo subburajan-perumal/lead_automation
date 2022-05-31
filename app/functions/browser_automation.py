@@ -47,6 +47,7 @@ def adityaram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, p
         proj1.select_by_visible_text(subproject)
         time.sleep(3)
         browser.save_screenshot(save_path[0])
+        time.sleep(5)
 
         add=browser.find_element(By.XPATH,'/html/body/div[1]/div/div/div/div/div/div/form/div[8]/div/div/input').click()
         time.sleep(3)
@@ -523,11 +524,12 @@ def fomra(subproject:str, browser, site_data:dict, lead_data:dict, automate_path
         f_channel_phone.send_keys(site_data["channel_phone_number"])
 
         
-        browser.save_screenshot(save_path[0])    
+        browser.save_screenshot(save_path[0])
+        time.sleep(5)    
     
 
         f_submit= browser.find_element(By.XPATH, '/html/body/div/div/div/div/div/div/div/form/div[9]/div/div/input').click()
-        time.sleep(5)
+        time.sleep(10)
         # browser.implicitly_wait(5)
 
         
@@ -602,7 +604,7 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
 
         intrest_project = browser.find_element(By.NAME, 'cname')
         new = Select(intrest_project)
-        new.select_by_index(3)      
+        new.select_by_index(13)      
 
         browser.save_screenshot(save_path[0])
         add=browser.find_element(By.XPATH,'/html/body/div[3]/div/div/div/form/button').click()
