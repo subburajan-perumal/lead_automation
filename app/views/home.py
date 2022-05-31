@@ -1,4 +1,5 @@
 import logging
+from urllib import response
 from celery.result import AsyncResult
 from flask import Blueprint, Response, jsonify, request
 
@@ -88,7 +89,21 @@ def webhook_99acres():
 
             print(request.get_data())
             print(request.get_json())
-            return {"message":"99 acres request received"}
+            data=dict(request.get_json())
+            
+            name = data.get("name")
+            email = data.get("email")
+            phone = data.get("phone")
+            projects= data.get("project")
+            response={
+                "name":name,
+                "email":email,
+                "phone":phone,
+                "projects":projects
+            }
+            print(response)
+
+            return {"message":"99 acres request received "}
         else:
             return {"message":"Invalid token"}
     except:
