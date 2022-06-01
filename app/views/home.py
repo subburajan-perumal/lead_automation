@@ -93,3 +93,48 @@ def webhook_99acres():
             return {"message":"Invalid token"}
     except:
         return  {"message":"invalid request"}
+
+
+@home.get("/magicbricks")
+def get_magicbricks():
+    return {"message":"magicbricks endpoint working"}
+
+
+
+@home.post("/magicbricks")
+def webhook_magicbricks():
+    try:
+        secret_key="REDACTED_FLASK_SECRET"
+        if request.headers["token"] == secret_key:
+            print(request.headers)
+
+            print(request.get_data())
+            print(request.get_json())
+            return {"message":"magicbricks request received"}
+        else:
+            return {"message":"Invalid token"}
+    except:
+        return  {"message":"invalid request"}
+
+        
+@home.get("/housing")
+def get_housing():
+    return {"message":"housing endpoint working"}
+
+
+
+@home.post("/housing")
+def webhook_housing():
+    try:
+        secret_key="REDACTED_FLASK_SECRET"
+        if request.headers["token"] == secret_key:
+            print(request.headers)
+
+            print(request.get_data())
+            print(request.get_json())
+            return {"message":"housing request received"}
+        else:
+            return {"message":"Invalid token"}
+    except:
+        return  {"message":"invalid request"}
+        
