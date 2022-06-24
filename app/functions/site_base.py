@@ -180,10 +180,10 @@ class SiteAutomator:
                 # print("lead_id :", self.lead_data["lead_id"])
                 logger.info("attachments uploaded")
                 # print("attachments uploaded")
-            if self.result == 2 or self.result == -1:
-                send_mail(self.lead_data['lead_id'], self.path,
-                          self.sub_project_name, self.lead_data['name'])
-                logger.info("mail sent")
+            	#if self.result == 2 or self.result == -1:
+                #send_mail(self.lead_data['lead_id'], self.path,
+                #          self.sub_project_name, self.lead_data['name'])
+                #logger.info("mail sent")
         # DB
             lead_detail = {
                 "projectname": self.site_data['name'],  # akshaya
