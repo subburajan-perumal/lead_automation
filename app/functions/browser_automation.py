@@ -1055,6 +1055,66 @@ def radiance_(subproject, browser, site_data, lead_data, path):
         browser.save_screenshot(save_path[2])
         return -1
 
+
+def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list):
+
+    try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
+
+        save_path=path
+        browser.get(site_data["url"])
+        time.sleep(10)
+
+        browser.switch_to.frame('sandboxFrame')
+        browser.switch_to.frame('userHtmlFrame')
+
+        browser.find_element(By.XPATH, '//*[@id="loginName"]').send_keys(site_data['partner_name'])
+        browser.find_element(By.XPATH, '//*[@id="passML"]').send_keys(site_data['pass'])
+        browser.find_element(By.XPATH, '//*[@id="logingBtn"]').click()
+
+        time.sleep(30)
+
+        newLeadButton = browser.find_element(By.XPATH,'//*[@id="upladFile"]/div[1]/div[1]/div[1]/img')
+        newLeadButton.click()
+        time.sleep(2)
+
+        name  = browser.find_element(By.XPATH, '//*[@id="addCName"]')
+        name.click()
+        name.send_keys(lead_data['name'])
+
+        contact=browser.find_element(By.XPATH,'//*[@id="addCPh1"]')
+        contact.click()
+        contact.send_keys(lead_data['phone'])
+
+        contact=browser.find_element(By.XPATH,'//*[@id="addCPh2"]')
+        contact.click()
+        contact.send_keys(lead_data['phone'])
+
+        email=browser.find_element(By.XPATH,'//*[@id="addCMail1"]')
+        email.click()
+        email.send_keys(lead_data['email'])
+
+        email=browser.find_element(By.XPATH,'//*[@id="addCMail2"]')
+        email.click()
+        email.send_keys(lead_data['email'])
+
+        submitButton = browser.find_element(By.XPATH,'//*[@id="addFileSubmit"]')
+
+        browser.save_screenshot(save_path[1])
+
+        submitButton.click()
+                
+        return 1
+
+    
+    except Exception as e:
+        browserLog.exception(f"Site:{site_data['name']}")
+        browser.save_screenshot(save_path[2])
+
+        return -1
+
+
+
 def shriram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, path:list):   
     try:
         browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
@@ -1179,9 +1239,10 @@ def tvs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list
         lastnamelead.send_keys(last_name)
         time.sleep(1)
 
-        emaillead=browser.find_element(By.XPATH,'//*[@id="lead_email"]')
-        emaillead.send_keys(lead_data['email'])
-        time.sleep(1)                
+	# OLD EMAIL
+        # emaillead=browser.find_element(By.XPATH,'//*[@id="lead_email"]')
+        # emaillead.send_keys(lead_data['email'])
+        # time.sleep(1)                
 
         #projectlead=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/div/lightning-combobox/div[1]/lightning-base-combobox/div/div[1]/button')
         #projectlead=Select(browser.find_element(By.ID,'combobox-button-618'))
@@ -1228,7 +1289,7 @@ def tvs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list
         #contact.send_keys(phone)
         time.sleep(1)
 
-        projectlead=browser.find_element(By.XPATH,'/html/body/div[3]/form/div/div/div/div[2]/div/div[2]/div[4]/div/div/div/div[1]')
+        projectlead=browser.find_element(By.XPATH,'//*[@id="lead_project_id-selectized"]')
         #projectlead=browser.find_element_by_xpath('/html/body/div[3]/form/div/div/div/div[2]/div/div[2]/div[4]/div/div/div/div[1]/div')        
         #time.sleep(5)        
         projectlead.click()
@@ -1314,4 +1375,48 @@ def vr(subproject, browser, site_data, lead_data, path):
         browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
 
-        return -1        
+        return -1    
+        
+
+# XS
+def xs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list):
+
+    try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
+
+        save_path=path
+        browser.get(site_data["url"])
+        time.sleep(5)
+
+        name  = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[2]/div/div/input')
+        name.send_keys(lead_data['name'])
+        time.sleep(3)
+        
+        contact=browser.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[3]/div/div/div/input')
+        contact.send_keys(lead_data['phone'])
+
+        email=browser.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[4]/div/div/input')
+        email.send_keys(lead_data['email'])
+
+        projectName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[5]/div/div/select')
+        projectName.send_keys(subproject)
+        projectName.send_keys(Keys.RETURN)
+
+        cpName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[6]/div/div/input')
+        cpName.send_keys(site_data["partner_name"])
+
+        submitButton = browser.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[7]/div/div/input')
+        submitButton.click()
+
+        browser.save_screenshot(save_path[1])
+                
+        return 1
+        
+    
+    except Exception as e:
+        browserLog.exception(f"Site:{site_data['name']}")
+        browser.save_screenshot(save_path[2])
+
+        return -1
+
+    
