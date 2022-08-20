@@ -20,6 +20,7 @@ logging.basicConfig(
 # blueprint for the app route
 home = Blueprint("home", __name__)
 
+secret_key="REDACTED_FLASK_SECRET"
 
 @home.get("/tasks/<task_id>")
 def get_status(task_id):
@@ -83,31 +84,40 @@ def get_99acres():
 @home.post("/99acres")
 def webhook_99acres():
     try:
-        secret_key="REDACTED_FLASK_SECRET"
         if request.headers["token"] == secret_key:
+            start_time = time.time()
             print(request.headers)
-
             print(request.get_data())
             print(request.get_json())
-            data=dict(request.get_json())
             
-            name = data.get("name")
-            email = data.get("email")
-            phone = data.get("phone")
-            projects= data.get("project")
-            response={
+            response=dict(request.get_json())
+            name = response.get("name")
+            email = response.get("email")
+            phone = response.get("phone")
+            projects= response.get("project")
+            
+            data={
                 "name":name,
                 "email":email,
                 "phone":phone,
                 "projects":projects
             }
-            print(response)
+            print(data)
 
-            return {"message":"99 acres request received "}
+            result = lead.apply_async(kwargs=data, queue="lead")
+            print("task executed succesfully")
+
+            end_time = time.time()
+            print(f"Response time {end_time-start_time}")
+            return Response("received", 200)
+
         else:
-            return {"message":"Invalid token"}
-    except:
-        return  {"message":"invalid request"}
+            return Response("Invalid token", status=400)
+
+    except Exception as e:
+        print(str(e))
+        logging.info("invalid request received")
+        return Response("something went wrong\n", status=400)
 
 
 @home.get("/magicbricks")
@@ -119,7 +129,6 @@ def get_magicbricks():
 @home.post("/magicbricks")
 def webhook_magicbricks():
     try:
-        secret_key="REDACTED_FLASK_SECRET"
         if request.headers["token"] == secret_key:
             print(request.headers)
 
@@ -141,10 +150,8 @@ def get_housing():
 @home.post("/housing")
 def webhook_housing():
     try:
-        secret_key="REDACTED_FLASK_SECRET"
         if request.headers["token"] == secret_key:
             print(request.headers)
-
             print(request.get_data())
             print(request.get_json())
             return {"message":"housing request received"}

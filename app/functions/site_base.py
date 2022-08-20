@@ -41,10 +41,11 @@ project_store = {
     "pragnya": pragnya,
     "radiance": radiance,
     "radiance_phase_2": radiance_,
+    "sidharth": sidharth,
     "shriram": shriram,
     "tvs": tvs,
-    "vijayaraja": vr
-
+    "vijayaraja": vr,
+    "xs": xs,
 }
 required_store = {
     "adityaram": {"function": adityaram, "required_field": ["phone", "email"]},
@@ -150,9 +151,7 @@ class SiteAutomator:
             self.upload_data()
 
     def upload_data(self):
-
         try:
-
             # ZOHO attachment
             if self.result == 1 or self.result == -1:
                 upload_an_attachment(
