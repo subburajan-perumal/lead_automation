@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content%}
+
+
+<table class="table">
+    <tr>
+    <th>No</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>Created_at</th>
+    <th>Project name</th>
+    <th>Sub-project name</th>
+    <th>Registration time</th>
+    <th>Status</th>
+    <th>Source</th>
+
+</tr>
+{% for i in data %}
+{% for j in i.project}
+<tr>
+    <td>{{loop.index}}</td>
+    <td> {{ i.name }}</td>
+    <td> {{ i.email }}</td>
+    <td>{{ i.phone }}</td>
+    <td>{{ i.created_at }}</td>
+    <td> {{ j.projectname }}</td>
+    <td> {{ j.subproject }}</td>
+    <td> {{ j.applied_time }}</td>
+    <td> {{ j.status }}</td>
+    <td> {if (j.source) 
+            {j.source}
+            else
+            {'Default'}
+            {% endfor %}}
+    </td>
+</tr>
+{% endfor %}
+{% endfor %}
+</table>
+{% endblock %}

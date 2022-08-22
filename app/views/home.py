@@ -55,8 +55,8 @@ def homepage_post():
             return Response("invalid request", 200)
         if type(data) is list:
             print(data)
-
         elif type(data) is dict:
+            data['source'] = "zoho"
             print(data)
             result = lead.apply_async(kwargs=data, queue="lead")
             print("task executed succesfully")
@@ -84,35 +84,33 @@ def get_99acres():
 @home.post("/99acres")
 def webhook_99acres():
     try:
-        if request.headers["token"] == secret_key:
-            start_time = time.time()
-            print(request.headers)
-            print(request.get_data())
-            print(request.get_json())
-            
-            response=dict(request.get_json())
-            name = response.get("name")
-            email = response.get("email")
-            phone = response.get("phone")
-            projects= response.get("project")
-            
-            data={
-                "name":name,
-                "email":email,
-                "phone":phone,
-                "projects":projects
-            }
-            print(data)
+        logging.info(msg="request received")
+        logging.info(msg=request.headers)
+        start_time = time.time()
+        data = {}
+        # out = "{}"
+        print(request)
+        print(request.get_data())
 
+        # print(request.get_json())
+        data = find_format(request)
+        if data == {}:
+            return Response("invalid request", 200)
+        if type(data) is list:
+            print(data)
+        elif type(data) is dict:
+            data['source'] = "99acres"
+            print(data)
             result = lead.apply_async(kwargs=data, queue="lead")
             print("task executed succesfully")
-
-            end_time = time.time()
-            print(f"Response time {end_time-start_time}")
-            return Response("received", 200)
-
+            # print(result.task_id)
+            # out={"task id" : result.task_id}
         else:
-            return Response("Invalid token", status=400)
+            print(data)
+
+        end_time = time.time()
+        print(f"Response time {end_time-start_time}")
+        return Response("received", 200)
 
     except Exception as e:
         print(str(e))
@@ -129,16 +127,39 @@ def get_magicbricks():
 @home.post("/magicbricks")
 def webhook_magicbricks():
     try:
-        if request.headers["token"] == secret_key:
-            print(request.headers)
+        logging.info(msg="request received")
+        logging.info(msg=request.headers)
+        start_time = time.time()
+        data = {}
+        # out = "{}"
+        print(request)
+        print(request.get_data())
 
-            print(request.get_data())
-            print(request.get_json())
-            return {"message":"magicbricks request received"}
+        # print(request.get_json())
+        data = find_format(request)
+        if data == {}:
+            return Response("invalid request", 200)
+        if type(data) is list:
+            print(data)
+        elif type(data) is dict:
+            data['source'] = "magicbricks"
+            print(data)
+            result = lead.apply_async(kwargs=data, queue="lead")
+            print("task executed succesfully")
+            # print(result.task_id)
+            # out={"task id" : result.task_id}
         else:
-            return {"message":"Invalid token"}
-    except:
-        return  {"message":"invalid request"}
+            print(data)
+
+        end_time = time.time()
+        print(f"Response time {end_time-start_time}")
+        return Response("received", 200)
+
+    except Exception as e:
+        print(str(e))
+        logging.info("invalid request received")
+        return Response("something went wrong\n", status=400)
+
 
         
 @home.get("/housing")
@@ -150,13 +171,35 @@ def get_housing():
 @home.post("/housing")
 def webhook_housing():
     try:
-        if request.headers["token"] == secret_key:
-            print(request.headers)
-            print(request.get_data())
-            print(request.get_json())
-            return {"message":"housing request received"}
+        logging.info(msg="request received")
+        logging.info(msg=request.headers)
+        start_time = time.time()
+        data = {}
+        # out = "{}"
+        print(request)
+        print(request.get_data())
+
+        # print(request.get_json())
+        data = find_format(request)
+        if data == {}:
+            return Response("invalid request", 200)
+        if type(data) is list:
+            print(data)
+        elif type(data) is dict:
+            data['source'] = "housing"
+            print(data)
+            result = lead.apply_async(kwargs=data, queue="lead")
+            print("task executed succesfully")
+            # print(result.task_id)
+            # out={"task id" : result.task_id}
         else:
-            return {"message":"Invalid token"}
-    except:
-        return  {"message":"invalid request"}
-        
+            print(data)
+
+        end_time = time.time()
+        print(f"Response time {end_time-start_time}")
+        return Response("received", 200)
+
+    except Exception as e:
+        print(str(e))
+        logging.info("invalid request received")
+        return Response("something went wrong\n", status=400)

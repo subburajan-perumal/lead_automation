@@ -40,7 +40,8 @@ class LeadAutomator:
                             "phone": self.lead_data["phone"],
                             "email": self.lead_data["email"],
                             "created_at": getTime(),
-                            "modified_time": getTime()
+                            "modified_time": getTime(),
+                            "source": self.lead_data["source"],
                             }
             self.LEADS.insert_one(lead_creation)
 

@@ -37,3 +37,25 @@ def lead_today():
     except Exception as e:
         return(str(e))
     # render_template("message.html",message=lead_all)
+
+@lead.get("/all/<page>")
+def lead_today(page):
+    try:
+        db=mongo.db;
+        print(db)
+        ls=[]
+        lead_all = db.leads.find(
+            {"project":{"$exists":"true"}},
+            {"_id":0}
+            ).sort("_id",-1).skip((page-1)*100).limit(page*100)
+        # for i in lead_all: print(i)
+        # print(lead_all)
+        # for i in lead_all:
+        #     ls.append(i)
+        result=json.loads(json_util.dumps(lead_all))
+        # result=jsonify([i for i in lead_all])
+        return render_template("/lead/leads.html",data=result)
+
+    except Exception as e:
+        return(str(e))
+    # render_template("message.html",message=lead_all)
