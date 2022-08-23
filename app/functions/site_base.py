@@ -108,7 +108,8 @@ class SiteAutomator:
                     "project": {
                         "$elemMatch":
                         {
-                            "subproject": self.sub_project_name}
+                            "subproject": self.sub_project_name
+                        }
                     },
                     "project.applied_time":
                     {

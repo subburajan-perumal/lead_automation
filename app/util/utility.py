@@ -65,6 +65,29 @@ def getsavePath(path, site_name, sub_project_name, leadname):
         ]
 # print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
 
+def mapping(input):
+
+    data = {
+        'Configuration1': input['apartment_names'],
+        'Country_Code': input['country_code'],
+        'Zoning': input['category_type'],
+        'Interested_Localities': list(input['locality_name']),
+        'City': input['city_name'],
+        'Email': input['lead_email'],
+        'Phone': input['lead_phone'],
+        'Project_Enquired_for': dict({'name': input['project_name'], 'id': input['project_id']}),
+        # 'Project_Enquired_for': '$' + input['project_name'],
+        'Property_Type1': input['property_field'],
+        'Minimum_Price': input['min_price'],
+        'Maximum_Price': input['max_price'],
+        'Full_Name': input['lead_name']
+    }
+
+    if input['service_type'] == 'new-projects':
+        data['Interested_in_wf'] = 'New'
+    
+    return data
+
 
 def send_mail(lead_id, path, sub_project_name, name1):
     import subprocess
@@ -97,10 +120,9 @@ def send_mail(lead_id, path, sub_project_name, name1):
     return
 
 
-def upload_an_attachment(lead_id, path):
+def get_access_token():
     import requests
     from requests.structures import CaseInsensitiveDict
-    import subprocess
     import os
 
     zoho = {
@@ -136,6 +158,13 @@ def upload_an_attachment(lead_id, path):
         except Exception as e:
             print("Failed to create Access token. \n" + str(e))
 
+    return access_token
+
+def upload_an_attachment(lead_id, path):
+    import subprocess
+
+    access_token = get_access_token()
+
     try:
         CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(
             lead_id,
@@ -145,7 +174,34 @@ def upload_an_attachment(lead_id, path):
         print(out1, out2)
     except Exception:
         print("Failed to Upload...")
-
     return
-    # if __name__=="__main__":
-#     send_mail("123","/home/dinesh/LEAD_AUTOMATION/lead_automation/storage/akshaya/post_akshaya_Today_testin11.png","testing","niveth testing")
+
+
+def insert_records(record):
+    import requests
+    import json
+
+    access_token = get_access_token()
+
+    url = 'https://www.zohoapis.com/crm/v2/Leads/upsert'
+    headers = {
+        'Authorization': 'Zoho-oauthtoken ' + str(access_token),
+    }
+
+    record = mapping(record) 
+
+    request_body = dict()
+    record_list = list()
+    duplicate_check_fields= ["Email", "Phone"]
+    trigger = ["workflow"]
+    record_list.append(record)
+    request_body['data'] = record_list
+    request_body['duplicate_check_fields'] = duplicate_check_fields
+    request_body['trigger'] = trigger
+    response = requests.post(url=url, headers=headers, data=json.dumps(request_body).encode('utf-8'))
+    
+    if response is not None:
+        print("HTTP Status Code : " + str(response.status_code))
+        print(response.json())
+    
+    return {'status': 'success'}

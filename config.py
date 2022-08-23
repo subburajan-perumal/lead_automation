@@ -39,7 +39,7 @@ class Config(object):
     RESULT_BACKEND = 'redis://REDACTED_REDIS_URI'
     CELERY_BROKER = "redis://REDACTED_REDIS_URI"
     CELERY_RESULT_BACKEND = "REDACTED"
-    FLASK_SENTRY_DSN = "https://redacted@example.com/6320262"
+    FLASK_SENTRY_DSN = "https://redacted@example.com/6681765"
     MONGO_DB = "REDACTED"
     MONGO_URI = "REDACTED"+MONGO_DB
     SECRET_KEY = ""

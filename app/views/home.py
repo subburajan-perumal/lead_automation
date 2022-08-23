@@ -83,6 +83,8 @@ def get_99acres():
 
 @home.post("/99acres")
 def webhook_99acres():
+    from app.util.utility import insert_records
+
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
@@ -108,6 +110,8 @@ def webhook_99acres():
         else:
             print(data)
 
+        # insert_records(data)
+
         end_time = time.time()
         print(f"Response time {end_time-start_time}")
         return Response("received", 200)
@@ -126,6 +130,8 @@ def get_magicbricks():
 
 @home.post("/magicbricks")
 def webhook_magicbricks():
+    from app.util.utility import insert_records
+
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
@@ -152,6 +158,9 @@ def webhook_magicbricks():
             print(data)
 
         end_time = time.time()
+
+        # insert_records(data)
+
         print(f"Response time {end_time-start_time}")
         return Response("received", 200)
 
@@ -170,6 +179,8 @@ def get_housing():
 
 @home.post("/housing")
 def webhook_housing():
+    from app.util.utility import insert_records
+
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
@@ -196,6 +207,9 @@ def webhook_housing():
             print(data)
 
         end_time = time.time()
+
+        # insert_records(data)
+
         print(f"Response time {end_time-start_time}")
         return Response("received", 200)
 

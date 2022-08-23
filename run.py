@@ -5,7 +5,7 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.celery import CeleryIntegration
 
 sentry_sdk.init(
-    dsn="https://redacted@example.com/6320262",
+    dsn="https://redacted@example.com/6681765",
     integrations=[FlaskIntegration(), RedisIntegration(), CeleryIntegration()],
     traces_sample_rate=1.0
 )
