@@ -1,3 +1,21 @@
+<script>
+const button = document.getElementById('post-btn');
+
+button.addEventListener('click', input, async _ => {
+  try {     
+    const response = await fetch('http://automation.example.com/retry_leads', {
+      method: 'post',
+      body: input
+    });
+    console.log('Completed!', response);
+    return 
+  } catch(err) {
+    console.error(`Error: ${err}`);
+  }
+});
+
+</script>
+
 {% extends "base.html" %}
 {% block content%}
 
@@ -26,7 +44,9 @@
     <td> {{ i.subproject }}</td>
     <td> {{ i.applied_time }}</td>
     <td> {{ i.status }}</td>
+    <td><button id="post-btn", input= i >Retry</button></td>
 </tr>
 {% endfor %}
 </table>
 {% endblock %}
+

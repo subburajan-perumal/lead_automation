@@ -344,6 +344,7 @@ def doshi(subproject, browser, site_data, lead_data, path):
         search.send_keys(site_data["email"])
         passo=browser.find_element(By.ID,'password')
         passo.send_keys(site_data["pass"])
+        phone=PN.parse(lead_data["phone"])
         submit=browser.find_element(By.NAME,'user_login').click()
         time.sleep(2)
         lead=browser.find_elements(By.CLASS_NAME,'icon-plus')[0].click()
@@ -351,7 +352,7 @@ def doshi(subproject, browser, site_data, lead_data, path):
         name  = browser.find_element(By.NAME, "leads_name")
         name.send_keys(lead_data['name'])
         contact=browser.find_element(By.NAME,'leads_mobile_number')
-        contact.send_keys(lead_data['phone'])
+        contact.send_keys(phone.national_number)
         email=browser.find_element(By.NAME,'leads_email')
         email.send_keys(lead_data['email'])
 

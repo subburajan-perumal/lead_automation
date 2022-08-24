@@ -217,3 +217,71 @@ def webhook_housing():
         print(str(e))
         logging.info("invalid request received")
         return Response("something went wrong\n", status=400)
+
+
+def retry_mapping(lead):
+    data = {
+        'interested_properties': lead['subproject'],
+        'email': lead['email'],
+        'name': lead['name'],
+        'phone': lead['phone']
+    }
+    return data
+
+
+@home.post("/retry_leads")
+def webhook_retry():
+    from app.util.utility import insert_records
+
+    try:
+        logging.info(msg="request received")
+        logging.info(msg=request.headers)
+        start_time = time.time()
+        data = {}
+        print(request)
+        print(request.get_data())
+        data = find_format(request)
+        if data == {}:
+            return Response("invalid request", 200)
+        if type(data) is list:
+            print(data)
+        elif type(data) is dict:
+            data['source'] = "retry"
+            result = lead.apply_async(kwargs=retry_mapping(data), queue="lead")
+            print("task executed succesfully")
+        else:
+            print(data)
+        end_time = time.time()
+        print(f"Response time {end_time-start_time}")
+        return Response("received", 200)
+
+    except Exception as e:
+        print(str(e))
+        logging.info("invalid request received")
+        return Response("something went wrong\n", status=400)
+
+'''
+mapping = {
+    'email' : 'email',
+    'phone': ["phone", "mobile", "alt_phone"],
+    'keyword_field': [
+    {
+        "field": "project_enquired_for",
+        "seperator": ";"
+    },
+    {
+        "field": "interested_properties",
+        "seperator": ";"
+    },
+    {
+        "field": "interested_localities",
+        "seperator": ";"
+    },
+    {
+        "field": "initial_enquiry_particulars_automation",
+        "seperator": ";"
+    }
+]
+}
+'''
+

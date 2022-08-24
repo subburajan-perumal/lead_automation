@@ -37,7 +37,7 @@ def leads_all():
             leads_details = json.loads(json_util.dumps(leads_details))
         except:
             leads_details = lead_all
-        return render_template("/lead/new_leads.html", data=leads_details)
+        return render_template("/lead/leads.html", data=leads_details)
     except Exception as e:
         return(str(e))
 
