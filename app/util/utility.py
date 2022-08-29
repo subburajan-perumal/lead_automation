@@ -1,6 +1,8 @@
+from json import dumps, loads
 import os
 from datetime import datetime
 import pytz
+from requests import get, post
 
 def cmpstring(string1, string2):
     str1 = "".join([i for i in string1 if i.isalpha()])
@@ -65,8 +67,9 @@ def getsavePath(path, site_name, sub_project_name, leadname):
         ]
 # print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
 
-def mapping(input):
 
+
+def mapping(input, id):
     data = {
         'Configuration1': input['apartment_names'],
         'Country_Code': input['country_code'],
@@ -75,7 +78,12 @@ def mapping(input):
         'City': input['city_name'],
         'Email': input['lead_email'],
         'Phone': input['lead_phone'],
-        'Project_Enquired_for': dict({'name': input['project_name'], 'id': input['project_id']}),
+        'Project_Enquired_for': dict(
+            {
+            # 'name': input['project_name'], 
+            # 'id': input['project_id'],
+            'id': id
+            }),
         # 'Project_Enquired_for': '$' + input['project_name'],
         'Property_Type1': input['property_field'],
         'Minimum_Price': input['min_price'],
@@ -88,6 +96,7 @@ def mapping(input):
     
     return data
 
+# SEND MAIL VIA MAILGUN
 
 def send_mail(lead_id, path, sub_project_name, name1):
     import subprocess
@@ -120,18 +129,19 @@ def send_mail(lead_id, path, sub_project_name, name1):
     return
 
 
+# GET ACCESS TOKEN
+
 def get_access_token():
-    import requests
     from requests.structures import CaseInsensitiveDict
     import os
-
     zoho = {
         "URL": "https://www.zohoapis.com/crm/v2/Leads/",
         "CLIENT_ID": "REDACTED",
         "CLIENT_SECRET": "REDACTED",
         "REFRESH_TOKEN": "REDACTED",
         "REDIRECT_URI": "https://example.com",
-        "NAME": "Zoho"}
+        "NAME": "Zoho"
+        }
 
     try:
         url = 'https://accounts.zoho.com/oauth/v2/token?client_id={}&client_secret={}&refresh_token={}&grant_type=refresh_token'.format(
@@ -141,7 +151,7 @@ def get_access_token():
 
         headers = CaseInsensitiveDict()
         headers["Content-Length"] = "0"
-        resp = requests.post(url, headers=headers)
+        resp = post(url, headers=headers)
         output = resp.json()
         print(output)
         print("before :", os.environ.get("access-token"))
@@ -160,11 +170,12 @@ def get_access_token():
 
     return access_token
 
+
+# UPLOAD ATTACHMENT TO ZOHO
+
 def upload_an_attachment(lead_id, path):
     import subprocess
-
     access_token = get_access_token()
-
     try:
         CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(
             lead_id,
@@ -177,18 +188,35 @@ def upload_an_attachment(lead_id, path):
     return
 
 
-def insert_records(record):
-    import requests
-    import json
+# SEARCH PROJECT ID
 
-    access_token = get_access_token()
+def getProjectID(project_name, access_token):
+    url = 'https://www.zohoapis.com/crm/v2/Deals/search'
+    params = {
+        'fields': 'Deal_Name',
+        'criteria': '(Deal_Name:starts_with:{})'.format(project_name)
+    }
+    headers = {
+        'Authorization': 'Zoho-oauthtoken ' + str(access_token),
+    }
+    resp = get(url, params=params, headers=headers)
 
+    if resp.status_code == 200:
+        data = loads(resp.content)['data']
+        if data:
+            id = data[0]['id']
+            return id
+
+    return {'error': 'No such project'}
+
+
+# INSERT NEW RECORD IN ZOHO
+
+def insert_records(record, access_token):
     url = 'https://www.zohoapis.com/crm/v2/Leads/upsert'
     headers = {
         'Authorization': 'Zoho-oauthtoken ' + str(access_token),
     }
-
-    record = mapping(record) 
 
     request_body = dict()
     record_list = list()
@@ -198,10 +226,20 @@ def insert_records(record):
     request_body['data'] = record_list
     request_body['duplicate_check_fields'] = duplicate_check_fields
     request_body['trigger'] = trigger
-    response = requests.post(url=url, headers=headers, data=json.dumps(request_body).encode('utf-8'))
+    response = post(url=url, headers=headers, data=dumps(request_body).encode('utf-8'))
     
     if response is not None:
         print("HTTP Status Code : " + str(response.status_code))
         print(response.json())
     
+    return {'status': 'success'}
+
+
+# MAIN FUNCTION FOR INSERT RECORD
+
+def insert_record_to_zoho(record, type = None):
+    access_token = get_access_token()
+    id = getProjectID(input['project_name'], access_token)
+    data = mapping(record, id)
+    insert_records(data, access_token)
     return {'status': 'success'}

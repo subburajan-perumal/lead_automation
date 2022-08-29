@@ -1,8 +1,8 @@
+from datetime import datetime
 import logging
 from urllib import response
 from celery.result import AsyncResult
 from flask import Blueprint, Response, jsonify, request
-
 from config import Config
 from ..util.request_handler import find_format
 import time
@@ -83,7 +83,7 @@ def get_99acres():
 
 @home.post("/99acres")
 def webhook_99acres():
-    from app.util.utility import insert_records
+    from app.util.utility import insert_record_to_zoho
 
     try:
         logging.info(msg="request received")
@@ -104,13 +104,14 @@ def webhook_99acres():
             data['source'] = "99acres"
             print(data)
             result = lead.apply_async(kwargs=data, queue="lead")
+            _ = insert_record_to_zoho(data)
             print("task executed succesfully")
             # print(result.task_id)
             # out={"task id" : result.task_id}
         else:
             print(data)
 
-        # insert_records(data)
+        # insert_record_to_zoho(data)
 
         end_time = time.time()
         print(f"Response time {end_time-start_time}")
@@ -130,7 +131,7 @@ def get_magicbricks():
 
 @home.post("/magicbricks")
 def webhook_magicbricks():
-    from app.util.utility import insert_records
+    from app.util.utility import insert_record_to_zoho
 
     try:
         logging.info(msg="request received")
@@ -151,6 +152,7 @@ def webhook_magicbricks():
             data['source'] = "magicbricks"
             print(data)
             result = lead.apply_async(kwargs=data, queue="lead")
+            _ = insert_record_to_zoho(data)
             print("task executed succesfully")
             # print(result.task_id)
             # out={"task id" : result.task_id}
@@ -158,9 +160,6 @@ def webhook_magicbricks():
             print(data)
 
         end_time = time.time()
-
-        # insert_records(data)
-
         print(f"Response time {end_time-start_time}")
         return Response("received", 200)
 
@@ -179,7 +178,7 @@ def get_housing():
 
 @home.post("/housing")
 def webhook_housing():
-    from app.util.utility import insert_records
+    from app.util.utility import insert_record_to_zoho
 
     try:
         logging.info(msg="request received")
@@ -200,6 +199,7 @@ def webhook_housing():
             data['source'] = "housing"
             print(data)
             result = lead.apply_async(kwargs=data, queue="lead")
+            _ = insert_record_to_zoho(data)
             print("task executed succesfully")
             # print(result.task_id)
             # out={"task id" : result.task_id}
@@ -207,9 +207,6 @@ def webhook_housing():
             print(data)
 
         end_time = time.time()
-
-        # insert_records(data)
-
         print(f"Response time {end_time-start_time}")
         return Response("received", 200)
 
@@ -231,8 +228,6 @@ def retry_mapping(lead):
 
 @home.post("/retry_leads")
 def webhook_retry():
-    from app.util.utility import insert_records
-
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
@@ -260,6 +255,29 @@ def webhook_retry():
         logging.info("invalid request received")
         return Response("something went wrong\n", status=400)
 
+
+# UPLOAD BULK CSV
+
+@home.route("/bulk_upload", methods=["GET","POST"])
+def uploader_file():
+    from app.database import mongo
+    import pandas as pd
+
+    if request.method == "GET":
+        return {'message':'upload csv file'}
+
+    if request.method == "POST":
+        f = request.files['file']
+        db=mongo.db
+        df = pd.read_csv(f)
+        data = df.to_dict(orient="records")
+        for val in data:
+            val['created_time'] = datetime.now()
+            db.bulk_leads.insert_one(val)
+            result = lead.apply_async(kwargs=val, queue="lead")
+ 
+        return 'succesfully added to Mongodb'
+
 '''
 mapping = {
     'email' : 'email',
@@ -284,4 +302,3 @@ mapping = {
 ]
 }
 '''
-

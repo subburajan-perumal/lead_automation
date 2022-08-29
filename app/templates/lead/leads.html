@@ -1,7 +1,7 @@
 <script>
 const button = document.getElementById('post-btn');
 
-button.addEventListener('click', input, async _ => {
+button.addEventListener('click', val, async _ => {
   try {     
     const response = await fetch('http://automation.example.com/retry_leads', {
       method: 'post',
@@ -44,7 +44,7 @@ button.addEventListener('click', input, async _ => {
     <td> {{ i.subproject }}</td>
     <td> {{ i.applied_time }}</td>
     <td> {{ i.status }}</td>
-    <td><button id="post-btn", input= i >Retry</button></td>
+    <td><button id="post-btn", val = {{i.data}} >Retry</button></td>
 </tr>
 {% endfor %}
 </table>
