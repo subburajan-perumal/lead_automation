@@ -1,0 +1,54 @@
+<link rel="stylesheet" href="style.css">
+
+<script>
+const button = document.getElementById('post-btn');
+
+button.addEventListener('click', val, async _ => {
+  try {     
+    const response = await fetch('http://automation.example.com/retry_leads', {
+      method: 'post',
+      body: input
+    });
+    console.log('Completed!', response);
+    return 
+  } catch(err) {
+    console.error(`Error: ${err}`);
+  }
+});
+
+</script>
+
+{% extends "base.html" %}
+{% block content%}
+
+
+<table class="table">
+    <tr>
+    <th>No</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>Created_at</th>
+    <th>Project name</th>
+    <th>Sub-project name</th>
+    <th>Registration time</th>
+    <th>Status</th>
+
+</tr>
+{% for i in data %}
+<tr>
+    <td>{{loop.index}}</td>
+    <td> {{ i.name }}</td>
+    <td> {{ i.email }}</td>
+    <td>{{ i.phone }}</td>
+    <td>{{ i.created_at }}</td>
+    <td> {{ i.projectname }}</td>
+    <td> {{ i.subproject }}</td>
+    <td> {{ i.applied_time }}</td>
+    <td> {{ i.status }}</td>
+    <td><button id="post-btn", val = {{i.data}} ><img src="./img/retry-1995927-1686763.png" alt="Retry-btn"></button></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
+
