@@ -1,0 +1,21 @@
+#post-btn{
+    width: 43px;
+     height:40px;
+     cursor: pointer;
+     overflow: hidden;
+     border: none;
+     background-color: transparent;
+}
+#post-btn img{
+    width: 35px;
+    height: 35px;
+    
+    position: flex;
+    transition: 0.4s ease-in-out;
+    
+}
+
+#post-btn:hover img{
+    transform: rotate(80deg);
+}
+
