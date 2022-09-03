@@ -16,8 +16,8 @@ def removing_older_img():
                 print(filename)
                 os.remove(os.path.join(path, filename))
 
-schedule.every().seconds.do(removing_older_img)
+schedule.every(86400).seconds.do(removing_older_img)
 
 while True:
     schedule.run_pending()
-    time.sleep(1)
+    time.sleep(8640)

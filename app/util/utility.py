@@ -61,7 +61,7 @@ def getName(name):
 # (site,sub_projectname,path,leadname)
 
 
-def getsavePath(path, site_name, sub_project_name, leadname):
+def getsavePath(path, path2, site_name, sub_project_name, leadname):
 # Connecting to Lead Automation MongoDB server to get filename(subname)
     client = pymongo.MongoClient("mongodb://REDACTED_MONGO_URI")
     db = client["lead_automation"]
@@ -77,9 +77,9 @@ def getsavePath(path, site_name, sub_project_name, leadname):
         str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", '_') + ".png"),
         str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", "_") + ".png"),
         str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", "_") + ".png"),
-        str(str(path) + '/' + "pre" + "_" + str(subname) + ".png"),
-        str(str(path) + '/' + "post" + "_" + str(subname) + ".png"),
-        str(str(path) + '/' + "err" + "_" + str(subname) + ".png")
+        str(str(path2) + '/' + "pre" + "_" + str(subname) + ".png"),
+        str(str(path2) + '/' + "post" + "_" + str(subname) + ".png"),
+        str(str(path2) + '/' + "err" + "_" + str(subname) + ".png")
         ]
 # print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
 

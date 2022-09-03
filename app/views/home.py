@@ -2,7 +2,7 @@ from datetime import datetime
 import logging
 from urllib import response
 from celery.result import AsyncResult
-from flask import Blueprint, Response, jsonify, request
+from flask import Blueprint, Response, jsonify, render_template, request
 from config import Config
 from ..util.request_handler import find_format
 import time
@@ -256,6 +256,13 @@ def webhook_retry():
         return Response("something went wrong\n", status=400)
 
 
+# UPLOAD
+
+@home.route('/upload')
+def upload_file():
+   return render_template('bulk/upload.html')
+
+
 # UPLOAD BULK CSV
 
 @home.route("/bulk_upload", methods=["GET","POST"])
@@ -264,7 +271,7 @@ def uploader_file():
     import pandas as pd
 
     if request.method == "GET":
-        return {'message':'upload csv file'}
+        return render_template("/lead/view.html",data=result)
 
     if request.method == "POST":
         f = request.files['file']
@@ -276,8 +283,7 @@ def uploader_file():
             val['source'] = 'bulk_upload'
             db.bulk_leads.insert_one(val)
             result = lead.apply_async(kwargs=val, queue="lead")
- 
-        return 'succesfully added to Mongodb'
+        return {'status': 'succesfully added to Mongodb'}
 
 '''
 mapping = {

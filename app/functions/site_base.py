@@ -137,24 +137,33 @@ class SiteAutomator:
             # if self.result=="failed":return
             if not self.projectexist:
                 self.path = "./storage/"+self.site_data["name"]
+                self.path_zoho = "./storage/"+ 'zoho'
                 if not os.path.exists(self.path):
                     os.mkdir(self.path)
+                if not os.path.exists(self.path_zoho):
+                    os.mkdir(self.path_zoho)
                 self.automate_path = getsavePath(
-                    self.path, self.site_data['name'], self.sub_project_name, self.lead_data['name'])
+                    self.path, self.path_zoho, self.site_data['name'], self.sub_project_name, self.lead_data['name'])
                 v_automator = project_store[self.site_data['name']]
                 self.result = v_automator(
                    self.sub_project_name, self.browser, self.site_data, self.lead_data, self.automate_path)
-        except Exception:
+        except Exception as e:
             self.result = 2
-            logger.exception("automte flow error")
+            logger.exception("automte flow error: {}".format(e))
 
         finally:
             self.upload_data()
 
     def upload_data(self):
+        import shutil
+
         try:
             # ZOHO attachment
             if self.result == 1 or self.result == -1:
+
+                shutil.copy(self.automate_path[0], self.automate_path[3])
+                shutil.copy(self.automate_path[1], self.automate_path[4])
+
                 upload_an_attachment(
                     self.lead_data["lead_id"], os.path.abspath(self.automate_path[3]))
                 upload_an_attachment(
@@ -166,6 +175,7 @@ class SiteAutomator:
                 # print("uploaded file : ", self.automate_path[1])
                 # print("success lead uploaded")
                 if self.result == 2 or self.result == -1:
+                    shutil.copy(self.automate_path[2], self.automate_path[5])
                     # if os.path.exists(self.automate_path[0]):
                     # upload_an_attachment(
                     upload_an_attachment(
