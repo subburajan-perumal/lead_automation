@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="style.css">
+
 <script>
 const button = document.getElementById('post-btn');
 
@@ -44,7 +46,7 @@ button.addEventListener('click', val, async _ => {
     <td> {{ i.subproject }}</td>
     <td> {{ i.applied_time }}</td>
     <td> {{ i.status }}</td>
-    <td><button id="post-btn", val = {{i.data}} >Retry</button></td>
+    <td><button id="post-btn", val = {{i.data}} ><img src="./img/retry-1995927-1686763.png" alt="Retry-btn"></button></td>
 </tr>
 {% endfor %}
 </table>
