@@ -1,10 +1,9 @@
-from json import dumps, loads,json
-import os
+from json import dumps, loads
 from datetime import datetime
 import pytz
 from requests import get, post
 import pymongo
-from bson import json_util, ObjectId
+from bson import json_util
 
 def cmpstring(string1, string2):
     str1 = "".join([i for i in string1 if i.isalpha()])

@@ -41,6 +41,7 @@ mccabe==0.6.1
 mongoengine==0.24.1
 numpy==1.22.3
 outcome==1.1.0
+opencv-python==4.6.0
 packaging==21.3
 pandas==1.4.1
 phonenumbers==8.12.44
