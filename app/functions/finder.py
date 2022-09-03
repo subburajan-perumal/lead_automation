@@ -7,6 +7,16 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger("finder")
 MONGO_DB = "REDACTED"
 
+def common_member(a, b):   
+    a_set = set(a)
+    b_set = set(b)
+     
+    # check length
+    if len(a_set.intersection(b_set)) > 0:
+        return(a_set.intersection(b_set)) 
+    else:
+        return("no common elements")
+     
 
 def function_finder(lead_data: dict):
     """This function process the request data and generate into lead
@@ -105,6 +115,10 @@ def function_finder(lead_data: dict):
             ]
         )
         for _site in site_list:
+            project_list = _site['project_list']
+            print(project_list)
+            match_keywords = common_member(site_keywords,project_list['keywords'])
+            lead_data['match_keywords'] = match_keywords
             logger.info(f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}")
             site_name = _site['name']
             site_projectname = _site['project_list']['project_name']
