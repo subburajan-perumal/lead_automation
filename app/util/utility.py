@@ -1,8 +1,10 @@
-from json import dumps, loads
+from json import dumps, loads,json
 import os
 from datetime import datetime
 import pytz
 from requests import get, post
+import pymongo
+from bson import json_util, ObjectId
 
 def cmpstring(string1, string2):
     str1 = "".join([i for i in string1 if i.isalpha()])
@@ -60,10 +62,24 @@ def getName(name):
 
 
 def getsavePath(path, site_name, sub_project_name, leadname):
+# Connecting to Lead Automation MongoDB server to get filename(subname)
+    client = pymongo.MongoClient("mongodb://REDACTED_MONGO_URI")
+    db = client["lead_automation"]
+    mycol = db["Site"]
+    result = mycol.find({"project_list.project_name": sub_project_name})
+    result = json.loads(json_util.dumps(result))
+
+    for elem in result[0]["project_list"]:
+        if elem["project_name"] == sub_project_name:
+            subname = elem["filename"]    
+
     return [
         str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", '_') + ".png"),
         str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", "_") + ".png"),
-        str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", "_") + ".png")
+        str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", "_") + ".png"),
+        str(str(path) + '/' + "pre" + "_" + str(subname) + ".png"),
+        str(str(path) + '/' + "post" + "_" + str(subname) + ".png"),
+        str(str(path) + '/' + "err" + "_" + str(subname) + ".png")
         ]
 # print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
 

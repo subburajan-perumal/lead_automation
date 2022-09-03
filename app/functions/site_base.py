@@ -156,21 +156,21 @@ class SiteAutomator:
             # ZOHO attachment
             if self.result == 1 or self.result == -1:
                 upload_an_attachment(
-                    self.lead_data["lead_id"], os.path.abspath(self.automate_path[0]))
+                    self.lead_data["lead_id"], os.path.abspath(self.automate_path[3]))
                 upload_an_attachment(
-                    self.lead_data["lead_id"], os.path.abspath(self.automate_path[1]))
+                    self.lead_data["lead_id"], os.path.abspath(self.automate_path[4]))
                 # print("upload lead working")
-                logger.info(f"upload file{ self.automate_path[0] }")
+                logger.info(f"upload file{ self.automate_path[3] }")
                 # print("uploaded file : ", os.path.abspath(self.automate_path[0]))
-                logger.info(f"upload file{ self.automate_path[1] }")
+                logger.info(f"upload file{ self.automate_path[4] }")
                 # print("uploaded file : ", self.automate_path[1])
                 # print("success lead uploaded")
                 if self.result == 2 or self.result == -1:
                     # if os.path.exists(self.automate_path[0]):
                     # upload_an_attachment(
                     upload_an_attachment(
-                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[2]))
-                    logger.info(f"upload file{ self.automate_path[2] }")
+                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[5]))
+                    logger.info(f"upload file{ self.automate_path[5] }")
                 # print("uploaded file : ", self.path[0])
 
                 # print("uploaded file : ", self.path[2])
