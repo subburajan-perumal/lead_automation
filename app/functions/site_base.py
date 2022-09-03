@@ -101,7 +101,7 @@ class SiteAutomator:
             logger.info("checking for existing project in db")
             self.sub_project_name = sub_project_name
 
-            filterdate = datetime.now()-timedelta(30)
+            filterdate = datetime.now()-timedelta(self.site_data['days'])
             self.projectexist = self.LEAD.find_one(
                 {
                     "email": self.lead_data["email"],
