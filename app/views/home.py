@@ -273,6 +273,7 @@ def uploader_file():
         data = df.to_dict(orient="records")
         for val in data:
             val['created_time'] = datetime.now()
+            val['source'] = 'bulk_upload'
             db.bulk_leads.insert_one(val)
             result = lead.apply_async(kwargs=val, queue="lead")
  
