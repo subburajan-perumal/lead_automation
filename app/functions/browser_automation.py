@@ -13,6 +13,7 @@ from celery.utils.log import get_task_logger
 from phonenumbers import geocoder as GC
 import logging
 import time
+import cv2
 # browserLog=logging.getLogger("browser_log")
 browserLog=get_task_logger(__name__)
 # browserLog.set
@@ -1163,6 +1164,17 @@ def shriram(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, pat
         phone10 = browser.find_element(By.XPATH, '//*[@id="input_9_48"]')
         phone10.send_keys(site_data["mobile"])
         browser.save_screenshot(save_path[0])
+
+
+
+        img = cv2.imread(save_path[0])
+
+        imgCropped = img[200:862,800:1280]
+        cv2.imwrite(save_path[0], imgCropped)
+
+
+        imgCroppedResize = cv2.resize(imgCropped,(350,550))
+        cv2.imwrite(save_path[0], imgCroppedResize)
         
  
         
