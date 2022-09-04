@@ -119,7 +119,7 @@ def function_finder(lead_data: dict):
             logger.debug(project_list)
             match_keywords = common_member(site_keywords,project_list['keywords'])
             lead_data['match_keywords'] = match_keywords
-            logger.info(f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}")
+            logger.info(f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}; Matched keywords: {match_keywords}")
             site_name = _site['name']
             site_projectname = _site['project_list']['project_name']
             browserAutomation = SiteAutomator(lead_data["phone"],
