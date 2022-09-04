@@ -90,6 +90,7 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
 # print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
 
 
+# LeadAutomation Mapping
 
 def mapping(input, id):
     data = {
@@ -117,6 +118,20 @@ def mapping(input, id):
         data['Interested_in_wf'] = 'New'
     
     return data
+
+
+# MAPPING BULK DATA
+
+def bulk_mapping(data):
+    data = {
+        'email': data['Email'],
+        'phone': data['Phone'],
+        'name': data['Full Name'],
+        'project_enquired_for': data['Project Enquired for'],
+        'interested_properties': data['Interested Properties']
+    }
+    return data
+
 
 # SEND MAIL VIA MAILGUN
 

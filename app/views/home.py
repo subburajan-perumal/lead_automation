@@ -4,6 +4,7 @@ from urllib import response
 from celery.result import AsyncResult
 from flask import Blueprint, Response, jsonify, render_template, request
 from config import Config
+from lead_automation.app.util.utility import bulk_mapping
 from ..util.request_handler import find_format
 import time
 from app.tasks import lead
@@ -279,6 +280,7 @@ def uploader_file():
         df = pd.read_csv(f)
         data = df.to_dict(orient="records")
         for val in data:
+            val = bulk_mapping(val)
             val['created_time'] = datetime.now()
             val['source'] = 'bulk_upload'
             db.bulk_leads.insert_one(val)
