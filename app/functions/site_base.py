@@ -101,7 +101,12 @@ class SiteAutomator:
             logger.info("checking for existing project in db")
             self.sub_project_name = sub_project_name
 
-            filterdate = datetime.now()-timedelta(self.site_data['days'])
+            try:
+                days = int(self.site_data['days'])
+            except:
+                days = 30
+
+            filterdate = datetime.now()-timedelta(days)
             self.projectexist = self.LEAD.find_one(
                 {
                     "email": self.lead_data["email"],
@@ -160,27 +165,53 @@ class SiteAutomator:
         try:
             # ZOHO attachment
             if self.result == 1 or self.result == -1:
+                try:
+                    shutil.copy(self.automate_path[0], self.automate_path[3])
+                    shutil.copy(self.automate_path[1], self.automate_path[4])
+                    upload_an_attachment(
+                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[3]))
+                    upload_an_attachment(
+                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[4]))
+                    # print("upload lead working")
+                    logger.info(f"upload file{ self.automate_path[3] }")
+                    # print("uploaded file : ", os.path.abspath(self.automate_path[0]))
+                    logger.info(f"upload file{ self.automate_path[4] }")
+                    # print("uploaded file : ", self.automate_path[1])
+                
+                except:
+                    upload_an_attachment(
+                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[0]))
+                    upload_an_attachment(
+                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[1]))    
+                    # print("upload lead working")
+                    logger.info(f"upload file{ self.automate_path[0] }")
+                    # print("uploaded file : ", os.path.abspath(self.automate_path[0]))
+                    logger.info(f"upload file{ self.automate_path[1] }")
+                    # print("uploaded file : ", self.automate_path[1])
 
-                shutil.copy(self.automate_path[0], self.automate_path[3])
-                shutil.copy(self.automate_path[1], self.automate_path[4])
-
-                upload_an_attachment(
-                    self.lead_data["lead_id"], os.path.abspath(self.automate_path[3]))
-                upload_an_attachment(
-                    self.lead_data["lead_id"], os.path.abspath(self.automate_path[4]))
                 # print("upload lead working")
-                logger.info(f"upload file{ self.automate_path[3] }")
+                # logger.info(f"upload file{ self.automate_path[3] }")
                 # print("uploaded file : ", os.path.abspath(self.automate_path[0]))
-                logger.info(f"upload file{ self.automate_path[4] }")
+                # logger.info(f"upload file{ self.automate_path[4] }")
                 # print("uploaded file : ", self.automate_path[1])
                 # print("success lead uploaded")
                 if self.result == 2 or self.result == -1:
-                    shutil.copy(self.automate_path[2], self.automate_path[5])
-                    # if os.path.exists(self.automate_path[0]):
-                    # upload_an_attachment(
-                    upload_an_attachment(
-                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[5]))
-                    logger.info(f"upload file{ self.automate_path[5] }")
+                    try:
+                        shutil.copy(self.automate_path[2], self.automate_path[5])
+                        # if os.path.exists(self.automate_path[0]):
+                        # upload_an_attachment(
+                        upload_an_attachment(
+                            self.lead_data["lead_id"], os.path.abspath(self.automate_path[5]))
+                        logger.info(f"upload file{ self.automate_path[5] }")
+
+                    except:
+                        # if os.path.exists(self.automate_path[0]):
+                        # upload_an_attachment(
+                        upload_an_attachment(
+                            self.lead_data["lead_id"], os.path.abspath(self.automate_path[2]))
+                        logger.info(f"upload file{ self.automate_path[2] }")
+
+
                 # print("uploaded file : ", self.path[0])
 
                 # print("uploaded file : ", self.path[2])

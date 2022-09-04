@@ -5,7 +5,7 @@ import schedule
 
 def removing_older_img():
     
-    path = r"./storage/**/*.png"
+    path = r"storage/**/*.png"
     now = time.time()
     days = 200
 

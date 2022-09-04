@@ -1,5 +1,6 @@
 from json import dumps, loads
 from datetime import datetime
+import json
 import pytz
 from requests import get, post
 import pymongo
@@ -61,16 +62,22 @@ def getName(name):
 
 
 def getsavePath(path, path2, site_name, sub_project_name, leadname):
-# Connecting to Lead Automation MongoDB server to get filename(subname)
-    client = pymongo.MongoClient("mongodb://REDACTED_MONGO_URI")
-    db = client["lead_automation"]
-    mycol = db["Site"]
-    result = mycol.find({"project_list.project_name": sub_project_name})
-    result = json.loads(json_util.dumps(result))
+    from config import Config
+    MONGO_DB = Config.MONGO_URI
+    try:
+        # Connecting to Lead Automation MongoDB server to get filename(subname)
+        CONN = pymongo.MongoClient(MONGO_DB)
+        DB = CONN['lead_automation']
+        SITE = DB['Site']
 
-    for elem in result[0]["project_list"]:
-        if elem["project_name"] == sub_project_name:
-            subname = elem["filename"]    
+        result = SITE.find({"project_list.project_name": sub_project_name})
+        result = json.loads(json_util.dumps(result))
+
+        for elem in result[0]["project_list"]:
+            if elem["project_name"] == sub_project_name:
+                subname = elem["filename"]    
+    except:
+        subname = sub_project_name
 
     return [
         str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", '_') + ".png"),
