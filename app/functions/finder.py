@@ -13,9 +13,9 @@ def common_member(a, b):
      
     # check length
     if len(a_set.intersection(b_set)) > 0:
-        return(a_set.intersection(b_set)) 
+        return list(a_set.intersection(b_set))
     else:
-        return("no common elements")
+        return []
      
 
 def function_finder(lead_data: dict):

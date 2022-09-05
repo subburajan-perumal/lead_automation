@@ -1,6 +1,7 @@
 from json import dumps, loads
 from datetime import datetime
 import json
+from uuid import uuid4
 import pytz
 from requests import get, post
 import pymongo
@@ -80,12 +81,12 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
         subname = sub_project_name
 
     return [
-        str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", '_') + ".png"),
-        str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", "_") + ".png"),
-        str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name)+"_"+str(leadname).replace(" ", "_") + ".png"),
-        str(str(path2) + '/' + "pre" + "_" + str(subname) + ".png"),
-        str(str(path2) + '/' + "post" + "_" + str(subname) + ".png"),
-        str(str(path2) + '/' + "err" + "_" + str(subname) + ".png")
+        str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", '_') + ".png"),
+        str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
+        str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
+        str(str(path2) + '/' + "pre" + "_" + str(subname) + str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "post" + "_" + str(subname) + str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "err" + "_" + str(subname) + str(uuid4().hex) + ".png")
         ]
 # print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
 

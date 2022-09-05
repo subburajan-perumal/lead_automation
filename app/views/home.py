@@ -4,7 +4,7 @@ from urllib import response
 from celery.result import AsyncResult
 from flask import Blueprint, Response, jsonify, render_template, request
 from config import Config
-from lead_automation.app.util.utility import bulk_mapping
+from app.util.utility import bulk_mapping
 from ..util.request_handler import find_format
 import time
 from app.tasks import lead
@@ -25,6 +25,7 @@ secret_key="REDACTED_FLASK_SECRET"
 
 @home.get("/tasks/<task_id>")
 def get_status(task_id):
+    logging.info(msg=request.get_data())
     task_result = AsyncResult(task_id, backend=Config.CELERY_RESULT_BACKEND)
     result = {
         "task_id": task_id,
@@ -44,6 +45,7 @@ def homepage_post():
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
+        logging.info(msg=request.get_data())
         start_time = time.time()
         data = {}
         # out = "{}"
@@ -78,6 +80,7 @@ def homepage_post():
 
 @home.get("/99acres")
 def get_99acres():
+    logging.info(msg=request.get_data())
     return {"message":"99 acres endpoint working"}
 
 
@@ -89,6 +92,7 @@ def webhook_99acres():
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
+        logging.info(msg=request.get_data())
         start_time = time.time()
         data = {}
         # out = "{}"
@@ -126,6 +130,7 @@ def webhook_99acres():
 
 @home.get("/magicbricks")
 def get_magicbricks():
+    logging.info(msg=request.get_data())
     return {"message":"magicbricks endpoint working"}
 
 
@@ -137,6 +142,7 @@ def webhook_magicbricks():
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
+        logging.info(msg=request.get_data())
         start_time = time.time()
         data = {}
         # out = "{}"
@@ -173,6 +179,7 @@ def webhook_magicbricks():
         
 @home.get("/housing")
 def get_housing():
+    logging.info(msg=request.get_data())
     return {"message":"housing endpoint working"}
 
 
@@ -184,6 +191,7 @@ def webhook_housing():
     try:
         logging.info(msg="request received")
         logging.info(msg=request.headers)
+        logging.info(msg=request.get_data())
         start_time = time.time()
         data = {}
         # out = "{}"

@@ -44,9 +44,9 @@ def lead(**lead_data):
             site_projectname = _site['project_list']['project_name']
             try:
                 if 'days' not in _site:
-                    _site['days'] =30
+                    _site['days'] = 30
             except:
-                _site['days'] =30
+                _site['days'] = 30
             celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
             task_list.append(browserAutomate.s(_site, lead_data))
         job = group(task_list)
