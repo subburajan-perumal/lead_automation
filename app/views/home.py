@@ -86,7 +86,7 @@ def get_99acres():
     from app.util.utility import insert_record_to_zoho
 
     try:
-        logging.info(msg="request received")
+        logging.info(msg="99acres request received")
         logging.info(msg=request.headers)
         logging.info(msg=request.get_data())
         start_time = time.time()
@@ -130,7 +130,7 @@ def webhook_99acres():
     from app.util.utility import insert_record_to_zoho
 
     try:
-        logging.info(msg="request received")
+        logging.info(msg="99acres request received")
         logging.info(msg=request.headers)
         logging.info(msg=request.get_data())
         start_time = time.time()
@@ -175,7 +175,7 @@ def get_magicbricks():
     from app.util.utility import insert_record_to_zoho
 
     try:
-        logging.info(msg="request received")
+        logging.info(msg="magicbricks request received")
         logging.info(msg=request.headers)
         logging.info(msg=request.get_data())
         start_time = time.time()
@@ -218,7 +218,7 @@ def webhook_magicbricks():
     from app.util.utility import insert_record_to_zoho
 
     try:
-        logging.info(msg="request received")
+        logging.info(msg="magicbricks request received")
         logging.info(msg=request.headers)
         logging.info(msg=request.get_data())
         start_time = time.time()
@@ -263,7 +263,7 @@ def get_housing():
     from app.util.utility import insert_record_to_zoho
 
     try:
-        logging.info(msg="request received")
+        logging.info(msg="housing request received")
         logging.info(msg=request.headers)
         logging.info(msg=request.get_data())
         start_time = time.time()
@@ -305,7 +305,7 @@ def webhook_housing():
     from app.util.utility import insert_record_to_zoho
 
     try:
-        logging.info(msg="request received")
+        logging.info(msg="housing request received")
         logging.info(msg=request.headers)
         logging.info(msg=request.get_data())
         start_time = time.time()
@@ -354,7 +354,7 @@ def retry_mapping(lead):
 @home.post("/retry_leads")
 def webhook_retry():
     try:
-        logging.info(msg="request received")
+        logging.info(msg="retry_leads request received")
         logging.info(msg=request.headers)
         start_time = time.time()
         data = {}
