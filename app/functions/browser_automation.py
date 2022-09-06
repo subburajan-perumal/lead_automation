@@ -1100,6 +1100,19 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
         email.click()
         email.send_keys(lead_data['email'])
 
+        form=browser.find_element(By.XPATH, '//*[@id="addProject"]')
+        form.select_by_visible_text(subproject)
+
+        budget=browser.find_element(By.XPATH, '//*[@id="addBudget"]')
+        budget.select_by_visible_text("80L - 100L")
+
+        propType=browser.find_element(By.XPATH, '//*[@id="addType"]')
+        propType.select_by_visible_text("3BHK")
+
+        remarks=browser.find_element(By.XPATH, '//*[@id="addCRemark"]')
+        remarks.click()
+        remarks.send_keys("NIL")
+
         submitButton = browser.find_element(By.XPATH,'//*[@id="addFileSubmit"]')
 
         browser.save_screenshot(save_path[1])

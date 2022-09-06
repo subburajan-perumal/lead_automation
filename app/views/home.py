@@ -5,7 +5,7 @@ from celery.result import AsyncResult
 from flask import Blueprint, Response, jsonify, render_template, request
 from config import Config
 from app.util.utility import bulk_mapping
-from ..util.request_handler import find_format
+from app.util.request_handler import find_format
 import time
 from app.tasks import lead
 
