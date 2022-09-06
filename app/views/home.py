@@ -80,8 +80,48 @@ def homepage_post():
 
 @home.get("/99acres")
 def get_99acres():
-    logging.info(msg=request.get_data())
-    return {"message":"99 acres endpoint working"}
+    # logging.info(msg=request.get_data())
+    # return {"message":"99 acres endpoint working"}
+    
+    from app.util.utility import insert_record_to_zoho
+
+    try:
+        logging.info(msg="request received")
+        logging.info(msg=request.headers)
+        logging.info(msg=request.get_data())
+        start_time = time.time()
+        data = {}
+        # out = "{}"
+        print(request)
+        print(request.get_data())
+
+        # print(request.get_json())
+        data = find_format(request)
+        if data == {}:
+            return Response("invalid request", 200)
+        if type(data) is list:
+            print(data)
+        elif type(data) is dict:
+            data['source'] = "99acres"
+            print(data)
+            result = lead.apply_async(kwargs=data, queue="lead")
+            _ = insert_record_to_zoho(data)
+            print("task executed succesfully")
+            # print(result.task_id)
+            # out={"task id" : result.task_id}
+        else:
+            print(data)
+
+        # insert_record_to_zoho(data)
+
+        end_time = time.time()
+        print(f"Response time {end_time-start_time}")
+        return Response("received", 200)
+
+    except Exception as e:
+        print(str(e))
+        logging.info("invalid request received")
+        return Response("something went wrong\n", status=400)
 
 
 
@@ -130,8 +170,46 @@ def webhook_99acres():
 
 @home.get("/magicbricks")
 def get_magicbricks():
-    logging.info(msg=request.get_data())
-    return {"message":"magicbricks endpoint working"}
+    # logging.info(msg=request.get_data())
+    # return {"message":"magicbricks endpoint working"}
+    from app.util.utility import insert_record_to_zoho
+
+    try:
+        logging.info(msg="request received")
+        logging.info(msg=request.headers)
+        logging.info(msg=request.get_data())
+        start_time = time.time()
+        data = {}
+        # out = "{}"
+        print(request)
+        print(request.get_data())
+
+        # print(request.get_json())
+        data = find_format(request)
+        if data == {}:
+            return Response("invalid request", 200)
+        if type(data) is list:
+            print(data)
+        elif type(data) is dict:
+            data['source'] = "magicbricks"
+            print(data)
+            result = lead.apply_async(kwargs=data, queue="lead")
+            _ = insert_record_to_zoho(data)
+            print("task executed succesfully")
+            # print(result.task_id)
+            # out={"task id" : result.task_id}
+        else:
+            print(data)
+
+        end_time = time.time()
+        print(f"Response time {end_time-start_time}")
+        return Response("received", 200)
+
+    except Exception as e:
+        print(str(e))
+        logging.info("invalid request received")
+        return Response("something went wrong\n", status=400)
+
 
 
 
@@ -179,8 +257,46 @@ def webhook_magicbricks():
         
 @home.get("/housing")
 def get_housing():
-    logging.info(msg=request.get_data())
-    return {"message":"housing endpoint working"}
+    # logging.info(msg=request.get_data())
+    # return {"message":"housing endpoint working"}
+    
+    from app.util.utility import insert_record_to_zoho
+
+    try:
+        logging.info(msg="request received")
+        logging.info(msg=request.headers)
+        logging.info(msg=request.get_data())
+        start_time = time.time()
+        data = {}
+        # out = "{}"
+        print(request)
+        print(request.get_data())
+
+        # print(request.get_json())
+        data = find_format(request)
+        if data == {}:
+            return Response("invalid request", 200)
+        if type(data) is list:
+            print(data)
+        elif type(data) is dict:
+            data['source'] = "housing"
+            print(data)
+            result = lead.apply_async(kwargs=data, queue="lead")
+            _ = insert_record_to_zoho(data)
+            print("task executed succesfully")
+            # print(result.task_id)
+            # out={"task id" : result.task_id}
+        else:
+            print(data)
+
+        end_time = time.time()
+        print(f"Response time {end_time-start_time}")
+        return Response("received", 200)
+
+    except Exception as e:
+        print(str(e))
+        logging.info("invalid request received")
+        return Response("something went wrong\n", status=400)
 
 
 
