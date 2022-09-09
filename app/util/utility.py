@@ -84,9 +84,9 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
         str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", '_') + ".png"),
         str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
         str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
-        str(str(path2) + '/' + "pre" + "_" + str(subname) + str(uuid4().hex) + ".png"),
-        str(str(path2) + '/' + "post" + "_" + str(subname) + str(uuid4().hex) + ".png"),
-        str(str(path2) + '/' + "err" + "_" + str(subname) + str(uuid4().hex) + ".png")
+        str(str(path2) + '/' + "pre" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "post" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "err" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png")
         ]
 # print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
 
@@ -98,7 +98,6 @@ def mapping(input, id):
         'Configuration1': input['apartment_names'],
         'Country_Code': input['country_code'],
         'Zoning': input['category_type'],
-        'Interested_Localities': list(input['locality_name']),
         'City': input['city_name'],
         'Email': input['lead_email'],
         'Phone': input['lead_phone'],
@@ -114,6 +113,11 @@ def mapping(input, id):
         'Maximum_Price': input['max_price'],
         'Full_Name': input['lead_name']
     }
+
+    if type(input['locality_name']) == str:
+        data['Interested_Localities'] = [input['locality_name']]
+    else:
+        data['Interested_Localities'] = list(input['locality_name'])
 
     if input['service_type'] == 'new-projects':
         data['Interested_in_wf'] = 'New'
@@ -276,8 +280,131 @@ def insert_records(record, access_token):
 # MAIN FUNCTION FOR INSERT RECORD
 
 def insert_record_to_zoho(record, type = None):
-    access_token = get_access_token()
-    id = getProjectID(input['project_name'], access_token)
-    data = mapping(record, id)
-    insert_records(data, access_token)
+    if not type:
+        access_token = get_access_token()
+        id = getProjectID(input['project_name'], access_token)
+        data = mapping(record, id)
+        insert_records(data, access_token)
+    elif type == 'housing':
+        access_token = get_access_token()
+        id = getProjectID(input['project_name'], access_token)
+        data = mapping(record, id)
+        insert_records(data, access_token)
+    elif type == 'magicbricks':
+        access_token = get_access_token()
+        insert_records(record, access_token)
     return {'status': 'success'}
+
+
+# INSERT RECORD FROM HOUSING API
+def housing_api():
+    import requests
+    import hmac
+    import hashlib
+    from datetime import datetime, timedelta
+    import time
+    import pytz
+
+    date_time = datetime.now()
+    date_time = pytz.utc.localize(date_time)
+    timestamp = int(time.mktime(date_time.timetuple()))
+
+    today = datetime.today() + timedelta(days=1)
+    yesterday = today - timedelta(days=2)
+
+    yesterday = pytz.utc.localize(yesterday)
+    today = pytz.utc.localize(today)
+
+    yesterday = int(time.mktime(yesterday.timetuple()))
+    today = int(time.mktime(today.timetuple()))
+
+    id = 2674965
+    key = "REDACTED"
+    timestamp = str(timestamp)
+    byte_key = bytes(key, 'UTF-8')
+    message = timestamp.encode()
+    hash = hmac.new(byte_key, message, hashlib.sha256).hexdigest()
+    params = {
+        'start_date': str(yesterday),
+        'end_date': str(today),
+        'current_time': str(timestamp),
+        'hash': str(hash),
+        'id': id
+    }
+    url = 'https://leads.housing.com/api/v0/get-builder-leads'
+    resp = requests.get(url = url, params = params)
+    leads = resp.json()
+    print(leads)
+
+    for record in leads[::-1]:
+        try:
+            insert_record_to_zoho(record, type = 'housing') 
+        except:
+            pass
+    
+    return {'task': 'completed'}
+
+
+
+def magicbricks_api():
+    import requests
+    from datetime import datetime, timedelta
+    import pytz
+    from json import loads
+
+    today = datetime.today() + timedelta(days=1)
+    yesterday = today - timedelta(days=2)
+
+    yesterday = pytz.utc.localize(yesterday)
+    today = pytz.utc.localize(today)
+
+    yesterday = datetime.strptime(str(yesterday).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
+    today = datetime.strptime(str(today).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
+
+    key = 'REDACTED_MAGICBRICKS_KEY'
+    params = {
+        'key': key,
+        'endDate': today,
+        'startDate': yesterday,
+    }
+    url = 'http://rating.magicbricks.com/mbRating/download.json'
+    resp = requests.get(url = url, params = params)
+    leads = loads(resp.content)
+    print(leads)
+    leads_array = []
+
+    for input in leads['leadPojo']['leads']:
+        try:
+            access_token = get_access_token()
+            project_id = getProjectID(input['project'], access_token)
+            apartment_names = []
+            if '2 BHK' in input['msg']:
+                apartment_names.append('2 BHK')
+            if '3 BHK' in input['msg']:
+                apartment_names.append('3 BHK')
+            if '4 BHK' in input['msg']:
+                apartment_names.append('4 BHK')
+            data = {
+                'Configuration1': list(apartment_names),
+                'Country_Code': '+' + str(input['isd']),
+                'Interested_Localities': input['locality'],
+                'City': input['city'],
+                'Email': input['email'],
+                'Phone': input['mobile'],
+                'Project_Enquired_for': dict({'id': project_id}),
+                'Full_Name': input['name'],
+                'Automation Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
+            }
+            leads_array.append(data)
+        except:
+          pass 
+
+    print(leads_array)
+
+    for record in leads_array:
+        try:
+            insert_records(record, access_token)
+        except:
+            pass
+
+    return {'tasks': 'completed'}

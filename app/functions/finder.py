@@ -118,14 +118,17 @@ def function_finder(lead_data: dict):
             project_list = _site['project_list']
             logger.debug(project_list)
             match_keywords = common_member(site_keywords,project_list['keywords'])
-            lead_data['match_keywords'] = match_keywords
+            print('Matched keywords .. ' + str(match_keywords))
             logger.info(f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}; Matched keywords: {match_keywords}")
             site_name = _site['name']
             site_projectname = _site['project_list']['project_name']
-            browserAutomation = SiteAutomator(lead_data["phone"],
-                                              lead_data["email"],
-                                              lead_data,
-                                              site_data=_site)
+            browserAutomation = SiteAutomator(  
+                                            phone = lead_data["phone"],
+                                            email= lead_data["email"],
+                                            lead_data= lead_data,
+                                            match_keywords= match_keywords,
+                                            site_data=_site
+                                            )
             browserAutomation.projectCheck(site_name, site_projectname)
             browserAutomation.automated_flow()
             browserAutomation.upload_data()

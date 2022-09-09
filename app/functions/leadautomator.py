@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 from app.util.utility import getTime
 from datetime import datetime
-# from app.functions.site_base import SiteAutomator
 from config import Config
 MONGO_DB = Config.MONGO_URI
 

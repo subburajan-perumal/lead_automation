@@ -69,7 +69,7 @@ required_store = {
 
 class SiteAutomator:
 
-    def __init__(self, email, lead_data, site_data) -> None:
+    def __init__(self, phone, email, lead_data, match_keywords, site_data) -> None:
         self.email = email
         self.lead_data = lead_data
         self.path = ""
@@ -77,6 +77,7 @@ class SiteAutomator:
         self.site_data = site_data
         self.CONN = MongoClient(os.getenv("MONGO_DB", MONGO_DB))
         self.DB = self.CONN['lead_automation']
+        self.match_keywords = match_keywords
 
         self.LEAD = self.DB["leads"]
         self.SITE = ""
@@ -227,7 +228,7 @@ class SiteAutomator:
                 #logger.info("mail sent")
             # DB
             try:
-                match_keywords = self.lead_data['match_keywords']
+                match_keywords = self.match_keywords
             except:
                 match_keywords = []
             lead_detail = {

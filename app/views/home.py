@@ -410,28 +410,3 @@ def uploader_file():
             db.bulk_leads.insert_one(val)
             result = lead.apply_async(kwargs=val, queue="lead")
         return {'status': 'succesfully added to Mongodb'}
-
-'''
-mapping = {
-    'email' : 'email',
-    'phone': ["phone", "mobile", "alt_phone"],
-    'keyword_field': [
-    {
-        "field": "project_enquired_for",
-        "seperator": ";"
-    },
-    {
-        "field": "interested_properties",
-        "seperator": ";"
-    },
-    {
-        "field": "interested_localities",
-        "seperator": ";"
-    },
-    {
-        "field": "initial_enquiry_particulars_automation",
-        "seperator": ";"
-    }
-]
-}
-'''

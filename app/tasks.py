@@ -8,6 +8,7 @@ from app.functions.leadautomator import LeadAutomator
 from app.functions.site_base import SiteAutomator
 import json
 from celery.utils.log import get_task_logger
+from app.functions.finder import common_member
 
 
 celery_logger = get_task_logger(__name__)
@@ -65,11 +66,25 @@ def browserAutomate(_site, lead_data):
     celery_logger.info("browser started")
     site_name = _site['name']
     site_projectname = _site['project_list']['project_name']
+    ##
+    site_keywords = []
+    project_enquired = lead_data.get("project_enquired_for", "").split(";")
+    interested_project = lead_data.get("interest_properties", "").split(";")
+    interested_localities = lead_data.get("interested_localities", "").split(";")
+    site_keywords.extend(project_enquired)
+    site_keywords.extend(interested_project)
+    site_keywords.extend(interested_localities)
+    print(site_keywords)    
+    ##
+    match_keywords = common_member(site_keywords, _site['project_list']['keywords'])
     celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
-    browserAutomation = SiteAutomator(
-                                    lead_data["email"],
-                                    lead_data,
-                                    site_data=_site)
+    browserAutomation = SiteAutomator(  
+                                    phone = lead_data["phone"],
+                                    email= lead_data["email"],
+                                    lead_data= lead_data,
+                                    match_keywords= match_keywords,
+                                    site_data=_site
+                                        )
     browserAutomation.projectCheck(site_name, site_projectname)
     browserAutomation.automated_flow()
     # upload_result = browserAutomation.upload_data()
