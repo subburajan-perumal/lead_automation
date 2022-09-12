@@ -259,7 +259,6 @@ def insert_records(record, access_token):
     headers = {
         'Authorization': 'Zoho-oauthtoken ' + str(access_token),
     }
-
     request_body = dict()
     record_list = list()
     duplicate_check_fields= ["Email", "Phone"]
@@ -269,7 +268,6 @@ def insert_records(record, access_token):
     request_body['duplicate_check_fields'] = duplicate_check_fields
     request_body['trigger'] = trigger
     response = post(url=url, headers=headers, data=dumps(request_body).encode('utf-8'))
-    
     if response is not None:
         print("HTTP Status Code : " + str(response.status_code))
         print(response.json())
@@ -297,6 +295,7 @@ def insert_record_to_zoho(record, type = None):
 
 
 # INSERT RECORD FROM HOUSING API
+
 def housing_api():
     import requests
     import hmac
@@ -345,6 +344,7 @@ def housing_api():
     return {'task': 'completed'}
 
 
+# INSERT RECORD FROM MAGICBRICKS API
 
 def magicbricks_api():
     import requests
