@@ -75,8 +75,8 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
         fl_email.send_keys(site_data["email"])
         fl_password = browser.find_element(By.ID, "user_password")
         fl_password.send_keys(site_data["pass"])
-        browser.find_element(By.XPATH, "//button[@type='submit']").click()
-        f_Leads = WebDriverWait(browser, 10).until(
+        browser.find_element(By.XPATH, '//*[@id="new_user"]/div[4]/div[2]/button').click()
+        f_Leads = WebDriverWait(browser, 15).until(
             EC.presence_of_element_located((By.LINK_TEXT, "Leads")))
         # f_Leads = browser.find_element(By.LINK_TEXT, "Leads")
         f_Leads.click()
@@ -289,7 +289,7 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
         fl_email.send_keys(site_data["email"])
         fl_password = browser.find_element(By.ID,"user_password")
         fl_password.send_keys(site_data["pass"])
-        browser.find_element(By.XPATH,"//button[@type='submit']").click()
+        browser.find_element(By.XPATH,'//*[@id="new_user"]/div[4]/div[2]/button').click()
 
         Leads = browser.find_element(By.LINK_TEXT, "Leads")
         Leads.click()
@@ -1113,6 +1113,8 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
         remarks.click()
         remarks.send_keys("NIL")
 
+        browser.save_screenshot(save_path[0])
+
         submitButton = browser.find_element(By.XPATH,'//*[@id="addFileSubmit"]')
 
         browser.save_screenshot(save_path[1])
@@ -1425,11 +1427,14 @@ def xs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list)
         email.send_keys(lead_data['email'])
 
         projectName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[5]/div/div/select')
+        projectName.click()
         projectName.send_keys(subproject)
         projectName.send_keys(Keys.RETURN)
 
         cpName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[6]/div/div/input')
         cpName.send_keys(site_data["partner_name"])
+
+        browser.save_screenshot(save_path[0])
 
         submitButton = browser.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[7]/div/div/input')
         submitButton.click()

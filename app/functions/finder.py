@@ -117,7 +117,7 @@ def function_finder(lead_data: dict):
         for _site in site_list:
             project_list = _site['project_list']
             logger.debug(project_list)
-            match_keywords = common_member(site_keywords,project_list['keywords'])
+            match_keywords = common_member(site_keywords,project_list[0]['keywords'])
             print('Matched keywords .. ' + str(match_keywords))
             logger.info(f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}; Matched keywords: {match_keywords}")
             site_name = _site['name']
