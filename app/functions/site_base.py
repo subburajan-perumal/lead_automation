@@ -227,16 +227,12 @@ class SiteAutomator:
                 #          self.sub_project_name, self.lead_data['name'])
                 #logger.info("mail sent")
             # DB
-            try:
-                match_keywords = self.match_keywords
-            except:
-                match_keywords = []
             lead_detail = {
                 "projectname": self.site_data['name'],  # akshaya
                 "subproject": self.sub_project_name,  # Tango
                 "applied_time": getTime(),
                 "status": self.result,
-                "match_keywords": match_keywords
+                "match_keywords": list(self.match_keywords)
             }
             dbresult = self.LEAD.update_one(
                 {
