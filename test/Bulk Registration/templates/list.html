@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+   <body>
+   
+      <table border = 1>
+         <thead>
+            <td>LEADID</td>
+            <td>Full Name</td>
+            <td>Phone</td>
+            <td>Email</td>
+            <td>Project Enquired for</td>
+            <td>Interested Properties</td>
+            <td>created_time</td>
+            <td>source</td>
+         </thead>
+         
+         {% for x in x %}
+            <tr>
+               <td>{{x["LEADID"]}}</td>
+               <td>{{x["Full Name"]}}</td>
+               <td>{{x["Phone"]}}</td>
+               <td>{{x['Email']}}</td>	
+               <td>{{x["Project Enquired for"]}}</td>
+               <td>{{x["Interested Properties"]}}</td>
+               <td>{{x["created_time"]}}</td>
+               <td>{{x['source']}}</td>	
+            </tr>
+         {% endfor %}
+      </table>
+      
+      <a href = "/upload">Go back to home page</a>
+      
+   </body>
+</html>
