@@ -333,7 +333,6 @@ def housing_api():
     url = 'https://leads.housing.com/api/v0/get-builder-leads'
     resp = requests.get(url = url, params = params)
     leads = resp.json()
-    print(leads)
 
     for record in leads[::-1]:
         try:

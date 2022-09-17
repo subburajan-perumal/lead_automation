@@ -212,7 +212,6 @@ def get_magicbricks():
 
 
 
-
 @home.post("/magicbricks")
 def webhook_magicbricks():
     from app.util.utility import insert_record_to_zoho
@@ -383,10 +382,19 @@ def webhook_retry():
 
 # UPLOAD
 
-@home.route('/upload')
-def upload_file():
-   return render_template('bulk/upload.html')
-
+@home.route('/bulk_leads_list')
+def bulk_leads():
+    from app.database import mongo
+    try:
+        db=mongo.db
+        db = db["leads"]
+        x=[]
+        cur = db.find({'source': 'bulk_upload'})
+        for i in cur:
+            x.append(i)
+        return render_template('/bulk/list.html', x=x)
+    except Exception as e:
+        return jsonify({"Status": "Error", "Error": str(e)})
 
 # UPLOAD BULK CSV
 
@@ -408,5 +416,5 @@ def uploader_file():
             val['created_time'] = datetime.now()
             val['source'] = 'bulk_upload'
             db.bulk_leads.insert_one(val)
-            result = lead.apply_async(kwargs=val, queue="lead")
+            result = lead.apply_async(kwargs=val, queue="bulk_upload")
         return {'status': 'succesfully added to Mongodb'}
