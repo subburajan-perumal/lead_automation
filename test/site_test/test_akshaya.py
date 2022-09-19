@@ -22,7 +22,7 @@ browserLog=logging.getLogger("selenium_log")
 # browserLog.setLevel=logging.INFO
 
 
-driver="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
+driver="./geckodriver.exe"
 firefox_service = Service(driver)
 opt = Options()
 opt.add_argument ( "--incognito" )
@@ -45,23 +45,35 @@ lead_data={
        "initial_enquiry_particulars_automation": ""
     }
 site_data={"_id":{"$oid":"623c25874dca8f32e9244178"},"name":"akshaya","url":"http://cp.sell.do/users/sign_in","email":"redacted@example.com","pass":"REDACTED","status":1,"project_list":[{"project_name":"Tango","keywords":["Akshaya Tango","Alliance Galleria","Casagrand Esquire","Risland","Courtyards","Risington","Brigade Residences","Thoraipakkam","Perungudi","Sholinganallur","Pallavaram","House of Hiranandani","Gardenia","Tuxedo","Olympia Opaline","TCP Altura","Elevate 21","Anchorage","Mandarin","Alexandri","AkshayaTest"],"location":["Thoraipakkam","Perungudi","Sholinganallur","Pallavaram"]},{"project_name":"Republic","keywords":["Akshaya Re   public","Woodside","Green Enclave","Emerald Peninsula","Signature City"],"location":[]},{"project_name":"Today","keywords":["Akshaya Today","Savoye","Radiance Sapphire","PBEL","Godrej Azure","Kelambakkam","OMR","Navalur"],"location":["Kelambakkam","OMR","Navalur"]},{"project_name":"OrlandO","keywords":["Akshaya OrlandO"],"location":[]},{"project_name":"Earth","keywords":["Akshaya Earth"],"location":[]},{"project_name":"Shanti","keywords":["Akshaya Shanti"],"location":[]},{"project_name":"Poongavanam","keywords":["Akshaya Poongavanam"],"location":[]}]}
+
+def getName(name):
+    splited_name = name.split(" ")
+
+    if len(splited_name) == 1:
+
+        return splited_name[0], splited_name[0]
+    elif len(splited_name) == 2:
+        return splited_name[0], splited_name[1]
+    elif len(splited_name) == 3:
+        return splited_name[0]+splited_name[1], splited_name[2]
+    else:
+        return "" ""
+
+
+
 def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,automate_path:list):
     try:
-        browserLog.info("akshaya started")
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path = automate_path
         fullname=str(lead_data['name'])
-        #this line need to change
-    
-        # first_name,last_name=getName(fullname)
-        first_name=lead_data['first_name']
-        last_name=lead_data['last_name']
+        first_name,last_name=getName(fullname)
         browser.get(site_data["url"])
         fl_email = browser.find_element(By.ID, "user_email")
         fl_email.send_keys(site_data["email"])
         fl_password = browser.find_element(By.ID, "user_password")
         fl_password.send_keys(site_data["pass"])
-        browser.find_element(By.XPATH, "//button[@type='submit']").click()
-        f_Leads = WebDriverWait(browser, 10).until(
+        browser.find_element(By.XPATH, '//*[@id="new_user"]/div[4]/div[2]/button').click()
+        f_Leads = WebDriverWait(browser, 15).until(
             EC.presence_of_element_located((By.LINK_TEXT, "Leads")))
         # f_Leads = browser.find_element(By.LINK_TEXT, "Leads")
         f_Leads.click()
@@ -94,18 +106,16 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
 
         # browser.save_screenshot(save_path[0])
         f_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
-        f_save.click()
+        # f_save.click()
         browser.implicitly_wait(5)
         # browser.save_screenshot(save_path[1])
         browser.close()
-        browserLog.info("akshaya executed successfully")
         return 1
 
     except Exception as e:
-        time.sleep(2)
-        print(str(e))
+        browserLog.exception(f"Site:{site_data['name']}")
+        # print(str(e))
         # browser.save_screenshot(save_path[2])
-        browserLog.error(str(e))
         browser.close()
         return -1
 

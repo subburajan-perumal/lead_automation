@@ -24,7 +24,7 @@ browserLog=logging.getLogger("selenium_log")
 # browserLog.setLevel=logging.INFO
 
 
-driver="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
+driver="./geckodriver.exe"
 firefox_service = Service(driver)
 opt = Options()
 opt.add_argument ( "--incognito" )
@@ -36,11 +36,11 @@ browser = webdriver.Firefox (
 
 lead_data={
     "lead_id": "920786000234230275",
-     "name": "Manikandan",
-      "first_name": "subbu",
-    "last_name": "Manikandan", 
+     "name": "Test",
+      "first_name": "Test",
+    "last_name": "Test", 
     "email": "redacted@example.com", 
-    "phone": "9000000000",
+    "phone": "+911111111111",
      "project_enquired_for": "",
       "interested_properties": "SPR Market of India", 
       "interested_localities": "Perambur",
@@ -49,24 +49,41 @@ lead_data={
 
 site_data={"_id":{"$oid":"623c25874dca8f32e924417b"},"name":"casagrand","url":"http://cp.sell.do/users/sign_in","email":"redacted@example.com","pass":"REDACTED","status":1,"project_list":[{"project_name":"CG Zenith","keywords":["Casagrand Zenith","Zenith"],"location":[]},{"project_name":"CG Esquire","keywords":["Casagrand Esquire"],"location":[]},{"project_name":"CG Tudor","keywords":["Casagrand Tudor","Brigade Bonito","Brigade Xanadu","Signature City"],"location":[]},{"project_name":"CG Savoye","keywords":["Casagrand Savoye","Godrej Azure","Radiance Sapphire","Olympia Opaline","TCP Altura"],"location":[]},{"project_name":"CG Supremus","keywords":["Casagrand Supremus"],"location":[]},{"project_name":"CG ECR 14","keywords":["Casagrand ECR 14"],"location":[]},{"project_name":"CG Crescendo Elite","keywords":["Casagrand Crescendo Elite"],"location":[]},{"project_name":"CG Crescendo Compact","keywords":["Casagrand Crescendo Compact"],"location":[]},{"project_name":"CG Millenia","keywords":["Casagrand Millenia"],"location":[]},{"project_name":"CG Royale","keywords":["Casagrand Royale"],"location":[]},{"project_name":"CG Utopia","keywords":["Casagrand Utopia","Peninsula"],"location":[]},{"project_name":"CG Athens","keywords":["Casagrand Athens"],"location":[]},{"project_name":"CG FirstCity","keywords":["Casagrand FirstCity"],"location":[]}]}
 
+def getName(name):
+    splited_name = name.split(" ")
+
+    if len(splited_name) == 1:
+
+        return splited_name[0], splited_name[0]
+    elif len(splited_name) == 2:
+        return splited_name[0], splited_name[1]
+    elif len(splited_name) == 3:
+        return splited_name[0]+splited_name[1], splited_name[2]
+    else:
+        return "" ""
+
 def casagrand(subproject, browser, site_data, lead_data, automate_path):
     try:
-        browserLog.info("casagrand started")
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path = automate_path
         fullname=str(lead_data['name'])
-        #need to change in production
-        # first_name,last_name=getName(fullname)
+        first_name,last_name=getName(fullname)
         browser.get(site_data["url"])
         fl_email = browser.find_element(By.ID, "user_email")
         fl_email.send_keys(site_data["email"])
         fl_password = browser.find_element(By.ID,"user_password")
         fl_password.send_keys(site_data["pass"])
-        browser.find_element(By.XPATH,"//button[@type='submit']").click()
+        browser.find_element(By.XPATH,'//*[@id="new_user"]/div[4]/div[2]/button').click()
+        time.sleep(5)
 
-        Leads = browser.find_element(By.LINK_TEXT, "Leads")
+        # Leads = browser.find_element(By.LINK_TEXT, ('Leads'))
+        Leads = browser.find_element(By.XPATH, '/html/body/nav/div/ul[1]/li[2]/a')
         Leads.click()
-        addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
+        time.sleep(5)
+
+        addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a") 
         addlead.click()
+        time.sleep(5)
 
         firstname = browser.find_element(By.ID, "lead_first_name")
         firstname.send_keys(fullname)
@@ -96,19 +113,17 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
     
 
         fs_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
-        fs_save.click()
+        # fs_save.click()
         
         time.sleep(5)
         # browser.save_screenshot(save_path[1])
         browser.close()
-        browserLog.info("casagrand Executed Succesfully")
         return 1
     except Exception as e:
-        print(str(e))
-        browserLog.exception("casagrand error occured")
+        browserLog.exception(f"Site:{site_data['name']}")
         # browser.save_screenshot(save_path[2])
         return -1
 
-subproject="CG Esquire"
+subproject="CG Tudor"
 path="."
 casagrand(subproject, browser, site_data, lead_data, path)

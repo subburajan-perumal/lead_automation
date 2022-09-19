@@ -24,7 +24,7 @@ browserLog=logging.getLogger("selenium_log")
 # browserLog.setLevel=logging.INFO
 
 
-driver="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
+driver="./geckodriver.exe"
 firefox_service = Service(driver)
 opt = Options()
 opt.add_argument ( "--incognito" )
@@ -36,9 +36,9 @@ browser = webdriver.Firefox (
 
 lead_data={
     "lead_id": "920786000234230275",
-     "name": "Manikandan",
-      "first_name": "subbu",
-    "last_name": "Manikandan", 
+     "name": "Test",
+      "first_name": "Test",
+    "last_name": "Test", 
     "email": "redacted@example.com", 
     "phone": "9000000000",
      "project_enquired_for": "",
@@ -51,7 +51,7 @@ site_data={"_id":{"$oid":"623c25874dca8f32e924417e"},"name":"dra","url":"http://
 
 def dra(subproject, browser, site_data, lead_data, path):
     try:
-        browserLog.info("dra started")
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path=path
 
         browser.get(site_data["url"])
@@ -93,18 +93,15 @@ def dra(subproject, browser, site_data, lead_data, path):
 
         # browser.save_screenshot(save_path[0])
         save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
-        save.click()
+        # save.click()
 
         browser.implicitly_wait(5)
-        
         # browser.save_screenshot(save_path[1])
         browser.close()
-        browserLog.info("dra executed successfully")
         return 1
 
     except Exception as e:
-        print(str(e))
-        browserLog.exception("dra error occured ")
+        browserLog.exception(f"Site:{site_data['name']}")
         # browser.save_screenshot(save_path[2])
         return -1
 

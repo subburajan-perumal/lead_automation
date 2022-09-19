@@ -22,7 +22,7 @@ browserLog=logging.getLogger("browser_log.log")
 # browserLog.setLevel=logging.INFO
 
 
-driver="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
+driver="./geckodriver.exe"
 firefox_service = Service(driver)
 opt = Options()
 opt.add_argument ( "--incognito" )
@@ -50,28 +50,28 @@ site_data={"_id":{"$oid":"623c25874dca8f32e9244179"},"name":"alliance","url":"ht
 #issue in handling subproject
 def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, automate_path:list):
     try:
-        subproject_2=""
+        # subproject_2=""
         # Villabelvedere/Eternity
-        if subproject=="Villabelvedere":
-            subproject="Villabelvedere/Eternity"
-            subproject_2="Villabelvedere"
+        # if subproject=="Villabelvedere":
+        #     subproject="Villabelvedere/Eternity"
+        #     subproject_2="Villabelvedere"
         
-        if subproject=="Urbanrise Eternity":
-            subproject="Villabelvedere/Eternity"
-            subproject_2="Urbanrise Eternity"
+        # if subproject=="Urbanrise Eternity":
+        #     subproject="Villabelvedere/Eternity"
+        #     subproject_2="Urbanrise Eternity"
         
-        # OMR Cluster - JS/CNCB,CNGS
-        if subproject=="Codename Chennai's Best":
-            subproject="OMR Cluster - JS/CNCB,CNGS"
-            subproject_2="Codename Chennai's Best"
+        # # OMR Cluster - JS/CNCB,CNGS
+        # if subproject=="Codename Chennai's Best":
+        #     subproject="OMR Cluster - JS/CNCB,CNGS"
+        #     subproject_2="Codename Chennai's Best"
 
-        if subproject=="Codename Gold Standard":
-            subproject="OMR Cluster - JS/CNCB,CNGS"
-            subproject_2="Codename Gold Standard"
+        # if subproject=="Codename Gold Standard":
+        #     subproject="OMR Cluster - JS/CNCB,CNGS"
+        #     subproject_2="Codename Gold Standard"
         
-        if subproject=="Jasmine springs":
-            subproject="OMR Cluster - JS/CNCB,CNGS"
-            subproject_2="Jasmine springs"
+        # if subproject=="Jasmine springs":
+        #     subproject="OMR Cluster - JS/CNCB,CNGS"
+        #     subproject_2="Jasmine springs"
 
 
         save_path = automate_path
@@ -97,9 +97,9 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         email.send_keys(lead_data['email'])
         project=Select(browser.find_element(By.ID,'select_project'))
         project.select_by_visible_text(subproject)
-        if subproject_2 != "" :
-            projectsub=Select(browser.find_element(By.ID,'sub_project_select'))
-            projectsub.select_by_visible_text(subproject_2)
+        # if subproject_2 != "" :
+            # projectsub=Select(browser.find_element(By.ID,'sub_project_select'))
+            # projectsub.select_by_visible_text(subproject_2)
 
 
         # browser.save_screenshot(save_path[0])    
@@ -121,7 +121,12 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         return -1
 
 
-subproject="Jasmine springs"
-# subproject="Alliance Galleria Residences"
-path="."
+subproject="Orchid Greens - Tiruvallur"
+# subproject="Villabelvedere/Eternity"
+path="./geckodriver.exe"
 alliance(subproject, browser, site_data, lead_data, path)
+
+# # subproject = 'Crown'
+# browser = webdriver.Firefox(executable_path='./geckodriver.exe')
+# result=alliance("Jasmine springs", browser, site_data, lead_data, ".")
+# print(result)

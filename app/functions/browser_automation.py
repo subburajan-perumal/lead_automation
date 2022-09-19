@@ -122,31 +122,31 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
         browser.close()
         return -1
 
-#issue in handling subproject
+#updated
 def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, automate_path:list):
     try:
-        subproject_2=""
-        # Villabelvedere/Eternity
-        if subproject=="Villabelvedere":
-            subproject="Villabelvedere/Eternity"
-            subproject_2="Villabelvedere"
+        # subproject_2=""
+        # # Villabelvedere/Eternity
+        # if subproject=="Villabelvedere":
+        #     subproject="Villabelvedere/Eternity"
+        #     subproject_2="Villabelvedere"
         
-        if subproject=="Urbanrise Eternity":
-            subproject="Villabelvedere/Eternity"
-            subproject_2="Urbanrise Eternity"
+        # if subproject=="Urbanrise Eternity":
+        #     subproject="Villabelvedere/Eternity"
+        #     subproject_2="Urbanrise Eternity"
         
-        # OMR Cluster - JS/CNCB,CNGS
-        if subproject=="Codename Chennai's Best":
-            subproject="OMR Cluster - JS/CNCB,CNGS"
-            subproject_2="Codename Chennai's Best"
+        # # OMR Cluster - JS/CNCB,CNGS
+        # if subproject=="Codename Chennai's Best":
+        #     subproject="OMR Cluster - JS/CNCB,CNGS"
+        #     subproject_2="Codename Chennai's Best"
 
-        if subproject=="Codename Gold Standard":
-            subproject="OMR Cluster - JS/CNCB,CNGS"
-            subproject_2="Codename Gold Standard"
+        # if subproject=="Codename Gold Standard":
+        #     subproject="OMR Cluster - JS/CNCB,CNGS"
+        #     subproject_2="Codename Gold Standard"
         
-        if subproject=="Jasmine springs":
-            subproject="OMR Cluster - JS/CNCB,CNGS"
-            subproject_2="Jasmine springs"
+        # if subproject=="Jasmine springs":
+        #     subproject="OMR Cluster - JS/CNCB,CNGS"
+        #     subproject_2="Jasmine springs"
 
 
         save_path = automate_path
@@ -176,9 +176,9 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         email.send_keys(lead_data['email'])
         project=Select(browser.find_element(By.ID,'select_project'))
         project.select_by_visible_text(subproject)
-        if subproject_2 != "" :
-            projectsub=Select(browser.find_element(By.ID,'sub_project_select'))
-            projectsub.select_by_visible_text(subproject_2)
+        # if subproject_2 != "" :
+        #     projectsub=Select(browser.find_element(By.ID,'sub_project_select'))
+        #     projectsub.select_by_visible_text(subproject_2)
 
 
         # browser.save_screenshot(save_path[0])    
@@ -291,10 +291,13 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
         fl_password.send_keys(site_data["pass"])
         browser.find_element(By.XPATH,'//*[@id="new_user"]/div[4]/div[2]/button').click()
 
-        Leads = browser.find_element(By.LINK_TEXT, "Leads")
+        Leads = browser.find_element(By.XPATH, '/html/body/nav/div/ul[1]/li[2]/a')
         Leads.click()
+        time.sleep(5)
+        
         addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
         addlead.click()
+        time.sleep(5)
 
         firstname = browser.find_element(By.ID, "lead_first_name")
         firstname.send_keys(fullname)
@@ -1066,13 +1069,6 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
         save_path=path
         browser.get(site_data["url"])
         time.sleep(10)
-   
-        browser.switch_to.frame('sandboxFrame')
-        browser.switch_to.frame('userHtmlFrame')
-
-        browser.find_element(By.XPATH, '//*[@id="loginBtn"]').click()
-
-        time.sleep(30)
 
         browser.switch_to.frame('sandboxFrame')
         browser.switch_to.frame('userHtmlFrame')
@@ -1108,17 +1104,13 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
         email.send_keys(lead_data['email'])
 
         form=browser.find_element(By.XPATH, '//*[@id="addProject"]')
-        form.click()
-        form.send_keys(subproject)
-        form.send_keys(Keys.RETURN)
+        form.select_by_visible_text(subproject)
 
         budget=browser.find_element(By.XPATH, '//*[@id="addBudget"]')
-        budget.send_keys("80L - 100L")
-        form.send_keys(Keys.RETURN)
+        budget.select_by_visible_text("80L - 100L")
 
         propType=browser.find_element(By.XPATH, '//*[@id="addType"]')
-        propType.send_keys("3BHK")
-        form.send_keys(Keys.RETURN)
+        propType.select_by_visible_text("3BHK")
 
         remarks=browser.find_element(By.XPATH, '//*[@id="addCRemark"]')
         remarks.click()
@@ -1128,9 +1120,10 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
 
         submitButton = browser.find_element(By.XPATH,'//*[@id="addFileSubmit"]')
 
-        browser.save_screenshot(save_path[1])
+        submitButton.click()
 
-        submitButton.click()                
+        browser.save_screenshot(save_path[1])
+                
         return 1
 
     
