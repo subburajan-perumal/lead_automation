@@ -38,35 +38,40 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
         browser.find_element(By.XPATH, '//*[@id="loginName"]').send_keys(site_data['partner_name'])
         browser.find_element(By.XPATH, '//*[@id="passML"]').send_keys(site_data['pass'])
         browser.find_element(By.XPATH, '//*[@id="logingBtn"]').click()
-
         time.sleep(30)
 
         newLeadButton = browser.find_element(By.XPATH,'//*[@id="upladFile"]/div[1]/div[1]/div[1]/img')
         newLeadButton.click()
-        time.sleep(2)
+        time.sleep(10)
 
         name  = browser.find_element(By.XPATH, '//*[@id="addCName"]')
         name.click()
+        time.sleep(10)
         name.send_keys(lead_data['name'])
 
         contact=browser.find_element(By.XPATH,'//*[@id="addCPh1"]')
         contact.click()
+        time.sleep(10)
         contact.send_keys(lead_data['phone'])
 
         contact=browser.find_element(By.XPATH,'//*[@id="addCPh2"]')
         contact.click()
+        time.sleep(10)
         contact.send_keys(lead_data['phone'])
 
         email=browser.find_element(By.XPATH,'//*[@id="addCMail1"]')
         email.click()
+        time.sleep(10)
         email.send_keys(lead_data['email'])
 
         email=browser.find_element(By.XPATH,'//*[@id="addCMail2"]')
         email.click()
+        time.sleep(10)
         email.send_keys(lead_data['email'])
 
         form=browser.find_element(By.XPATH, '//*[@id="addProject"]')
         form.click()
+        time.sleep(10)
         form.send_keys(subproject)
         form.send_keys(Keys.RETURN)
 
@@ -80,15 +85,17 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
 
         remarks=browser.find_element(By.XPATH, '//*[@id="addCRemark"]')
         remarks.click()
+        time.sleep(10)
         remarks.send_keys("NIL")
 
-        # browser.save_screenshot(save_path[0])
+        browser.save_screenshot(save_path[0])
 
         submitButton = browser.find_element(By.XPATH,'//*[@id="addFileSubmit"]')
 
-        # browser.save_screenshot(save_path[1])
+        browser.save_screenshot(save_path[1])
 
         submitButton.click()
+        time.sleep(10)
                 
         return 1
 

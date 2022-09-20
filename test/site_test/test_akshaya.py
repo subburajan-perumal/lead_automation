@@ -73,13 +73,18 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
         fl_password = browser.find_element(By.ID, "user_password")
         fl_password.send_keys(site_data["pass"])
         browser.find_element(By.XPATH, '//*[@id="new_user"]/div[4]/div[2]/button').click()
+        time.sleep(10)
+        # f_Leads = WebDriverWait(browser, 15).until(
+        #     EC.presence_of_element_located((By.LINK_TEXT, "Leads")))
         f_Leads = WebDriverWait(browser, 15).until(
-            EC.presence_of_element_located((By.LINK_TEXT, "Leads")))
+            EC.presence_of_element_located((By.XPATH, '/html/body/nav/div/ul[1]/li[2]/a')))
         # f_Leads = browser.find_element(By.LINK_TEXT, "Leads")
         f_Leads.click()
+        time.sleep(10)
         f_addlead = browser.find_element(
             By.XPATH, "//a[@href='/broker/2150/leads/new']")
         f_addlead.click()
+        time.sleep(10)
         f_firstname = browser.find_element(By.ID, "lead_first_name")
         f_firstname.send_keys(first_name)
         f_lastname = browser.find_element(By.ID, "lead_last_name")

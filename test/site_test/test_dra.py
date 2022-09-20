@@ -61,7 +61,7 @@ def dra(subproject, browser, site_data, lead_data, path):
         password.send_keys(site_data["pass"])
         browser.find_element(By.XPATH,"//button[@type='submit']").click()
 
-        Leads = browser.find_element(By.LINK_TEXT, "Leads")
+        Leads = browser.find_element(By.XPATH, '/html/body/nav/div/ul[1]/li[2]/a')
         Leads.click()
         addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
         addlead.click()

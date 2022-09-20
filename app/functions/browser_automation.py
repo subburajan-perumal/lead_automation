@@ -76,13 +76,21 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
         fl_password = browser.find_element(By.ID, "user_password")
         fl_password.send_keys(site_data["pass"])
         browser.find_element(By.XPATH, '//*[@id="new_user"]/div[4]/div[2]/button').click()
+        time.sleep(10)
+
         f_Leads = WebDriverWait(browser, 15).until(
-            EC.presence_of_element_located((By.LINK_TEXT, "Leads")))
+            EC.presence_of_element_located((By.XPATH, '/html/body/nav/div/ul[1]/li[2]/a')))
+        # f_Leads = WebDriverWait(browser, 15).until(
+        #     EC.presence_of_element_located((By.LINK_TEXT, "Leads")))
         # f_Leads = browser.find_element(By.LINK_TEXT, "Leads")
         f_Leads.click()
+        time.sleep(10)
+
         f_addlead = browser.find_element(
             By.XPATH, "//a[@href='/broker/2150/leads/new']")
         f_addlead.click()
+        time.sleep(10)
+
         f_firstname = browser.find_element(By.ID, "lead_first_name")
         f_firstname.send_keys(first_name)
         f_lastname = browser.find_element(By.ID, "lead_last_name")
@@ -92,24 +100,31 @@ def akshaya(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,auto
                                     '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a'
                                     )
         f_mail.click()
+        time.sleep(10)
         f_mail1 = browser.find_element(By.XPATH, '/html/body/div[3]/div/input')
         f_mail1.click()
+        time.sleep(10)
         f_mail1.send_keys(lead_data.get("email"))
         f_mail1.send_keys(Keys.RETURN)
         f_phone = browser.find_element(By.XPATH, '//*[@id="lead_phone"]')
         f_phone.click()
+        time.sleep(10)
         f_phone.send_keys(lead_data.get("phone"))
         f_button2 = browser.find_element(
             By.XPATH, '//*[@id="s2id_lead_project_ids"]/a/span[2]')
         f_button2.click()
+        time.sleep(10)
         f_project1 = browser.find_element(
             By.XPATH, '/html/body/div[4]/div/input')
         f_project1.send_keys(subproject)
         f_project1.send_keys(Keys.RETURN)
 
         browser.save_screenshot(save_path[0])
+
         f_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
         f_save.click()
+        time.sleep(10)
+
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
         browser.close()
@@ -165,7 +180,7 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         time.sleep(10)
         f_lead=browser.find_elements(By.CLASS_NAME,'kt-menu__item')
         f_lead[1].click()
-        time.sleep(5)
+        time.sleep(10)
         f_name=browser.find_element(By.NAME,'name')
         f_name.send_keys(lead_data['name'])
         contact=browser.find_element(By.NAME,'contact')
@@ -184,13 +199,14 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
         # browser.save_screenshot(save_path[0])    
 
         add=browser.find_element(By.ID,'lead_submit_btn').click()
+        time.sleep(10)
         aa = WebDriverWait(browser, 10).until(
                 EC.presence_of_element_located((By.XPATH,"//*[@id='kt_table_1']/tbody/tr[1]/td[7]"))
         )
         browser.save_screenshot(save_path[0])
         aa.click()
         
-        time.sleep(3) ## FOR CHANGING WAIT TIME
+        time.sleep(10) ## FOR CHANGING WAIT TIME
         browser.save_screenshot(save_path[1])
         browser.close()
         return 1
@@ -290,14 +306,15 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
         fl_password = browser.find_element(By.ID,"user_password")
         fl_password.send_keys(site_data["pass"])
         browser.find_element(By.XPATH,'//*[@id="new_user"]/div[4]/div[2]/button').click()
+        time.sleep(10)
 
         Leads = browser.find_element(By.XPATH, '/html/body/nav/div/ul[1]/li[2]/a')
         Leads.click()
-        time.sleep(5)
+        time.sleep(10)
         
         addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
         addlead.click()
-        time.sleep(5)
+        time.sleep(10)
 
         firstname = browser.find_element(By.ID, "lead_first_name")
         firstname.send_keys(fullname)
@@ -310,15 +327,19 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
 
         f_mail = browser.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a')
         f_mail.click()
+        time.sleep(10)
         f_alt_mail = browser.find_element(By.XPATH, '/html/body/div[3]/div/input')
         f_alt_mail.click()
+        time.sleep(10)
         f_alt_mail.send_keys(lead_data['email'])
         f_alt_mail.send_keys(Keys.RETURN)
         f_phone = browser.find_element(By.XPATH, '//*[@id="lead_phone"]')
         f_phone.click()
+        time.sleep(10)
         f_phone.send_keys(lead_data['phone'])
         button2 = browser.find_element(By.XPATH, '//*[@id="s2id_lead_project_ids"]/a/span[2]')
         button2.click()
+        time.sleep(10)
         f_project = browser.find_element(By.XPATH, '/html/body/div[4]/div/input')
         f_project.send_keys(subproject)
         f_project.send_keys(Keys.RETURN)
@@ -328,8 +349,8 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
 
         fs_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
         fs_save.click()
+        time.sleep(10)
         
-        time.sleep(5)
         browser.save_screenshot(save_path[1])
         browser.close()
         return 1
@@ -460,11 +481,15 @@ def dra(subproject, browser, site_data, lead_data, path):
         password = browser.find_element(By.ID,"user_password")
         password.send_keys(site_data["pass"])
         browser.find_element(By.XPATH,"//button[@type='submit']").click()
+        time.sleep(10)
 
-        Leads = browser.find_element(By.LINK_TEXT, "Leads")
+        Leads = browser.find_element(By.XPATH, '/html/body/nav/div/ul[1]/li[2]/a')
         Leads.click()
+        time.sleep(10)
+
         addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
         addlead.click()
+        time.sleep(10)
 
         firstname = browser.find_element(By.ID, "lead_first_name")
         firstname.send_keys(lead_data['name'])
@@ -477,15 +502,19 @@ def dra(subproject, browser, site_data, lead_data, path):
 
         mail = browser.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a')
         mail.click()
+        time.sleep(10)
         mail1 = browser.find_element(By.XPATH, '/html/body/div[3]/div/input')
         mail1.click()
+        time.sleep(10)
         mail1.send_keys(lead_data['email'])
         mail1.send_keys(Keys.RETURN)
         phone1 = browser.find_element(By.XPATH, '//*[@id="lead_phone"]')
         phone1.click()
+        time.sleep(10)
         phone1.send_keys(lead_data.get("phone"))
         button2 = browser.find_element(By.XPATH, '//*[@id="s2id_lead_project_ids"]/a/span[2]')
         button2.click()
+        time.sleep(10)
         project = browser.find_element(By.XPATH, '/html/body/div[4]/div/input')
         project.send_keys(subproject)
         project.send_keys(Keys.RETURN)
@@ -494,6 +523,7 @@ def dra(subproject, browser, site_data, lead_data, path):
         browser.save_screenshot(save_path[0])
         save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
         save.click()
+        time.sleep(10)
 
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
@@ -1076,31 +1106,35 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
         browser.find_element(By.XPATH, '//*[@id="loginName"]').send_keys(site_data['partner_name'])
         browser.find_element(By.XPATH, '//*[@id="passML"]').send_keys(site_data['pass'])
         browser.find_element(By.XPATH, '//*[@id="logingBtn"]').click()
-
         time.sleep(30)
 
         newLeadButton = browser.find_element(By.XPATH,'//*[@id="upladFile"]/div[1]/div[1]/div[1]/img')
         newLeadButton.click()
-        time.sleep(2)
+        time.sleep(10)
 
         name  = browser.find_element(By.XPATH, '//*[@id="addCName"]')
         name.click()
+        time.sleep(10)
         name.send_keys(lead_data['name'])
 
         contact=browser.find_element(By.XPATH,'//*[@id="addCPh1"]')
         contact.click()
+        time.sleep(10)
         contact.send_keys(lead_data['phone'])
 
         contact=browser.find_element(By.XPATH,'//*[@id="addCPh2"]')
         contact.click()
+        time.sleep(10)
         contact.send_keys(lead_data['phone'])
 
         email=browser.find_element(By.XPATH,'//*[@id="addCMail1"]')
         email.click()
+        time.sleep(10)
         email.send_keys(lead_data['email'])
 
         email=browser.find_element(By.XPATH,'//*[@id="addCMail2"]')
         email.click()
+        time.sleep(10)
         email.send_keys(lead_data['email'])
 
         form=browser.find_element(By.XPATH, '//*[@id="addProject"]')
@@ -1114,13 +1148,14 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
 
         remarks=browser.find_element(By.XPATH, '//*[@id="addCRemark"]')
         remarks.click()
+        time.sleep(10)
         remarks.send_keys("NIL")
 
         browser.save_screenshot(save_path[0])
 
         submitButton = browser.find_element(By.XPATH,'//*[@id="addFileSubmit"]')
-
         submitButton.click()
+        time.sleep(10)
 
         browser.save_screenshot(save_path[1])
                 
