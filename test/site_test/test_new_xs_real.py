@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver import Firefox
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
@@ -8,8 +9,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.alert import Alert
 import time
+from selenium.webdriver.support import expected_conditions as EC
 
-driver="geckodriver"
+
+driver="./geckodriver.exe"
 firefox_service = Service(driver)
 opt = Options()
 opt.add_argument ( "--incognito" )
@@ -21,9 +24,9 @@ browser = webdriver.Firefox (
 
 lead_data={
     "lead_id": "920786000234230275",
-     "name": "Manikandan",
+     "name": "Tesy",
       "first_name": "",
-    "last_name": "Manikandan", 
+    "last_name": "Test", 
     "email": "redacted@example.com", 
     "phone": "9000000000",
      "project_enquired_for": "",
@@ -85,7 +88,7 @@ site_data={
   "days": 30
 }  
 
-def xs_new(subproject, browser, site_data, lead_data, path):
+def xs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list):
 
     try:
         # browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
@@ -104,17 +107,23 @@ def xs_new(subproject, browser, site_data, lead_data, path):
         email=browser.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[4]/div/div/input')
         email.send_keys(lead_data['email'])
 
-        projectName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[5]/div/div/select')
-        projectName.send_keys(subproject)
-        projectName.send_keys(Keys.RETURN)
+        # projectName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[5]/div/div/select')
+        # projectName.click()
+        # projectName.send_keys(subproject)
+        # projectName.send_keys(Keys.RETURN)
+
+        project=Select(browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/div/div/div/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[5]/div/div/select'))
+        project.select_by_visible_text(subproject)
 
         cpName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[6]/div/div/input')
         cpName.send_keys(site_data["partner_name"])
 
+        # browser.save_screenshot(save_path[0])
+
         submitButton = browser.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[7]/div/div/input')
         submitButton.click()
 
-        browser.save_screenshot(save_path[1])
+        # browser.save_screenshot(save_path[1])
                 
         return 1
         
@@ -127,6 +136,6 @@ def xs_new(subproject, browser, site_data, lead_data, path):
 
 
 
-subproject="XS Real- Magnus"
+subproject="XS Real Courtyard"
 path="."
-xs_new(subproject, browser, site_data, lead_data, path)
+xs(subproject, browser, site_data, lead_data, path)

@@ -1464,10 +1464,13 @@ def xs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list)
         email=browser.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[4]/div/div/input')
         email.send_keys(lead_data['email'])
 
-        projectName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[5]/div/div/select')
-        projectName.click()
-        projectName.send_keys(subproject)
-        projectName.send_keys(Keys.RETURN)
+        # projectName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[5]/div/div/select')
+        # projectName.click()
+        # projectName.send_keys(subproject)
+        # projectName.send_keys(Keys.RETURN)
+
+        project=Select(browser.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/div/div/div/main/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[5]/div/div/select'))
+        project.select_by_visible_text(subproject)
 
         cpName = browser.find_element(By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div/div/form/div[6]/div/div/input')
         cpName.send_keys(site_data["partner_name"])
