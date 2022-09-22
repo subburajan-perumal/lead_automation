@@ -404,7 +404,7 @@ def uploader_file():
     import pandas as pd
 
     if request.method == "GET":
-        return render_template("/bulk/upload.html",data=result)
+        return render_template("/bulk/upload.html")
 
     if request.method == "POST":
         f = request.files['file']
