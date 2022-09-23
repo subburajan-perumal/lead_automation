@@ -2,7 +2,7 @@ from datetime import datetime
 import logging
 from urllib import response
 from celery.result import AsyncResult
-from flask import Blueprint, Response, jsonify, render_template, request
+from flask import Blueprint, Response, jsonify, redirect, render_template, request
 from config import Config
 from app.util.utility import bulk_mapping
 from app.util.request_handler import find_format
@@ -383,38 +383,44 @@ def webhook_retry():
 # UPLOAD
 
 @home.route('/bulk_leads_list')
-def bulk_leads():
+async def bulk_leads():
     from app.database import mongo
     try:
         db=mongo.db
         db = db["leads"]
         x=[]
         cur = db.find({'source': 'bulk_upload'})
-        for i in cur:
+        for i in cur[::-1]:
             x.append(i)
         return render_template('/bulk/list.html', x=x)
     except Exception as e:
         return jsonify({"Status": "Error", "Error": str(e)})
 
+
 # UPLOAD BULK CSV
 
 @home.route("/bulk_upload", methods=["GET","POST"])
-def uploader_file():
+async def uploader_file():
     from app.database import mongo
     import pandas as pd
 
     if request.method == "GET":
         return render_template("/bulk/upload.html")
-
     if request.method == "POST":
-        f = request.files['file']
-        db=mongo.db
-        df = pd.read_csv(f)
-        data = df.to_dict(orient="records")
-        for val in data:
-            val = bulk_mapping(val)
-            val['created_time'] = datetime.now()
-            val['source'] = 'bulk_upload'
-            db.bulk_leads.insert_one(val)
-            result = lead.apply_async(kwargs=val, queue="bulk_upload")
-        return {'status': 'succesfully added to Mongodb'}
+        try:
+            f = request.files['file']
+            db=mongo.db
+            df = pd.read_csv(f)
+            data = df.to_dict(orient="records")
+            for val in data:
+                try:
+                    val = bulk_mapping(val)
+                    val['created_time'] = datetime.now()
+                    val['source'] = 'bulk_upload'
+                    db.bulk_leads.insert_one(val)
+                    result = lead.apply_async(kwargs=val, queue="bulk_upload")
+                except:
+                    pass
+        except:
+            pass
+        return redirect('http://automation.example.com/bulk_leads_list')

@@ -93,7 +93,7 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
 
 # LeadAutomation Mapping
 
-def mapping(input, id):
+def mapping(input, id, type = 'automation'):
     data = {
         'Configuration1': input['apartment_names'],
         'Country_Code': input['country_code'],
@@ -111,7 +111,8 @@ def mapping(input, id):
         'Property_Type1': input['property_field'],
         'Minimum_Price': input['min_price'],
         'Maximum_Price': input['max_price'],
-        'Full_Name': input['lead_name']
+        'Full_Name': input['lead_name'],
+        'Lead_Source': str(type)
     }
 
     if type(input['locality_name']) == str:
@@ -286,7 +287,7 @@ def insert_record_to_zoho(record, type = None):
     elif type == 'housing':
         access_token = get_access_token()
         id = getProjectID(input['project_name'], access_token)
-        data = mapping(record, id)
+        data = mapping(record, id, type = 'housing_automation')
         insert_records(data, access_token)
     elif type == 'magicbricks':
         access_token = get_access_token()
