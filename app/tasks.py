@@ -14,7 +14,8 @@ from app.functions.finder import common_member
 celery_logger = get_task_logger(__name__)
 celery_app = Celery(__name__,
                     broker=CeleryConfig.BROKER_URL,
-                    backend=CeleryConfig.RESULT_BACKEND)
+                    backend=CeleryConfig.RESULT_BACKEND
+                    )
 
 
 @celery_app.task(name="app.tasks.check")
