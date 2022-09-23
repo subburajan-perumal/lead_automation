@@ -130,6 +130,7 @@ def mapping(input, id, type = 'lead_automation'):
 
 def bulk_mapping(data):
     data = {
+        'leadid': data['LEADID'][5:],
         'email': data['Email'],
         'phone': data['Phone'],
         'name': data['Full Name'],
