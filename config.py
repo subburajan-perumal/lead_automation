@@ -45,7 +45,12 @@ class Config(object):
     MONGO_URI = "REDACTED"+MONGO_DB
     SECRET_KEY = ""
     # CELERY_RESULT_BACKEND = 'REDACTED'
-
+    # CELERY_BEAT_SCHEDULE = {
+    #     "run_apis-task": {
+    #         "task": "app.tasks.run_apis",
+    #         "schedule": crontab(hour='*/1')
+    #     }
+    # }
 
 class ProductionConfig(Config):
     ENV = "Production"
@@ -78,13 +83,13 @@ class CeleryConfig(Config):
                     #     "queue":"browser"
                     # }
     }
-    ## ADD CRON
-    CELERY_BEAT_SCHEDULE = {
-        "run_apis-task": {
-            "task": "app.tasks.run_apis",
-            "schedule": crontab(minute='*')
-        }
-    }
+    # ## ADD CRON
+    # CELERY_BEAT_SCHEDULE = {
+    #     "run_apis-task": {
+    #         "task": "app.tasks.run_apis",
+    #         "schedule": crontab(hour='*/1')
+    #     }
+    # }
 
 
 

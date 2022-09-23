@@ -272,9 +272,8 @@ def insert_records(record, access_token):
     response = post(url=url, headers=headers, data=dumps(request_body).encode('utf-8'))
     if response is not None:
         print("HTTP Status Code : " + str(response.status_code))
-        print(response.json())
-    
-    return {'status': 'success'}
+        return response.json()
+    return {'status': 'Failed'}
 
 
 # MAIN FUNCTION FOR INSERT RECORD
@@ -284,15 +283,15 @@ def insert_record_to_zoho(record, type = None):
         access_token = get_access_token()
         id = getProjectID(input['project_name'], access_token)
         data = mapping(record, id)
-        insert_records(data, access_token)
+        return insert_records(data, access_token)
     elif type == 'housing':
         access_token = get_access_token()
         id = getProjectID(input['project_name'], access_token)
         data = mapping(record, id, type = 'housing_automation')
-        insert_records(data, access_token)
+        return insert_records(data, access_token)
     elif type == 'magicbricks':
         access_token = get_access_token()
-        insert_records(record, access_token)
+        return insert_records(record, access_token)
     return {'status': 'success'}
 
 
@@ -335,14 +334,14 @@ def housing_api():
     url = 'https://leads.housing.com/api/v0/get-builder-leads'
     resp = requests.get(url = url, params = params)
     leads = resp.json()
+    logs = []
 
     for record in leads[::-1]:
         try:
-            insert_record_to_zoho(record, type = 'housing') 
-        except:
-            pass
-    
-    return {'task': 'completed'}
+            logs.append(insert_record_to_zoho(record, type = 'housing'))
+        except Exception as e:
+            logs.append(str(e))
+    return logs
 
 
 # INSERT RECORD FROM MAGICBRICKS API
@@ -373,6 +372,7 @@ def magicbricks_api():
     leads = loads(resp.content)
     print(leads)
     leads_array = []
+    logs = []
 
     for input in leads['leadPojo']['leads']:
         try:
@@ -398,11 +398,8 @@ def magicbricks_api():
                 'Lead_Source': 'magicbricks_automation'
             }
             leads_array.append(data)
-            insert_records(data, access_token)
-        
-        except:
-          pass 
-
+            logs.append(insert_records(data, access_token))
+        except Exception as e:
+          logs.append(str(e))
     print(leads_array)
-
-    return {'tasks': 'completed'}
+    return logs

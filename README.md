@@ -86,6 +86,32 @@ $ celery -A app.celery flower
 ```
 
 
+## COMMANDS
+Start Flower
+```
+genv/bin/celery -A app.tasks flower
+```
+
+View Flower
+```
+http://localhost:5555
+```
+
+Run tasks
+```
+genv/bin/celery -A app.tasks call app.tasks.run_apis
+```
+
+Check logs
+```
+cd /var/log/celery/
+```
+
+Start Celery Beats
+```
+celery -A app.tasks beat -l debug
+```
+
 <footer>
 
 <footer>

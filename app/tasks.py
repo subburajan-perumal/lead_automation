@@ -9,6 +9,7 @@ from app.functions.site_base import SiteAutomator
 import json
 from celery.utils.log import get_task_logger
 from app.functions.finder import common_member
+from celery.schedules import crontab
 
 
 celery_logger = get_task_logger(__name__)
@@ -16,6 +17,17 @@ celery_app = Celery(__name__,
                     broker=CeleryConfig.BROKER_URL,
                     backend=CeleryConfig.RESULT_BACKEND
                     )
+
+celery_app.conf.beat_schedule = {
+        "run_housing_api": {
+            "task": "app.tasks.run_housing_api",
+            "schedule": crontab(hour='*/1')
+        },
+        "run_magicbricks_api": {
+            "task": "app.tasks.run_magicbricks_api",
+            "schedule": crontab(hour='*/1')
+        }        
+    }
 
 
 @celery_app.task(name="app.tasks.check")
@@ -63,33 +75,34 @@ def lead(**lead_data):
 
 
 @celery_app.task
-def run_apis():
-    try:
-        celery_logger.info("API registration started")
-        # import time
-        # import schedule
-        from app.util.utility import housing_api, magicbricks_api
+def run_housing_api():
+    from app.util.utility import housing_api
+    celery_logger.info("Housing API registration started")
+    return housing_api
 
-        try:
-            housing_api()
-        except:
-            pass
-        try:
-            magicbricks_api()
-        except:
-            pass
-        
-        # schedule.every(60).seconds.do(housing)
-        # schedule.every(60).seconds.do(magicbricks)
+@celery_app.task
+def run_magicbricks_api():
+    from app.util.utility import magicbricks_api
+    celery_logger.info("Magicbricks API registration started")
+    return magicbricks_api
 
-        # while True:
-        #     celery_logger.info("running APIs")
-        #     schedule.run_pending()
-        #     time.sleep(6)
-    
-    except Exception:
-        celery_logger.exception("problem in running APIs")
-        return "problem in running APIs"
+# @celery_app.task
+# def run_apis():
+#     try:
+#         from app.util.utility import housing_api, magicbricks_api
+#         logs = []
+#         try:
+#             logs.append(housing_api())
+#         except:
+#             pass
+#         try:
+#             magicbricks_api()
+#         except:
+#             pass
+#         return {'status': 'Success'}
+#     except Exception:
+#         celery_logger.exception("problem in running APIs")
+#         return "problem in running APIs"
 
 
 @shared_task()
