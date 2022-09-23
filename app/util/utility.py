@@ -93,7 +93,7 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
 
 # LeadAutomation Mapping
 
-def mapping(input, id, type = 'automation'):
+def mapping(input, id, type = 'lead_automation'):
     data = {
         'Configuration1': input['apartment_names'],
         'Country_Code': input['country_code'],
@@ -394,6 +394,7 @@ def magicbricks_api():
                 'Project_Enquired_for': dict({'id': project_id}),
                 'Full_Name': input['name'],
                 'Automation Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
+                'Lead_Source': 'magicbricks_automation'
             }
             leads_array.append(data)
         except:
