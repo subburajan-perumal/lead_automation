@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 import logging
 from urllib import response
 from celery.result import AsyncResult
@@ -385,12 +386,14 @@ def webhook_retry():
 @home.route('/bulk_leads_list')
 async def bulk_leads():
     from app.database import mongo
+    from bson import json_util
     try:
         db=mongo.db
         db = db["bulk_leads"]
         x=[]
-        cur = db.find({'source': 'bulk_upload'})
-        for i in cur:
+        cur = db.find({'source': 'bulk_upload'}).sort("_id",-1).limit(50)
+        result=json.loads(json_util.dumps(cur))
+        for i in result:
             x.append(i)
         return render_template('/bulk/list.html', x=x)
     except Exception as e:
