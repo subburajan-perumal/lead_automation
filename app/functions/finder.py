@@ -64,7 +64,7 @@ def function_finder(lead_data: dict):
         # Enquired site
         site_keywords = []
         project_enquired = lead_data.get("project_enquired_for", "").split(";")
-        interested_project = lead_data.get("interest_properties", "").split(";")
+        interested_project = lead_data.get("interested_properties", "").split(";")
         interested_localities = lead_data.get("interested_localities", "").split(";")
         site_keywords.extend(project_enquired)
         site_keywords.extend(interested_project)

@@ -3,16 +3,18 @@
 
 
 <table class="table">
-    <tr>
+<tr>
     <th>No</th>
     <th>Name</th>
     <th>Email</th>
     <th>Phone</th>
     <th>Created_at</th>
     <th>Project</th>
-
+    <th>Matched Keywords</th>
 </tr>
+
 {% for i in data %}
+
 <tr>
     <td>{{loop.index}}</td>
     <td> {{ i.name }}</td>
@@ -20,7 +22,9 @@
     <td>{{ i.phone }}</td>
     <td>{{ i.created_at }}</td>
     <td> {{ i.project }}</td>
+    <td>{{ i.match_keywords }}</td>
 </tr>
+
 {% endfor %}
 </table>
 {% endblock %}

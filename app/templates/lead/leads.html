@@ -33,6 +33,7 @@ button.addEventListener('click', val, async _ => {
     <th>Sub-project name</th>
     <th>Registration time</th>
     <th>Status</th>
+    <th>Matched Keywords</th>
 
 </tr>
 {% for i in data %}
@@ -46,7 +47,8 @@ button.addEventListener('click', val, async _ => {
     <td> {{ i.subproject }}</td>
     <td> {{ i.applied_time }}</td>
     <td> {{ i.status }}</td>
-    <td><button id="post-btn", val = {{i.data}} ><img src="./img/retry-1995927-1686763.png" alt="Retry-btn"></button></td>
+    <td> {{ i.match_keywords }} </td>
+    <td><button id="post-btn", val = {{i}} ><img src="./img/retry-1995927-1686763.png" alt="Retry-btn"></button></td>
 </tr>
 {% endfor %}
 </table>

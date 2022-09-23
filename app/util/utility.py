@@ -398,15 +398,11 @@ def magicbricks_api():
                 'Lead_Source': 'magicbricks_automation'
             }
             leads_array.append(data)
+            insert_records(data, access_token)
+        
         except:
           pass 
 
     print(leads_array)
-
-    for record in leads_array:
-        try:
-            insert_records(record, access_token)
-        except:
-            pass
 
     return {'tasks': 'completed'}

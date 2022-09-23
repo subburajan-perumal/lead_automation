@@ -1,11 +1,8 @@
-import time
-import schedule
 import logging
-from config import Config
 
 
 logging.basicConfig(
-    filename= Config.LOG_PATH+"lead_automation.log",
+    # filename= Config.LOG_PATH+"lead_automation.log",
     level=logging.INFO,
     # format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
     encoding='utf-8'
@@ -23,10 +20,3 @@ def magicbricks():
     logging.info(msg='Magicbricks API running ...')
     magicbricks_api()
     return {'status': 'success'}
-
-schedule.every(60).seconds.do(housing)
-schedule.every(60).seconds.do(magicbricks)
-
-while True:
-    schedule.run_pending()
-    time.sleep(6)

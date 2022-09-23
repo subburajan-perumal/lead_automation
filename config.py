@@ -3,6 +3,7 @@
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from celery.schedules import crontab
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -77,6 +78,14 @@ class CeleryConfig(Config):
                     #     "queue":"browser"
                     # }
     }
+    ## ADD CRON
+    CELERY_BEAT_SCHEDULE = {
+        "run_apis-task": {
+            "task": "app.tasks.run_apis",
+            "schedule": crontab(minute='*')
+        }
+    }
+
 
 
 config = {

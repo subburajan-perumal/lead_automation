@@ -62,6 +62,36 @@ def lead(**lead_data):
         return "problem in sending lead"
 
 
+@celery_app.task
+def run_apis():
+    try:
+        celery_logger.info("API registration started")
+        # import time
+        # import schedule
+        from app.util.utility import housing_api, magicbricks_api
+
+        try:
+            housing_api()
+        except:
+            pass
+        try:
+            magicbricks_api()
+        except:
+            pass
+        
+        # schedule.every(60).seconds.do(housing)
+        # schedule.every(60).seconds.do(magicbricks)
+
+        # while True:
+        #     celery_logger.info("running APIs")
+        #     schedule.run_pending()
+        #     time.sleep(6)
+    
+    except Exception:
+        celery_logger.exception("problem in running APIs")
+        return "problem in running APIs"
+
+
 @shared_task()
 def browserAutomate(_site, lead_data):
     celery_logger.info("browser started")
@@ -70,7 +100,7 @@ def browserAutomate(_site, lead_data):
     ##
     site_keywords = []
     project_enquired = lead_data.get("project_enquired_for", "").split(";")
-    interested_project = lead_data.get("interest_properties", "").split(";")
+    interested_project = lead_data.get("interested_properties", "").split(";")
     interested_localities = lead_data.get("interested_localities", "").split(";")
     site_keywords.extend(project_enquired)
     site_keywords.extend(interested_project)
