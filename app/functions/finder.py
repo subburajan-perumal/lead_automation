@@ -2,9 +2,16 @@ from datetime import datetime
 from pymongo import MongoClient
 from app.functions.site_base import SiteAutomator
 from celery.utils.log import get_task_logger
+import logging
 
+# logger = get_task_logger("finder")
+logging.basicConfig(
+    # filename= Config.LOG_PATH+"lead_automation.log",
+    level=logging.INFO,
+    # format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
+    encoding='utf-8'
+    )
 
-logger = get_task_logger("finder")
 MONGO_DB = "REDACTED"
 
 def common_member(a, b):   
@@ -36,10 +43,10 @@ def function_finder(lead_data: dict):
         # print("db working")
 
     except Exception:
-        logger.exception("db connection failure")
+        logging.exception(msg="db connection failure")
 
     try:
-        logger.info("check for existing user in db")
+        logging.info(msg="check for existing user in db")
         user_detail = LEADS.find_one(
             {"email": lead_data["email"], "phone": lead_data["phone"]})
         print(user_detail)
@@ -52,7 +59,7 @@ def function_finder(lead_data: dict):
                              "modified_time": datetime.now()
                              }
             LEADS.insert_one(lead_creation)
-            logger.info("new user created")
+            logging.info(msg="new user created")
         # Enquired site
         site_keywords = []
         project_enquired = lead_data.get("project_enquired_for", "").split(";")
@@ -61,8 +68,8 @@ def function_finder(lead_data: dict):
         site_keywords.extend(project_enquired)
         site_keywords.extend(interested_project)
         site_keywords.extend(interested_localities)
-        logger.debug(site_keywords)
-        logger.info("search for the keywords in db")
+        logging.debug(msg=str(site_keywords))
+        logging.info(msg="search for the keywords in db")
         site_list = DB.Site.aggregate(
             [
                 {
@@ -116,12 +123,12 @@ def function_finder(lead_data: dict):
         )
         for _site in site_list:
             project_list = _site['project_list']
-            logger.debug(project_list)
+            logging.debug(msg=str(project_list))
             match_keywords = common_member(site_keywords,project_list[0]['keywords'])
             print('Matched keywords .. ' + str(match_keywords))
-            logger.info(f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}; Matched keywords: {match_keywords}")
-            logger.debug("Matched_Keywords")
-            logger.debug(match_keywords)
+            logging.info(msg=f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}; Matched keywords: {match_keywords}")
+            logging.debug(msg="Matched_Keywords")
+            logging.debug(msg=str(match_keywords))
             site_name = _site['name']
             site_projectname = _site['project_list']['project_name']
             browserAutomation = SiteAutomator(  
@@ -135,11 +142,11 @@ def function_finder(lead_data: dict):
             browserAutomation.automated_flow()
             browserAutomation.upload_data()
             browserAutomation.teardown()
-        logger.info("task completed")
+        logging.info(msg="task completed")
         return "success"
 
     except Exception:
-        logger.exception("exception occured")
+        logging.exception(msg="exception occured")
         # print("error occured in function_finder", str(e))
         # print(os.getcwd())
         return "failed"
