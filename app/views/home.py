@@ -387,10 +387,10 @@ async def bulk_leads():
     from app.database import mongo
     try:
         db=mongo.db
-        db = db["leads"]
+        db = db["bulk_leads"]
         x=[]
         cur = db.find({'source': 'bulk_upload'})
-        for i in cur[::-1]:
+        for i in cur:
             x.append(i)
         return render_template('/bulk/list.html', x=x)
     except Exception as e:
