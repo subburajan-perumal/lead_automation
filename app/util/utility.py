@@ -282,7 +282,7 @@ def insert_records(record, access_token):
 # MAIN FUNCTION FOR INSERT RECORD
 
 def insert_record_to_zoho(record, type = None):
-    print('insert_record_to_zoho')
+    print('insert_record_to_zoho', type)
     if not type:
         access_token = get_access_token()
         print(access_token)
@@ -323,7 +323,7 @@ def housing_api():
         import time
         import pytz
 
-        celery_logger.info('Housing')
+        print('Housing')
 
         date_time = datetime.now()
         date_time = pytz.utc.localize(date_time)
@@ -354,12 +354,13 @@ def housing_api():
         url = 'https://leads.housing.com/api/v0/get-builder-leads'
         resp = requests.get(url = url, params = params)
         leads = resp.json()
-        celery_logger.info(leads)
+        print(leads)
         logs = []
 
         for record in leads[::-1]:
             try:
-                logs.append(insert_record_to_zoho(record, type = 'housing'))
+                response = insert_record_to_zoho(record, type = 'housing')
+                logs.append(response)
             except Exception as e:
                 logs.append(str(e))
         return logs
