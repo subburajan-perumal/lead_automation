@@ -288,22 +288,24 @@ def insert_record_to_zoho(record, type = None):
         id = getProjectID(record['project_name'], access_token)
         print(record['project_name'], 'id: ', id)
         if 'error' not in id:
-            data = mapping(record, id)
-            print(data)
-            response = insert_records(data, access_token)
-            print(response)
-            return response
+            id = getProjectID('None (default)', access_token)
+        data = mapping(record, id)
+        print(data)
+        response = insert_records(data, access_token)
+        print(response)
+        return response
     elif type == 'housing':
         access_token = get_access_token()
         print(access_token)
         id = getProjectID(record['project_name'], access_token)
         print(record['project_name'], id)
         if 'error' not in id:
-            data = mapping(record, id, type = 'Housing automation')
-            print(data)
-            response = insert_records(data, access_token)
-            print(response)
-            return response
+            id = getProjectID('None (default)', access_token)
+        data = mapping(record, id, type = 'Housing automation')
+        print(data)
+        response = insert_records(data, access_token)
+        print(response)
+        return response
     elif type == 'magicbricks':
         access_token = get_access_token()
         response = insert_records(data, access_token)

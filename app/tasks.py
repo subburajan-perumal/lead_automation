@@ -201,44 +201,45 @@ def run_magicbricks_api():
                     access_token = get_access_token()
                     project_id = getProjectID(input['project'], access_token)
                     print(input['project'], project_id)
-                    if 'error' not in project_id:
-                        apartment_names = '2 BHK'
-                        if '4 BHK' in input['msg']:
-                            apartment_names = '4 BHK'
-                        elif '3 BHK' in input['msg']:
-                            apartment_names = '3 BHK'
-                        if 'name' not in input:
-                            input['name'] = 'Magicbricks User'
-                        data = {
-                            'Configuration1': apartment_names,
-                            'Country_Code': '+' + str(input['isd']),
-                            # 'Interested_Localities': input['locality'],
-                            'City': input['city'],
-                            'Email': input['email'],
-                            'Phone': input['mobile'],
-                            'Project_Enquired_for': dict({'id': project_id}),
-                            'Full_Name': input['name'],
-                            'Automation_Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
-                            'Lead_Source': 'Magicbricks automation'
-                        }
-                        if type(input['locality']) == str:
-                            data['Interested_Localities'] = [input['locality']]
-                        else:
-                            data['Interested_Localities'] = list(input['locality'])                
-                        print(data)
-                        response = insert_records(data, access_token)
-                        print(response)
-                        logs.append(response)
-                        input['latest_update'] = datetime.now()
-                        api_leads.update_one(
-                                {
-                                    'mobile': input['mobile']
-                                },
-                                {
-                                    '$set': input
-                                },
-                                upsert = True
-                            )
+                    if 'error' not in id:
+                        id = getProjectID('None (default)', access_token)
+                    apartment_names = '2 BHK'
+                    if '4 BHK' in input['msg']:
+                        apartment_names = '4 BHK'
+                    elif '3 BHK' in input['msg']:
+                        apartment_names = '3 BHK'
+                    if 'name' not in input:
+                        input['name'] = 'Magicbricks User'
+                    data = {
+                        'Configuration1': apartment_names,
+                        'Country_Code': '+' + str(input['isd']),
+                        # 'Interested_Localities': input['locality'],
+                        'City': input['city'],
+                        'Email': input['email'],
+                        'Phone': input['mobile'],
+                        'Project_Enquired_for': dict({'id': project_id}),
+                        'Full_Name': input['name'],
+                        'Automation_Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
+                        'Lead_Source': 'Magicbricks automation'
+                    }
+                    if type(input['locality']) == str:
+                        data['Interested_Localities'] = [input['locality']]
+                    else:
+                        data['Interested_Localities'] = list(input['locality'])                
+                    print(data)
+                    response = insert_records(data, access_token)
+                    print(response)
+                    logs.append(response)
+                    input['latest_update'] = datetime.now()
+                    api_leads.update_one(
+                            {
+                                'mobile': input['mobile']
+                            },
+                            {
+                                '$set': input
+                            },
+                            upsert = True
+                        )
 
                 except Exception as e:
                     logs.append(str(e))
