@@ -85,10 +85,10 @@ def run_housing_api():
         import pytz
         from app.util.utility import insert_record_to_zoho
 
-        celery_logger.info('Housing')
+        print('Housing')
 
         today = datetime.now()
-        yesterday = today - timedelta(minutes = 10)
+        yesterday = today - timedelta(minutes = 5)
         today = today.astimezone(pytz.timezone('Asia/Kolkata'))
         yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
 
@@ -138,7 +138,7 @@ def run_magicbricks_api():
         print('Magicbricks')
 
         today = datetime.now()
-        yesterday = today - timedelta(minutes=20)
+        yesterday = today - timedelta(minutes=5)
         today = today.astimezone(pytz.timezone('Asia/Kolkata'))
         yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
 
@@ -163,16 +163,15 @@ def run_magicbricks_api():
                 project_id = getProjectID(input['project'], access_token)
                 print(input['project'], project_id)
                 if 'error' not in project_id:
-                    apartment_names = []
-                    if '2 BHK' in input['msg']:
-                        apartment_names.append('2 BHK')
-                    if '3 BHK' in input['msg']:
-                        apartment_names.append('3 BHK')
+                    apartment_names = '2 BHK'
                     if '4 BHK' in input['msg']:
-                        apartment_names.append('4 BHK')
-                    print(list(apartment_names))
+                        apartment_names = '4 BHK'
+                    elif '3 BHK' in input['msg']:
+                        apartment_names = '3 BHK'
+                    if 'name' not in input:
+                        input['name'] = 'Magicbricks User'
                     data = {
-                        'Configuration1': list(apartment_names),
+                        'Configuration1': apartment_names,
                         'Country_Code': '+' + str(input['isd']),
                         # 'Interested_Localities': input['locality'],
                         'City': input['city'],
@@ -181,7 +180,7 @@ def run_magicbricks_api():
                         'Project_Enquired_for': dict({'id': project_id}),
                         'Full_Name': input['name'],
                         'Automation Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
-                        'Lead_Source': 'magicbricks_automation'
+                        'Lead_Source': 'Magicbricks automation'
                     }
                     if type(input['locality']) == str:
                         data['Interested_Localities'] = [input['locality']]

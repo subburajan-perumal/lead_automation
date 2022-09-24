@@ -63,8 +63,6 @@ class LeadAutomator:
             print(str(e))
 
     def search_by_keyword(self):
-        print("search by keyword")
-        print(self.keywords)
         self.site_list = self.DB.Site.aggregate(
             [
                 {
@@ -116,7 +114,6 @@ class LeadAutomator:
                 # }
             ]
         )
-        print("searched bykeyword")
         # for _site in list(self.site_list):
         #     # logger.info(f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}")
         #     site_name = _site['name']

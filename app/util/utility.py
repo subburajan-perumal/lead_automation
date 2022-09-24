@@ -100,7 +100,7 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
 
 def mapping(input, id, type = 'lead_automation'):
     data = {
-        'Configuration1': input['apartment_names'],
+        'Configuration1': str(input['apartment_names']),
         'Country_Code': input['country_code'],
         'Zoning': input['category_type'],
         'City': input['city_name'],
@@ -286,8 +286,8 @@ def insert_record_to_zoho(record, type = None):
     if not type:
         access_token = get_access_token()
         print(access_token)
-        id = getProjectID(input['project_name'], access_token)
-        print(input['project_name'], 'id: ', id)
+        id = getProjectID(record['project_name'], access_token)
+        print(record['project_name'], 'id: ', id)
         if 'error' not in id:
             data = mapping(record, id)
             print(data)
@@ -297,10 +297,10 @@ def insert_record_to_zoho(record, type = None):
     elif type == 'housing':
         access_token = get_access_token()
         print(access_token)
-        id = getProjectID(input['project_name'], access_token)
-        print(input['project_name'], id)
+        id = getProjectID(record['project_name'], access_token)
+        print(record['project_name'], id)
         if 'error' not in id:
-            data = mapping(record, id, type = 'housing_automation')
+            data = mapping(record, id, type = 'Housing automation')
             print(data)
             response = insert_records(data, access_token)
             print(response)
