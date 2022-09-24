@@ -111,7 +111,7 @@ def bulk_lead(**lead_data):
             celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
             task_list.append(browserAutomate.s(_site, lead_data))
         job = group(task_list)
-        output = job.apply_async(queue="bulk")
+        output = job.apply_async()
         print(output)
         result = "success"
         celery_logger.info("task sent to browser queue")
