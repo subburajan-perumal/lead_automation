@@ -1,14 +1,14 @@
 from datetime import datetime
 import json
 import logging
-from urllib import response
 from celery.result import AsyncResult
 from flask import Blueprint, Response, jsonify, redirect, render_template, request
 from config import Config
 from app.util.utility import bulk_mapping
 from app.util.request_handler import find_format
 import time
-from app.tasks import lead
+from app.tasks import lead, bulk_lead
+
 
 # from .. import tasks
 logging.basicConfig(
@@ -159,7 +159,7 @@ async def uploader_file():
                     val['created_time'] = datetime.now()
                     val['source'] = 'bulk_upload'
                     db.bulk_leads.insert_one(val)
-                    result = lead.apply_async(kwargs=val, queue="bulk_leads")
+                    result = bulk_lead.apply_async(kwargs=val, queue="bulk")
                 except:
                     pass
         except:

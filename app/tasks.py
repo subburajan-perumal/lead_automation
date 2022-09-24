@@ -45,6 +45,7 @@ def check_celery():
 def lead(**lead_data):
     try:
         celery_logger.info("lead automator started")
+        print("lead automator started")
         lead_data["email"] = str(lead_data["email"]).lower()
         lead_data["phone"] = getPhonenumber([lead_data[field] for field in phone_field])
         if lead_data['phone'] is None:
@@ -71,6 +72,46 @@ def lead(**lead_data):
             task_list.append(browserAutomate.s(_site, lead_data))
         job = group(task_list)
         output = job.apply_async(queue="browser")
+        print(output)
+        result = "success"
+        celery_logger.info("task sent to browser queue")
+        return result
+    except Exception:
+        celery_logger.exception("problem in sending lead")
+        return "problem in sending lead"
+
+
+@celery_app.task()
+def bulk_lead(**lead_data):
+    try:
+        celery_logger.info("lead automator started")
+        print("lead automator started")
+        lead_data["email"] = str(lead_data["email"]).lower()
+        lead_data["phone"] = getPhonenumber([lead_data[field] for field in phone_field])
+        if lead_data['phone'] is None:
+            return "phonenumber not found"
+
+        LA = LeadAutomator(lead_data=lead_data)
+        LA.create_lead()
+        for _ in keyword_field:
+            LA.get_keywords(lead_data.get(_["field"], ""), ";")
+        if len(LA.keywords) == 0:
+            LA.get_keywords("None (default)", ";")
+        site_list = LA.search_by_keyword()
+        site_list = json.loads(json_util.dumps(site_list))
+        task_list = []
+        for _site in site_list:
+            site_name = _site['name']
+            site_projectname = _site['project_list']['project_name']
+            try:
+                if 'days' not in _site:
+                    _site['days'] = 30
+            except:
+                _site['days'] = 30
+            celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
+            task_list.append(browserAutomate.s(_site, lead_data))
+        job = group(task_list)
+        output = job.apply_async(queue="bulk")
         print(output)
         result = "success"
         celery_logger.info("task sent to browser queue")
@@ -293,6 +334,7 @@ def run_magicbricks_api():
     except Exception as e:
         return {'error': str(e)}
 
+
 @celery_app.task
 def removing_older_img():
     import glob
@@ -343,13 +385,13 @@ def browserAutomate(_site, lead_data):
     return "success"
 
 
-@shared_task
-def bulk_lead(*args):
-    try:
-        return "success"
-    except Exception as e:
-        print(str(e))
-        return "failed"
+# @shared_task
+# def bulk_lead(*args):
+#     try:
+#         return "success"
+#     except Exception as e:
+#         print(str(e))
+#         return "failed"
 
 
 def make_celery(app):

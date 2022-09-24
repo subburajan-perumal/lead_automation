@@ -69,7 +69,13 @@ $ gunicorn -c gunicorn.conf.py
 
 ## Experimental worker
 ```sh
-$ genv/bin/celery multi restart  leadworker selenium bulk_leads -E -A app.celery -c 1 -c:selenium 4  -Q:leadworker lead,celery,default -Q:selenium browser,default,celery -Q:bulk_leads bulk_leads,default,celery --pidfile=/run/celery/%N.pid
+$ genv/bin/celery multi restart  leadworker selenium bulk_leads -E -A app.celery -c 1 -c:selenium 4  -Q:leadworker lead,celery,default -Q:selenium browser,default,celery -Q:bulk_leads bulk --pidfile=/run/celery/%N.pid
+```
+
+
+## Start Bulk worker
+```
+genv/bin/celery -A app.celery worker --loglevel=INFO --concurrency=2 -n bulk_leads@%h
 ```
 
 
