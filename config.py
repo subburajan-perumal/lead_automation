@@ -1,9 +1,7 @@
-
-
 import os
 from dotenv import load_dotenv
 load_dotenv()
-from celery.schedules import crontab
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -45,12 +43,7 @@ class Config(object):
     MONGO_URI = "REDACTED"+MONGO_DB
     SECRET_KEY = ""
     # CELERY_RESULT_BACKEND = 'REDACTED'
-    # CELERY_BEAT_SCHEDULE = {
-    #     "run_apis-task": {
-    #         "task": "app.tasks.run_apis",
-    #         "schedule": crontab(hour='*/1')
-    #     }
-    # }
+
 
 class ProductionConfig(Config):
     ENV = "Production"
@@ -83,13 +76,6 @@ class CeleryConfig(Config):
                     #     "queue":"browser"
                     # }
     }
-    # ## ADD CRON
-    # CELERY_BEAT_SCHEDULE = {
-    #     "run_apis-task": {
-    #         "task": "app.tasks.run_apis",
-    #         "schedule": crontab(hour='*/1')
-    #     }
-    # }
 
 
 

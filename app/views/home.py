@@ -159,7 +159,7 @@ async def uploader_file():
                     val['created_time'] = datetime.now()
                     val['source'] = 'bulk_upload'
                     db.bulk_leads.insert_one(val)
-                    result = lead.apply_async(kwargs=val, queue="bulk_upload")
+                    result = lead.apply_async(kwargs=val, queue="bulk_leads")
                 except:
                     pass
         except:

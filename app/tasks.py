@@ -28,7 +28,11 @@ celery_app.conf.beat_schedule = {
         "run_magicbricks_api": {
             "task": "app.tasks.run_magicbricks_api",
             "schedule": crontab(hour='*/1')
-        }        
+        },
+        "removing_older_img": {
+            "task": "app.tasks.removing_older_img",
+            "schedule": crontab(hour='23')
+        }
 }
 
 
@@ -289,6 +293,23 @@ def run_magicbricks_api():
     except Exception as e:
         return {'error': str(e)}
 
+@celery_app.task
+def removing_older_img():
+    import glob
+    import os
+    import time
+
+    path = r"storage/**/*.png"
+    now = time.time()
+    days = 200
+
+    for filename in glob.iglob(path, recursive=True):
+        if os.path.getmtime(os.path.join(path, filename)) < now - days * 86400:
+            if os.path.isfile(os.path.join(path, filename)):
+                print(filename)
+                os.remove(os.path.join(path, filename))
+
+    return {'status': 'Completed'}
 
 @shared_task()
 def browserAutomate(_site, lead_data):

@@ -66,6 +66,20 @@ Start flask server
 $ gunicorn -c gunicorn.conf.py
 ```
 
+
+## Experimental worker
+```sh
+$ genv/bin/celery multi restart  leadworker selenium bulk_leads -E -A app.celery -c 1 -c:selenium 4  -Q:leadworker lead,celery,default -Q:selenium browser,default,celery -Q:bulk_leads bulk_leads,default,celery --pidfile=/run/celery/%N.pid
+```
+
+
+## Start Celery Workers
+```sh
+$ genv/bin/celery multi restart  leadworker selenium -E -A app.celery -c 1 -c:selenium 4  -Q:leadworker lead,celery,default -Q:selenium browser,default,celery --pidfile=/run/celery/%N.pid
+```
+
+
+
 ## Leadworker
 Start lead worker
 ```sh
@@ -76,7 +90,7 @@ $ celery -A app.celery worker -l info -c 1 -Q default,lead,celery -n leadworker@
 ## Selenium worker
 Start selenium worker
 ```sh
-$ celery -A app.celery worker -l info -c 2 -Q default,browser,celery -n selenium_worker@%h -f logs/%n-%i.log
+$ celery -A app.celery worker -l info -c 4 -Q default,browser,celery -n selenium_worker@%h -f logs/%n-%i.log
 ```
 
 ## Monitoring tool
