@@ -1,11 +1,16 @@
 from json import dumps, loads
 from datetime import datetime
 import json
+from urllib import response
 from uuid import uuid4
 import pytz
 from requests import get, post
 import pymongo
 from bson import json_util
+from celery.utils.log import get_task_logger
+
+celery_logger = get_task_logger(__name__)
+
 
 def cmpstring(string1, string2):
     str1 = "".join([i for i in string1 if i.isalpha()])
@@ -102,11 +107,8 @@ def mapping(input, id, type = 'lead_automation'):
         'Email': input['lead_email'],
         'Phone': input['lead_phone'],
         'Project_Enquired_for': dict(
-            {
-            # 'name': input['project_name'], 
-            # 'id': input['project_id'],
-            'id': id
-            }),
+            {'id': id}
+        ),
         # 'Project_Enquired_for': '$' + input['project_name'],
         'Property_Type1': input['property_field'],
         'Minimum_Price': input['min_price'],
@@ -272,6 +274,7 @@ def insert_records(record, access_token):
     response = post(url=url, headers=headers, data=dumps(request_body).encode('utf-8'))
     if response is not None:
         print("HTTP Status Code : " + str(response.status_code))
+        print(response.json())
         return response.json()
     return {'status': 'Failed'}
 
@@ -279,127 +282,155 @@ def insert_records(record, access_token):
 # MAIN FUNCTION FOR INSERT RECORD
 
 def insert_record_to_zoho(record, type = None):
+    print('insert_record_to_zoho')
     if not type:
         access_token = get_access_token()
+        print(access_token)
         id = getProjectID(input['project_name'], access_token)
-        data = mapping(record, id)
-        return insert_records(data, access_token)
+        print(input['project_name'], 'id: ', id)
+        if 'error' not in id:
+            data = mapping(record, id)
+            print(data)
+            response = insert_records(data, access_token)
+            print(response)
+            return response
     elif type == 'housing':
         access_token = get_access_token()
+        print(access_token)
         id = getProjectID(input['project_name'], access_token)
-        data = mapping(record, id, type = 'housing_automation')
-        return insert_records(data, access_token)
+        print(input['project_name'], id)
+        if 'error' not in id:
+            data = mapping(record, id, type = 'housing_automation')
+            print(data)
+            response = insert_records(data, access_token)
+            print(response)
+            return response
     elif type == 'magicbricks':
         access_token = get_access_token()
-        return insert_records(record, access_token)
+        response = insert_records(data, access_token)
+        return response
     return {'status': 'success'}
 
 
 # INSERT RECORD FROM HOUSING API
 
 def housing_api():
-    import requests
-    import hmac
-    import hashlib
-    from datetime import datetime, timedelta
-    import time
-    import pytz
+    try:
+        import requests
+        import hmac
+        import hashlib
+        from datetime import datetime, timedelta
+        import time
+        import pytz
 
-    date_time = datetime.now()
-    date_time = pytz.utc.localize(date_time)
-    timestamp = int(time.mktime(date_time.timetuple()))
+        celery_logger.info('Housing')
 
-    today = datetime.today() + timedelta(days=1)
-    yesterday = today - timedelta(days=2)
+        date_time = datetime.now()
+        date_time = pytz.utc.localize(date_time)
+        timestamp = int(time.mktime(date_time.timetuple()))
 
-    yesterday = pytz.utc.localize(yesterday)
-    today = pytz.utc.localize(today)
+        today = datetime.today() + timedelta(days=1)
+        yesterday = today - timedelta(days=2)
 
-    yesterday = int(time.mktime(yesterday.timetuple()))
-    today = int(time.mktime(today.timetuple()))
+        yesterday = pytz.utc.localize(yesterday)
+        today = pytz.utc.localize(today)
 
-    id = 2674965
-    key = "REDACTED"
-    timestamp = str(timestamp)
-    byte_key = bytes(key, 'UTF-8')
-    message = timestamp.encode()
-    hash = hmac.new(byte_key, message, hashlib.sha256).hexdigest()
-    params = {
-        'start_date': str(yesterday),
-        'end_date': str(today),
-        'current_time': str(timestamp),
-        'hash': str(hash),
-        'id': id
-    }
-    url = 'https://leads.housing.com/api/v0/get-builder-leads'
-    resp = requests.get(url = url, params = params)
-    leads = resp.json()
-    logs = []
+        yesterday = int(time.mktime(yesterday.timetuple()))
+        today = int(time.mktime(today.timetuple()))
 
-    for record in leads[::-1]:
-        try:
-            logs.append(insert_record_to_zoho(record, type = 'housing'))
-        except Exception as e:
-            logs.append(str(e))
-    return logs
+        id = 2674965
+        key = "REDACTED"
+        timestamp = str(timestamp)
+        byte_key = bytes(key, 'UTF-8')
+        message = timestamp.encode()
+        hash = hmac.new(byte_key, message, hashlib.sha256).hexdigest()
+        params = {
+            'start_date': str(yesterday),
+            'end_date': str(today),
+            'current_time': str(timestamp),
+            'hash': str(hash),
+            'id': id
+        }
+        url = 'https://leads.housing.com/api/v0/get-builder-leads'
+        resp = requests.get(url = url, params = params)
+        leads = resp.json()
+        celery_logger.info(leads)
+        logs = []
+
+        for record in leads[::-1]:
+            try:
+                logs.append(insert_record_to_zoho(record, type = 'housing'))
+            except Exception as e:
+                logs.append(str(e))
+        return logs
+
+    except Exception as e:
+        return {'error': str(e)}
 
 
 # INSERT RECORD FROM MAGICBRICKS API
 
 def magicbricks_api():
-    import requests
-    from datetime import datetime, timedelta
-    import pytz
-    from json import loads
+    try:
+        import requests
+        from datetime import datetime, timedelta
+        import pytz
+        from json import loads
 
-    today = datetime.today() + timedelta(days=1)
-    yesterday = today - timedelta(days=2)
+        print('Magicbricks')
 
-    yesterday = pytz.utc.localize(yesterday)
-    today = pytz.utc.localize(today)
+        today = datetime.today() + timedelta(days=1)
+        yesterday = today - timedelta(days=2)
 
-    yesterday = datetime.strptime(str(yesterday).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
-    today = datetime.strptime(str(today).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
+        yesterday = pytz.utc.localize(yesterday)
+        today = pytz.utc.localize(today)
 
-    key = 'REDACTED_MAGICBRICKS_KEY'
-    params = {
-        'key': key,
-        'endDate': today,
-        'startDate': yesterday,
-    }
-    url = 'http://rating.magicbricks.com/mbRating/download.json'
-    resp = requests.get(url = url, params = params)
-    leads = loads(resp.content)
-    print(leads)
-    leads_array = []
-    logs = []
+        yesterday = datetime.strptime(str(yesterday).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
+        today = datetime.strptime(str(today).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
 
-    for input in leads['leadPojo']['leads']:
-        try:
-            access_token = get_access_token()
-            project_id = getProjectID(input['project'], access_token)
-            apartment_names = []
-            if '2 BHK' in input['msg']:
-                apartment_names.append('2 BHK')
-            if '3 BHK' in input['msg']:
-                apartment_names.append('3 BHK')
-            if '4 BHK' in input['msg']:
-                apartment_names.append('4 BHK')
-            data = {
-                'Configuration1': list(apartment_names),
-                'Country_Code': '+' + str(input['isd']),
-                'Interested_Localities': input['locality'],
-                'City': input['city'],
-                'Email': input['email'],
-                'Phone': input['mobile'],
-                'Project_Enquired_for': dict({'id': project_id}),
-                'Full_Name': input['name'],
-                'Automation Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
-                'Lead_Source': 'magicbricks_automation'
-            }
-            leads_array.append(data)
-            logs.append(insert_records(data, access_token))
-        except Exception as e:
-          logs.append(str(e))
-    print(leads_array)
-    return logs
+        key = 'REDACTED_MAGICBRICKS_KEY'
+        params = {
+            'key': key,
+            'endDate': today,
+            'startDate': yesterday,
+        }
+        url = 'http://rating.magicbricks.com/mbRating/download.json'
+        resp = requests.get(url = url, params = params)
+        leads = loads(resp.content)
+        print(leads)
+        logs = []
+
+        for input in leads['leadPojo']['leads']:
+            try:
+                access_token = get_access_token()
+                print(access_token)
+                project_id = getProjectID(input['project'], access_token)
+                print('project_id: ', project_id)
+                apartment_names = '2 BHK'
+                if '4 BHK' in input['msg']:
+                    apartment_names = '4 BHK'
+                elif '3 BHK' in input['msg']:
+                    apartment_names = '3 BHK'
+                data = {
+                    'Configuration1': apartment_names,
+                    'Country_Code': '+' + str(input['isd']),
+                    'Interested_Localities': input['locality'],
+                    'City': input['city'],
+                    'Email': input['email'],
+                    'Phone': input['mobile'],
+                    'Project_Enquired_for': dict({'id': project_id}),
+                    'Full_Name': input['name'],
+                    'Automation Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
+                    'Lead_Source': 'magicbricks_automation'
+                }
+                print(data)
+                response = insert_records(data, access_token)
+                print(response)
+                logs.append(response)
+            except Exception as e:
+                logs.append(str(e))
+        
+        return logs
+    
+    except Exception as e:
+        return {'error': str(e)}

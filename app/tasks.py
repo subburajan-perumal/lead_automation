@@ -27,7 +27,7 @@ celery_app.conf.beat_schedule = {
             "task": "app.tasks.run_magicbricks_api",
             "schedule": crontab(hour='*/1')
         }        
-    }
+}
 
 
 @celery_app.task(name="app.tasks.check")
@@ -76,33 +76,133 @@ def lead(**lead_data):
 
 @celery_app.task
 def run_housing_api():
-    from app.util.utility import housing_api
-    celery_logger.info("Housing API registration started")
-    return housing_api
+    try:
+        import requests
+        import hmac
+        import hashlib
+        from datetime import datetime, timedelta
+        import time
+        import pytz
+        from app.util.utility import insert_record_to_zoho
+
+        celery_logger.info('Housing')
+
+        date_time = datetime.now()
+        date_time = pytz.utc.localize(date_time)
+        timestamp = int(time.mktime(date_time.timetuple()))
+
+        today = datetime.today() + timedelta(days=1)
+        yesterday = today - timedelta(days=2)
+
+        yesterday = pytz.utc.localize(yesterday)
+        today = pytz.utc.localize(today)
+
+        yesterday = int(time.mktime(yesterday.timetuple()))
+        today = int(time.mktime(today.timetuple()))
+
+        id = 2674965
+        key = "REDACTED"
+        timestamp = str(timestamp)
+        byte_key = bytes(key, 'UTF-8')
+        message = timestamp.encode()
+        hash = hmac.new(byte_key, message, hashlib.sha256).hexdigest()
+        params = {
+            'start_date': str(yesterday),
+            'end_date': str(today),
+            'current_time': str(timestamp),
+            'hash': str(hash),
+            'id': id
+        }
+        url = 'https://leads.housing.com/api/v0/get-builder-leads'
+        resp = requests.get(url = url, params = params)
+        leads = resp.json()
+        print(leads)
+        logs = []
+
+        for record in leads[::-1]:
+            try:
+                logs.append(insert_record_to_zoho(record, type = 'housing'))
+            except Exception as e:
+                logs.append(str(e))
+        return logs
+
+    except Exception as e:
+        return {'error': str(e)}
+
 
 @celery_app.task
 def run_magicbricks_api():
-    from app.util.utility import magicbricks_api
-    celery_logger.info("Magicbricks API registration started")
-    return magicbricks_api
+    try:
+        import requests
+        from datetime import datetime, timedelta
+        import pytz
+        from json import loads
+        from app.util.utility import insert_records, get_access_token, getProjectID
 
-# @celery_app.task
-# def run_apis():
-#     try:
-#         from app.util.utility import housing_api, magicbricks_api
-#         logs = []
-#         try:
-#             logs.append(housing_api())
-#         except:
-#             pass
-#         try:
-#             magicbricks_api()
-#         except:
-#             pass
-#         return {'status': 'Success'}
-#     except Exception:
-#         celery_logger.exception("problem in running APIs")
-#         return "problem in running APIs"
+        print('Magicbricks')
+
+        today = datetime.today() + timedelta(days=1)
+        yesterday = today - timedelta(days=2)
+
+        yesterday = pytz.utc.localize(yesterday)
+        today = pytz.utc.localize(today)
+
+        yesterday = datetime.strptime(str(yesterday).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
+        today = datetime.strptime(str(today).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
+
+        key = 'REDACTED_MAGICBRICKS_KEY'
+        params = {
+            'key': key,
+            'endDate': today,
+            'startDate': yesterday,
+        }
+        url = 'http://rating.magicbricks.com/mbRating/download.json'
+        resp = requests.get(url = url, params = params)
+        leads = loads(resp.content)
+        print(leads)
+        logs = []
+
+        for input in leads['leadPojo']['leads']:
+            try:
+                access_token = get_access_token()
+                project_id = getProjectID(input['project'], access_token)
+                print(input['project'], project_id)
+                if 'error' not in project_id:
+                    apartment_names = []
+                    if '2 BHK' in input['msg']:
+                        apartment_names.append('2 BHK')
+                    if '3 BHK' in input['msg']:
+                        apartment_names.append('3 BHK')
+                    if '4 BHK' in input['msg']:
+                        apartment_names.append('4 BHK')
+                    print(list(apartment_names))
+                    data = {
+                        'Configuration1': list(apartment_names),
+                        'Country_Code': '+' + str(input['isd']),
+                        # 'Interested_Localities': input['locality'],
+                        'City': input['city'],
+                        'Email': input['email'],
+                        'Phone': input['mobile'],
+                        'Project_Enquired_for': dict({'id': project_id}),
+                        'Full_Name': input['name'],
+                        'Automation Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
+                        'Lead_Source': 'magicbricks_automation'
+                    }
+                    if type(input['locality']) == str:
+                        data['Interested_Localities'] = [input['locality']]
+                    else:
+                        data['Interested_Localities'] = list(input['locality'])                
+                    print(data)
+                    response = insert_records(data, access_token)
+                    print(response)
+                    logs.append(response)
+            except Exception as e:
+                logs.append(str(e))
+        
+        return logs
+    
+    except Exception as e:
+        return {'error': str(e)}
 
 
 @shared_task()

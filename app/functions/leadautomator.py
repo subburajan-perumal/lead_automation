@@ -45,7 +45,6 @@ class LeadAutomator:
             self.LEADS.insert_one(lead_creation)
 
     def get_keywords(self, field: str, splitBy: str):
-        print("get by keyword")
         try:
             temp = field.split(splitBy)
             temp_keyword = []
