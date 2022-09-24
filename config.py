@@ -69,7 +69,7 @@ class CeleryConfig(Config):
     TASK_ROUTES = {
                     "app.tasks.*":
                     {
-                        "queue": "lead,celery"
+                        "queue": "lead,celery,bulk"
                     }
                     # "celery_worker.*":{
                     #     "queue":"lead",
