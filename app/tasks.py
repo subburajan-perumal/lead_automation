@@ -87,18 +87,14 @@ def run_housing_api():
 
         celery_logger.info('Housing')
 
-        date_time = datetime.now()
-        date_time = pytz.utc.localize(date_time)
-        timestamp = int(time.mktime(date_time.timetuple()))
-
-        today = datetime.today() + timedelta(days=1)
-        yesterday = today - timedelta(days=2)
-
-        yesterday = pytz.utc.localize(yesterday)
-        today = pytz.utc.localize(today)
+        today = datetime.now()
+        yesterday = today - timedelta(minutes = 10)
+        today = today.astimezone(pytz.timezone('Asia/Kolkata'))
+        yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
 
         yesterday = int(time.mktime(yesterday.timetuple()))
         today = int(time.mktime(today.timetuple()))
+        timestamp = today
 
         id = 2674965
         key = "REDACTED"
@@ -141,15 +137,14 @@ def run_magicbricks_api():
 
         print('Magicbricks')
 
-        today = datetime.today() + timedelta(days=1)
-        yesterday = today - timedelta(days=2)
-
-        yesterday = pytz.utc.localize(yesterday)
-        today = pytz.utc.localize(today)
+        today = datetime.now()
+        yesterday = today - timedelta(minutes=20)
+        today = today.astimezone(pytz.timezone('Asia/Kolkata'))
+        yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
 
         yesterday = datetime.strptime(str(yesterday).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
         today = datetime.strptime(str(today).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
-
+        
         key = 'REDACTED_MAGICBRICKS_KEY'
         params = {
             'key': key,
