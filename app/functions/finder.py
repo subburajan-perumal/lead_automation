@@ -1,11 +1,8 @@
 from datetime import datetime
 from pymongo import MongoClient
 from app.functions.site_base import SiteAutomator
-from celery.utils.log import get_task_logger
 import logging
-from config import Config
 
-# logger = get_task_logger("finder")
 logging.basicConfig(
     # filename= Config.LOG_PATH+"lead_automation.log",
     level=logging.INFO,
@@ -39,9 +36,6 @@ def function_finder(lead_data: dict):
         CONN = MongoClient(MONGO_DB)
         DB = CONN['lead_automation']
         LEADS = DB['leads']
-        # SITE= DB['Site']
-        # print(SITE)
-        # print("db working")
 
     except Exception:
         logging.exception(msg="db connection failure")

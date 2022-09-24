@@ -12,6 +12,8 @@ from app.functions.finder import common_member
 from celery.schedules import crontab
 
 
+MONGO_DB = "REDACTED"
+
 celery_logger = get_task_logger(__name__)
 celery_app = Celery(__name__,
                     broker=CeleryConfig.BROKER_URL,
@@ -84,7 +86,7 @@ def run_housing_api():
         import time
         import pytz
         from app.util.utility import insert_record_to_zoho
-        from app.database import mongo
+        from pymongo import MongoClient
 
         print('Housing')
 
@@ -116,10 +118,12 @@ def run_housing_api():
         print(leads)
         logs = []
 
-        db=mongo.db
-        api_leads = db['API_leads']
+        CONN = MongoClient(MONGO_DB)
+        DB = CONN['lead_automation']
+        api_leads = DB['API_leads']
 
         for record in leads[::-1]:
+            print(record)
             history = api_leads.find(
                 {
                     'lead_phone': record['lead_phone'],
@@ -128,8 +132,11 @@ def run_housing_api():
                     }
                 }  
             )
+            print(history)
             history = json.loads(json_util.dumps(history))
-            if history:
+            print(history)
+            
+            if len(history) != 0:
                 try:
                     logs.append(insert_record_to_zoho(record, type = 'housing'))
                     record['latest_update'] = datetime.now()
@@ -144,6 +151,19 @@ def run_housing_api():
                     )
                 except Exception as e:
                     logs.append(str(e))
+                    record['latest_update'] = datetime.now()
+                    api_leads.update_one(
+                            {
+                                'lead_phone': record['lead_phone']
+                            },
+                            {
+                                '$set': record
+                            },
+                            upsert = True
+                        )
+                finally:
+                    pass
+
         return logs
 
     except Exception as e:
@@ -158,7 +178,7 @@ def run_magicbricks_api():
         import pytz
         from json import loads
         from app.util.utility import insert_records, get_access_token, getProjectID
-        from app.database import mongo
+        from pymongo import MongoClient
 
         print('Magicbricks')
 
@@ -179,13 +199,20 @@ def run_magicbricks_api():
         url = 'http://rating.magicbricks.com/mbRating/download.json'
         resp = requests.get(url = url, params = params)
         leads = loads(resp.content)
-        print(leads)
         logs = []
 
-        db=mongo.db
-        api_leads = db['API_leads']
+        CONN = MongoClient(MONGO_DB)
+        DB = CONN['lead_automation']
+        api_leads = DB['API_leads']
 
-        for input in leads['leadPojo']['leads']:
+        all_leads = leads['leadPojo']['leads']
+        print(all_leads)
+
+        if not all_leads:
+            return {'status': 'Empty'}
+
+        for input in all_leads:
+            print(input)
             history = api_leads.find(
                 {
                     'mobile': input['mobile'],
@@ -194,14 +221,17 @@ def run_magicbricks_api():
                     }
                 }
             )
+            print(history)
             history = json.loads(json_util.dumps(history))
+            print(history)
 
-            if history:
+            if len(history) != 0:
                 try:
                     access_token = get_access_token()
                     project_id = getProjectID(input['project'], access_token)
                     print(input['project'], project_id)
                     if 'error' not in id:
+                        access_token = get_access_token()
                         id = getProjectID('None (default)', access_token)
                     apartment_names = '2 BHK'
                     if '4 BHK' in input['msg']:
@@ -213,7 +243,6 @@ def run_magicbricks_api():
                     data = {
                         'Configuration1': apartment_names,
                         'Country_Code': '+' + str(input['isd']),
-                        # 'Interested_Localities': input['locality'],
                         'City': input['city'],
                         'Email': input['email'],
                         'Phone': input['mobile'],
@@ -243,7 +272,18 @@ def run_magicbricks_api():
 
                 except Exception as e:
                     logs.append(str(e))
-        
+                    input['latest_update'] = datetime.now()
+                    api_leads.update_one(
+                            {
+                                'mobile': input['mobile']
+                            },
+                            {
+                                '$set': input
+                            },
+                            upsert = True
+                        )
+                finally:
+                    pass        
         return logs
     
     except Exception as e:
