@@ -154,11 +154,14 @@ async def uploader_file():
             f = request.files['file']
             db=mongo.db
             df = pd.read_csv(f)
+            logging.info(msg=df)
             data = df.to_dict(orient="records")
+            logging.info(msg=data)
             for val in data:
                 try:
                     val = bulk_mapping(val)
                     print(val)
+                    logging.info(msg=val)
                     val['created_time'] = datetime.now()
                     val['source'] = 'bulk_upload'
                     db.bulk_leads.insert_one(val)

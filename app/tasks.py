@@ -199,8 +199,11 @@ def run_housing_api():
             
             if len(history) == 0:
                 try:
-                    logs.append(insert_record_to_zoho(record, type = 'housing'))
+                    response = insert_record_to_zoho(record, type = 'housing')
+                    print(response)
+                    logs.append(response)
                     record['latest_update'] = datetime.now()
+                    record['response'] = response
                     api_leads.update_one(
                         {
                             'lead_phone': record['lead_phone']
@@ -323,6 +326,7 @@ def run_magicbricks_api():
                     print(response)
                     logs.append(response)
                     input['latest_update'] = datetime.now()
+                    input['response'] = response
                     api_leads.update_one(
                             {
                                 'mobile': input['mobile']
