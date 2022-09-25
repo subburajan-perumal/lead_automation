@@ -162,7 +162,16 @@ async def uploader_file():
                     val['created_time'] = datetime.now()
                     lead_data['source'] = 'bulk_upload'
                     val['source'] = 'bulk_upload'
-                    db.bulk_leads.insert_one(val)
+                    db.bulk_leads.update_one(
+                        {
+                            'lead_phone': val['phone']
+                        },
+                        {
+                            '$set': val
+                        },
+                        upsert = True
+                    )
+                    # db.bulk_leads.insert_one(val)
                     logging.info(msg='Lead raw')
                     logging.info(msg=val)
                     logging.info(msg='Lead parsed')
