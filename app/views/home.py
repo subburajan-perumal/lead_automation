@@ -162,7 +162,8 @@ async def uploader_file():
                     val['source'] = 'bulk_upload'
                     db.bulk_leads.insert_one(val)
                     logging.info(msg=val)
-                    result = bulk_lead.apply_async(kwargs=val, queue="bulk")
+                    # result = bulk_lead.apply_async(kwargs=val, queue="bulk")
+                    result = lead.apply_async(kwargs=val, queue="lead")
                     logging.info(msg='Added to bulk tasks')
                     logging.info(msg=result)
                     print(result)
