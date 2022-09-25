@@ -177,6 +177,15 @@ def send_mail(lead_id, path, sub_project_name, name1):
 # GET ACCESS TOKEN
 
 def get_access_token():
+    import os
+    access_token = os.environ.get("access_token")
+    print(access_token)    
+    return access_token
+
+
+# GET ACCESS TOKEN OLD
+
+def get_access_token_old():
     from requests.structures import CaseInsensitiveDict
     import os
     zoho = {
@@ -239,7 +248,7 @@ def getProjectID(project_name, access_token):
     url = 'https://www.zohoapis.com/crm/v2/Deals/search'
     params = {
         'fields': 'Deal_Name',
-        'criteria': '(Deal_Name:starts_with:{})'.format(project_name)
+        'criteria': '(Deal_Name:starts_with:{})or(Project_Alias_2:starts_with:{})or(Project_Alias:starts_with:{})'.format(project_name,project_name,project_name)
     }
     headers = {
         'Authorization': 'Zoho-oauthtoken ' + str(access_token),

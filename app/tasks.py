@@ -32,6 +32,10 @@ celery_app.conf.beat_schedule = {
         "removing_older_img": {
             "task": "app.tasks.removing_older_img",
             "schedule": crontab(hour='23')
+        },
+        "save_access_token": {
+            "task": "app.tasks.save_access_token",
+            "schedule": crontab(hour='*/10')
         }
 }
 
@@ -341,6 +345,8 @@ def removing_older_img():
     import os
     import time
 
+    print('Remove older files running')
+
     path = r"storage/**/*.png"
     now = time.time()
     days = 200
@@ -352,6 +358,44 @@ def removing_older_img():
                 os.remove(os.path.join(path, filename))
 
     return {'status': 'Completed'}
+
+
+@celery_app.task
+def save_access_token():
+    from requests.structures import CaseInsensitiveDict
+    import os
+    from requests import post
+
+    print('Save access token running')
+
+    zoho = {
+        "URL": "https://www.zohoapis.com/crm/v2/Leads/",
+        "CLIENT_ID": "REDACTED",
+        "CLIENT_SECRET": "REDACTED",
+        "REFRESH_TOKEN": "REDACTED",
+        "REDIRECT_URI": "https://example.com",
+        "NAME": "Zoho"
+        }
+
+    url = 'https://accounts.zoho.com/oauth/v2/token?client_id={}&client_secret={}&refresh_token={}&grant_type=refresh_token'.format(
+            zoho['CLIENT_ID'],
+            zoho['CLIENT_SECRET'],
+            zoho['REFRESH_TOKEN'])
+
+    headers = CaseInsensitiveDict()
+    headers["Content-Length"] = "0"
+    resp = post(url, headers=headers)
+    output = resp.json()
+    print(output)
+    print("before :", os.environ.get("access-token"))
+    access_token = output['access_token']
+    os.environ["access_token"] = str(access_token)
+
+    access_token = os.environ.get("access_token")
+    print("after :", access_token)
+  
+    return access_token    
+
 
 @shared_task()
 def browserAutomate(_site, lead_data):
