@@ -136,7 +136,7 @@ def run_housing_api():
         print('Housing')
 
         today = datetime.now()
-        yesterday = today - timedelta(minutes = 5)
+        yesterday = today - timedelta(days = 1)
         today = today.astimezone(pytz.timezone('Asia/Kolkata'))
         yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
 
@@ -173,7 +173,7 @@ def run_housing_api():
                 {
                     'lead_phone': record['lead_phone'],
                     'latest_update': {
-                        '$lte': datetime.now() - timedelta(days=1)
+                        '$gte': datetime.now() - timedelta(days=1)
                     }
                 }  
             )
@@ -181,7 +181,7 @@ def run_housing_api():
             history = json.loads(json_util.dumps(history))
             print(history)
             
-            if len(history) != 0:
+            if len(history) == 0:
                 try:
                     logs.append(insert_record_to_zoho(record, type = 'housing'))
                     record['latest_update'] = datetime.now()
@@ -262,7 +262,7 @@ def run_magicbricks_api():
                 {
                     'mobile': input['mobile'],
                     'latest_update': {
-                        '$lte': datetime.now() - timedelta(days=1)
+                        '$gte': datetime.now() - timedelta(days=1)
                     }
                 }
             )
@@ -270,7 +270,7 @@ def run_magicbricks_api():
             history = json.loads(json_util.dumps(history))
             print(history)
 
-            if len(history) != 0:
+            if len(history) == 0:
                 try:
                     access_token = get_access_token()
                     project_id = getProjectID(input['project'], access_token)
