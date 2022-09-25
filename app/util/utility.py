@@ -98,6 +98,8 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
 # LeadAutomation Mapping
 
 def mapping(input, id, type = 'lead_automation'):
+    if 'lead_email' not in input:
+        input['lead_email'] = input['lead_phone'] + '@example.com'
     data = {
         'Configuration1': str(input['apartment_names']),
         'Country_Code': input['country_code'],

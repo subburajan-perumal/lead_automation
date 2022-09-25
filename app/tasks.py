@@ -35,7 +35,7 @@ celery_app.conf.beat_schedule = {
         },
         "save_access_token": {
             "task": "app.tasks.save_access_token",
-            "schedule": crontab(hour='*/10')
+            "schedule": crontab(minute='*/5')
         }
 }
 
@@ -289,6 +289,8 @@ def run_magicbricks_api():
                         apartment_names = '3 BHK'
                     if 'name' not in input:
                         input['name'] = 'Magicbricks User'
+                    if 'email' not in input:
+                        input['email'] = input['mobile'] + '@example.com'
                     data = {
                         'Configuration1': apartment_names,
                         'Country_Code': '+' + str(input['isd']),
