@@ -20,6 +20,18 @@ celery_app = Celery(__name__,
                     backend=CeleryConfig.RESULT_BACKEND
                     )
 
+celery_app.conf.task_default_queue = 'default'
+
+celery_app.conf.task_routes = {
+    'app.tasks.run_housing_api': {'queue': 'lead'},
+    'app.tasks.run_magicbricks_api': {'queue': 'lead'},
+    'app.tasks.bulk_lead': {'queue': 'bulk'},
+    'app.tasks.lead': {'queue': 'lead'},
+    'app.tasks.removing_older_img': {'queue': 'lead'},
+    'app.tasks.save_access_token': {'queue': 'lead'},
+    'app.tasks.browserAutomate': {'queue': 'browser'},
+    }
+
 celery_app.conf.beat_schedule = {
         "run_housing_api": {
             "task": "app.tasks.run_housing_api",
@@ -115,7 +127,7 @@ def bulk_lead(**lead_data):
             celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
             task_list.append(browserAutomate.s(_site, lead_data))
         job = group(task_list)
-        output = job.apply_async()
+        output = job.apply_async(queue='bulk')
         print(output)
         result = "success"
         celery_logger.info("task sent to browser queue")
