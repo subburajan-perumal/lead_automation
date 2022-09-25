@@ -148,6 +148,8 @@ async def uploader_file():
     if request.method == "GET":
         return render_template("/bulk/upload.html")
     if request.method == "POST":
+        logging.info(msg="Bulk upload request received")
+        print('Bulk upload request received')
         try:
             f = request.files['file']
             db=mongo.db
@@ -156,10 +158,13 @@ async def uploader_file():
             for val in data:
                 try:
                     val = bulk_mapping(val)
+                    print(val)
                     val['created_time'] = datetime.now()
                     val['source'] = 'bulk_upload'
                     db.bulk_leads.insert_one(val)
                     result = bulk_lead.apply_async(kwargs=data, queue="bulk")
+                    logging.info(msg=result)
+                    print(result)
                 except:
                     pass
         except:

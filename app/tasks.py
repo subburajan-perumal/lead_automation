@@ -101,7 +101,7 @@ def lead(**lead_data):
 def bulk_lead(**lead_data):
     try:
         celery_logger.info("lead automator started")
-        print("lead automator started")
+        print("bulk lead automator started")
         lead_data["email"] = str(lead_data["email"]).lower()
         lead_data["phone"] = getPhonenumber([lead_data[field] for field in phone_field])
         if lead_data['phone'] is None:
