@@ -157,13 +157,18 @@ async def uploader_file():
             data = df.to_dict(orient="records")
             for val in data:
                 try:
+                    lead_data = bulk_mapping(val)
                     val = bulk_mapping(val)
                     val['created_time'] = datetime.now()
+                    lead_data['source'] = 'bulk_upload'
                     val['source'] = 'bulk_upload'
                     db.bulk_leads.insert_one(val)
+                    logging.info(msg='Lead raw')
                     logging.info(msg=val)
-                    # result = bulk_lead.apply_async(kwargs=val, queue="bulk")
-                    result = lead.apply_async(kwargs=val, queue="lead")
+                    logging.info(msg='Lead parsed')
+                    logging.info(msg=lead_data)
+                    result = bulk_lead.apply_async(kwargs=lead_data, queue="bulk")
+                    # result = lead.apply_async(kwargs=lead_data, queue="lead")
                     logging.info(msg='Added to bulk tasks')
                     logging.info(msg=result)
                     print(result)
