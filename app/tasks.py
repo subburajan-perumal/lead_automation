@@ -5,7 +5,6 @@ from config import keyword_field, phone_field
 from celery import shared_task, group
 from bson import json_util
 from app.functions.leadautomator import LeadAutomator
-from app.functions.site_base import SiteAutomator
 import json
 from celery.utils.log import get_task_logger
 from app.functions.finder import common_member
@@ -106,7 +105,6 @@ def bulk_lead(**lead_data):
         lead_data["email"] = str(lead_data["email"]).lower()
         if getPhonenumber([lead_data['phone']]):
             lead_data["phone"] = getPhonenumber([lead_data['phone']])
-        print('lead_data: ', lead_data)
         if lead_data['phone'] is None:
             return "phonenumber not found"
         LA = LeadAutomator(lead_data=lead_data)
@@ -128,7 +126,7 @@ def bulk_lead(**lead_data):
             except:
                 _site['days'] = 30
             celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
-            task_list.append(browserAutomate.s(_site, lead_data))
+            task_list.append(browserAutomateBulk.s(_site, lead_data))
         print('task_list: ', task_list)
         job = group(task_list)
         output = job.apply_async(queue='bulk')
@@ -421,6 +419,8 @@ def save_access_token():
 
 @shared_task()
 def browserAutomate(_site, lead_data):
+    from app.functions.site_base import SiteAutomator
+
     celery_logger.info("browser started")
     site_name = _site['name']
     site_projectname = _site['project_list']['project_name']
@@ -449,6 +449,39 @@ def browserAutomate(_site, lead_data):
     # print(f"data upload :{upload_result}")
     browserAutomation.teardown()
     return "success"
+
+
+@shared_task()
+def browserAutomateBulk(_site, lead_data):
+    from app.functions.site_automator_bulk import SiteAutomator
+
+    celery_logger.info("browser started")
+    site_name = _site['name']
+    site_projectname = _site['project_list']['project_name']
+    ##
+    site_keywords = []
+    project_enquired = lead_data.get("project_enquired_for", "").split(";")
+    interested_project = lead_data.get("interested_properties", "").split(";")
+    interested_localities = lead_data.get("interested_localities", "").split(";")
+    site_keywords.extend(project_enquired)
+    site_keywords.extend(interested_project)
+    site_keywords.extend(interested_localities)
+    print(site_keywords)    
+    ##
+    match_keywords = common_member(site_keywords, _site['project_list']['keywords'])
+    celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
+    browserAutomation = SiteAutomator(  
+                                    phone = lead_data["phone"],
+                                    email= lead_data["email"],
+                                    lead_data= lead_data,
+                                    match_keywords= match_keywords,
+                                    site_data=_site
+                                        )
+    browserAutomation.projectCheck(site_name, site_projectname)
+    browserAutomation.automated_flow()
+    browserAutomation.teardown()
+    return "success"
+
 
 
 # @shared_task
