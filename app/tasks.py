@@ -35,7 +35,7 @@ celery_app.conf.beat_schedule = {
         },
         "save_access_token": {
             "task": "app.tasks.save_access_token",
-            "schedule": crontab(minute='*/5')
+            "schedule": crontab(minute='*/55')
         }
 }
 
