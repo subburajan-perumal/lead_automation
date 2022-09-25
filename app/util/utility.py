@@ -43,8 +43,8 @@ def getPhonenumber(numberlist: list):
             filter_number.append("+91"+number)
             print("filtered_array : ", filter_number)
     if len(filter_number) > 0:
-        
         return(filter_number[0])
+
     else:
         return None
 
@@ -132,6 +132,9 @@ def mapping(input, id, type = 'lead_automation'):
 # MAPPING BULK DATA
 
 def bulk_mapping(data):
+    data['Phone'] = '+' + str(data['Phone'])
+    if 'Email' not in data:
+        data['Email'] = data['Phone'] + '@example.com'
     data = {
         'lead_id': data['LEADID'][5:],
         'email': data['Email'],

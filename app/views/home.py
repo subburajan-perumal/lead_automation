@@ -30,8 +30,8 @@ def get_status(task_id):
     task_result = AsyncResult(task_id, backend=Config.CELERY_RESULT_BACKEND)
     result = {
         "task_id": task_id,
-        "task_status": task_result.status,
-        "task_result": task_result.result
+        # "task_status": task_result.status,
+        # "task_result": task_result.result
     }
     return jsonify(result), 200
 

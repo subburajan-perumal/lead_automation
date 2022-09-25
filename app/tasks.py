@@ -100,13 +100,15 @@ def lead(**lead_data):
 @celery_app.task()
 def bulk_lead(**lead_data):
     try:
-        celery_logger.info("lead automator started")
+        celery_logger.info("bulk lead automator started")
         print("bulk lead automator started")
+        print(lead_data)
         lead_data["email"] = str(lead_data["email"]).lower()
-        lead_data["phone"] = getPhonenumber([lead_data[field] for field in phone_field])
+        if getPhonenumber([lead_data['phone']]):
+            lead_data["phone"] = getPhonenumber([lead_data['phone']])
+        print('lead_data: ', lead_data)
         if lead_data['phone'] is None:
             return "phonenumber not found"
-
         LA = LeadAutomator(lead_data=lead_data)
         LA.create_lead()
         for _ in keyword_field:
@@ -115,6 +117,7 @@ def bulk_lead(**lead_data):
             LA.get_keywords("None (default)", ";")
         site_list = LA.search_by_keyword()
         site_list = json.loads(json_util.dumps(site_list))
+        print('site_list: ', site_list)
         task_list = []
         for _site in site_list:
             site_name = _site['name']
@@ -126,6 +129,7 @@ def bulk_lead(**lead_data):
                 _site['days'] = 30
             celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
             task_list.append(browserAutomate.s(_site, lead_data))
+        print('task_list: ', task_list)
         job = group(task_list)
         output = job.apply_async(queue='bulk')
         print(output)
