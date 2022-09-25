@@ -35,7 +35,7 @@ celery_app.conf.beat_schedule = {
         },
         "save_access_token": {
             "task": "app.tasks.save_access_token",
-            "schedule": crontab(minute='*/55')
+            "schedule": crontab(minute='*/30')
         }
 }
 
@@ -139,7 +139,7 @@ def run_housing_api():
 
         print('Housing')
 
-        today = datetime.now()
+        today = datetime.now() + timedelta(minutes=10)
         yesterday = today - timedelta(days = 1)
         today = today.astimezone(pytz.timezone('Asia/Kolkata'))
         yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
@@ -231,8 +231,8 @@ def run_magicbricks_api():
 
         print('Magicbricks')
 
-        today = datetime.now()
-        yesterday = today - timedelta(minutes=5)
+        today = datetime.now() + timedelta(minutes=10)
+        yesterday = today - timedelta(days=1)
         today = today.astimezone(pytz.timezone('Asia/Kolkata'))
         yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
 
