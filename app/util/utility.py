@@ -136,6 +136,8 @@ def bulk_mapping(data):
         'lead_id': data['LEADID'][5:],
         'email': data['Email'],
         'phone': data['Phone'],
+        'mobile': data['Phone'],
+        'alt_phone': data['Phone'],
         'name': data['Full Name'],
         'project_enquired_for': data['Project Enquired for'],
         'interested_properties': data['Interested Properties']
