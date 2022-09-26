@@ -46,7 +46,7 @@ celery_app.conf.beat_schedule = {
         },
         "save_access_token": {
             "task": "app.tasks.save_access_token",
-            "schedule": crontab(minute='*/30')
+            "schedule": crontab(minute='*/9')
         }
 }
 
@@ -177,8 +177,9 @@ def run_housing_api():
         }
         url = 'https://leads.housing.com/api/v0/get-builder-leads'
         resp = requests.get(url = url, params = params)
+        print(resp)
+        print(resp.content)
         leads = resp.json()
-        print(leads)
         logs = []
 
         CONN = MongoClient(MONGO_DB)
@@ -195,7 +196,6 @@ def run_housing_api():
                     }
                 }  
             )
-            print(history)
             history = json.loads(json_util.dumps(history))
             print(history)
             
@@ -217,16 +217,16 @@ def run_housing_api():
                     )
                 except Exception as e:
                     logs.append(str(e))
-                    record['latest_update'] = datetime.now()
-                    api_leads.update_one(
-                            {
-                                'lead_phone': record['lead_phone']
-                            },
-                            {
-                                '$set': record
-                            },
-                            upsert = True
-                        )
+                    # record['latest_update'] = datetime.now()
+                    # api_leads.update_one(
+                    #         {
+                    #             'lead_phone': record['lead_phone']
+                    #         },
+                    #         {
+                    #             '$set': record
+                    #         },
+                    #         upsert = True
+                    #     )
                 finally:
                     pass
 
@@ -272,7 +272,6 @@ def run_magicbricks_api():
         api_leads = DB['API_leads']
 
         all_leads = leads['leadPojo']['leads']
-        print(all_leads)
 
         if not all_leads:
             return {'status': 'Empty'}
@@ -287,7 +286,6 @@ def run_magicbricks_api():
                     }
                 }
             )
-            print(history)
             history = json.loads(json_util.dumps(history))
             print(history)
 
@@ -296,9 +294,9 @@ def run_magicbricks_api():
                     access_token = get_access_token()
                     project_id = getProjectID(input['project'], access_token)
                     print(input['project'], project_id)
-                    if 'error' not in id:
+                    if 'error' in project_id:
                         access_token = get_access_token()
-                        id = getProjectID('None (default)', access_token)
+                        project_id = getProjectID('None (default)', access_token)
                     apartment_names = '2 BHK'
                     if '4 BHK' in input['msg']:
                         apartment_names = '4 BHK'
@@ -341,16 +339,16 @@ def run_magicbricks_api():
 
                 except Exception as e:
                     logs.append(str(e))
-                    input['latest_update'] = datetime.now()
-                    api_leads.update_one(
-                            {
-                                'mobile': input['mobile']
-                            },
-                            {
-                                '$set': input
-                            },
-                            upsert = True
-                        )
+                    # input['latest_update'] = datetime.now()
+                    # api_leads.update_one(
+                    #         {
+                    #             'mobile': input['mobile']
+                    #         },
+                    #         {
+                    #             '$set': input
+                    #         },
+                    #         upsert = True
+                    #     )
                 finally:
                     pass        
         return logs

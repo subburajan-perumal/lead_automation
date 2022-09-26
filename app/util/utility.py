@@ -303,7 +303,7 @@ def insert_record_to_zoho(record, type = None):
         print(access_token)
         id = getProjectID(record['project_name'], access_token)
         print(record['project_name'], 'id: ', id)
-        if 'error' not in id:
+        if 'error' in id:
             access_token = get_access_token()
             id = getProjectID('None (default)', access_token)
         data = mapping(record, id)
@@ -316,7 +316,7 @@ def insert_record_to_zoho(record, type = None):
         print(access_token)
         id = getProjectID(record['project_name'], access_token)
         print(record['project_name'], id)
-        if 'error' not in id:
+        if 'error' in id:
             access_token = get_access_token()
             id = getProjectID('None (default)', access_token)
         data = mapping(record, id, type = 'Housing automation')
