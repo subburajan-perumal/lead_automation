@@ -187,8 +187,14 @@ def send_mail(lead_id, path, sub_project_name, name1):
 # GET ACCESS TOKEN
 
 def get_access_token():
-    import os
-    access_token = os.environ.get("access_token")
+    # import os
+    # access_token = os.environ.get("access_token")
+    # return access_token
+    
+    from dotenv import load_dotenv, find_dotenv, get_key
+    dotenv_file = find_dotenv()
+    load_dotenv(dotenv_file)
+    access_token = get_key(dotenv_file, 'access_token', encoding='utf-8')
     return access_token
 
 
