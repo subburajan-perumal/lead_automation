@@ -34,11 +34,11 @@ celery_app.conf.task_routes = {
 celery_app.conf.beat_schedule = {
         "run_housing_api": {
             "task": "app.tasks.run_housing_api",
-            "schedule": crontab(hour='*/1')
+            "schedule": crontab(hour='*/10')
         },
         "run_magicbricks_api": {
             "task": "app.tasks.run_magicbricks_api",
-            "schedule": crontab(hour='*/1')
+            "schedule": crontab(hour='*/10')
         },
         "removing_older_img": {
             "task": "app.tasks.removing_older_img",
@@ -305,7 +305,8 @@ def run_magicbricks_api():
                         'Project_Enquired_for': dict({'id': project_id}),
                         'Full_Name': input['name'],
                         'Automation_Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
-                        'Lead_Source': 'Magicbricks automation'
+                        'Lead_Source': 'Magicbricks automation',
+                        'Last_Name': input['name'],
                     }
                     if type(input['locality']) == str:
                         data['Interested_Localities'] = [input['locality']]
@@ -347,13 +348,16 @@ def removing_older_img():
     path = r"storage/**/*.png"
     now = time.time()
     days = 200
-
+    
     for filename in glob.iglob(path, recursive=True):
         if os.path.getmtime(os.path.join(path, filename)) < now - days * 86400:
             if os.path.isfile(os.path.join(path, filename)):
                 print(filename)
-                os.remove(os.path.join(path, filename))
-
+                try:
+                    os.remove(os.path.join(path, filename))
+                except:
+                    pass
+    
     return {'status': 'Completed'}
 
 
@@ -453,7 +457,7 @@ def browserAutomateBulk(_site, lead_data):
                                     lead_data= lead_data,
                                     match_keywords= match_keywords,
                                     site_data=_site
-                                        )
+                                    )
     browserAutomation.projectCheck(site_name, site_projectname)
     browserAutomation.automated_flow()
     browserAutomation.teardown()

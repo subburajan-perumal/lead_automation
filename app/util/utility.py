@@ -100,6 +100,8 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
 def mapping(input, id, type = 'lead_automation'):
     if 'lead_email' not in input:
         input['lead_email'] = input['lead_phone'] + '@example.com'
+    if 'lead_name' not in input:
+        input['lead_name'] = 'Housing User'
     data = {
         'Configuration1': str(input['apartment_names']),
         'Country_Code': input['country_code'],
@@ -114,6 +116,7 @@ def mapping(input, id, type = 'lead_automation'):
         'Minimum_Price': input['min_price'],
         'Maximum_Price': input['max_price'],
         'Full_Name': input['lead_name'],
+        'Last_Name': input['lead_name'],
         'Lead_Source': str(type),
         'Automation_Updates': str(input)
     }
@@ -186,10 +189,10 @@ def send_mail(lead_id, path, sub_project_name, name1):
 def get_access_token():
     import os
     access_token = os.environ.get("access_token")
-    print(access_token)    
     return access_token
 
 
+'''
 # GET ACCESS TOKEN OLD
 
 def get_access_token_old():
@@ -230,13 +233,16 @@ def get_access_token_old():
             print("Failed to create Access token. \n" + str(e))
 
     return access_token
+'''
 
 
 # UPLOAD ATTACHMENT TO ZOHO
 
 def upload_an_attachment(lead_id, path):
+    print('Upload attachment: {}, {}'.format(lead_id, path))
     import subprocess
     access_token = get_access_token()
+    print('Access token: {}'.format(access_token))
     try:
         CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(
             lead_id,
@@ -290,42 +296,63 @@ def insert_records(record, access_token):
     if response is not None:
         print("HTTP Status Code : " + str(response.status_code))
         print(response.json())
-        return response.json()
+        return {'response' : response.json(), 'status_code': response.status_code}
+    
     return {'status': 'Failed'}
 
 
 # MAIN FUNCTION FOR INSERT RECORD
 
 def insert_record_to_zoho(record, type = None):
-    print('insert_record_to_zoho', type)
-    if not type:
-        access_token = get_access_token()
-        print(access_token)
-        id = getProjectID(record['project_name'], access_token)
-        print(record['project_name'], 'id: ', id)
-        if 'error' in id:
+    try:
+        print(('insert_record_to_zoho', type))
+        if not type:
             access_token = get_access_token()
-            id = getProjectID('None (default)', access_token)
-        data = mapping(record, id)
-        print(data)
-        response = insert_records(data, access_token)
-        print(response)
-        return response
-    elif type == 'housing':
-        access_token = get_access_token()
-        print(access_token)
-        id = getProjectID(record['project_name'], access_token)
-        print(record['project_name'], id)
-        if 'error' in id:
+            print(access_token)
+            id = getProjectID(record['project_name'], access_token)
+            print((record['project_name'], 'id: ', id))
+            
+            retries = 5
+            n = 0
+            while 'error' in str(id) and n < retries:
+                n += 1
+                access_token = get_access_token()
+                id = getProjectID('None (default)', access_token)
+                print(('None (default)', id))
+            
+            data = mapping(record, id)
+            print(data)
+            response = insert_records(data, access_token)
+            print(response)
+            return response
+        
+        elif type == 'housing':
             access_token = get_access_token()
-            id = getProjectID('None (default)', access_token)
-        data = mapping(record, id, type = 'Housing automation')
-        print(data)
-        response = insert_records(data, access_token)
-        print(response)
-        return response
-    elif type == 'magicbricks':
-        access_token = get_access_token()
-        response = insert_records(data, access_token)
-        return response
-    return {'status': 'success'}
+            # print(access_token)
+            id = getProjectID(record['project_name'], access_token)
+            print((record['project_name'], id))
+            
+            retries = 5
+            n = 0
+            while 'error' in str(id) and n < retries:
+                n += 1
+                access_token = get_access_token()
+                id = getProjectID('None (default)', access_token)
+                print(('None (default)', id))
+            
+            data = mapping(record, id, type = 'Housing automation')
+            print(data)
+            response = insert_records(data, access_token)
+            print(response)
+            return response
+        
+        elif type == 'magicbricks':
+            access_token = get_access_token()
+            response = insert_records(data, access_token)
+            return response
+        
+        return {'status': 'success'}
+    
+    except Exception as e:
+        print('Uncaught exception in housing {}'.format(e))
+        return {'status': 'Exception'}
