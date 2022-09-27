@@ -177,8 +177,8 @@ def run_housing_api():
         }
         url = 'https://leads.housing.com/api/v0/get-builder-leads'
         resp = requests.get(url = url, params = params)
-        print(resp)
-        print(resp.content)
+        # print(resp)
+        # print(resp.content)
         leads = resp.json()
         logs = []
 
@@ -187,7 +187,7 @@ def run_housing_api():
         api_leads = DB['API_leads']
 
         for record in leads[::-1]:
-            print(record)
+            # print(record)
             history = api_leads.find(
                 {
                     'lead_phone': record['lead_phone'],
@@ -197,9 +197,10 @@ def run_housing_api():
                 }  
             )
             history = json.loads(json_util.dumps(history))
-            print(history)
+            # print(history)
             
             if len(history) == 0:
+                print(record)
                 try:
                     response = insert_record_to_zoho(record, type = 'housing')
                     print(response)
@@ -217,18 +218,6 @@ def run_housing_api():
                     )
                 except Exception as e:
                     logs.append(str(e))
-                    # record['latest_update'] = datetime.now()
-                    # api_leads.update_one(
-                    #         {
-                    #             'lead_phone': record['lead_phone']
-                    #         },
-                    #         {
-                    #             '$set': record
-                    #         },
-                    #         upsert = True
-                    #     )
-                finally:
-                    pass
 
         return logs
 
@@ -277,7 +266,7 @@ def run_magicbricks_api():
             return {'status': 'Empty'}
 
         for input in all_leads:
-            print(input)
+            # print(input)
             history = api_leads.find(
                 {
                     'mobile': input['mobile'],
@@ -287,9 +276,10 @@ def run_magicbricks_api():
                 }
             )
             history = json.loads(json_util.dumps(history))
-            print(history)
+            # print(history)
 
             if len(history) == 0:
+                print(input)
                 try:
                     access_token = get_access_token()
                     project_id = getProjectID(input['project'], access_token)
@@ -339,18 +329,7 @@ def run_magicbricks_api():
 
                 except Exception as e:
                     logs.append(str(e))
-                    # input['latest_update'] = datetime.now()
-                    # api_leads.update_one(
-                    #         {
-                    #             'mobile': input['mobile']
-                    #         },
-                    #         {
-                    #             '$set': input
-                    #         },
-                    #         upsert = True
-                    #     )
-                finally:
-                    pass        
+
         return logs
     
     except Exception as e:
