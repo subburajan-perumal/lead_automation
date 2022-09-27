@@ -34,11 +34,11 @@ celery_app.conf.task_routes = {
 celery_app.conf.beat_schedule = {
         "run_housing_api": {
             "task": "app.tasks.run_housing_api",
-            "schedule": crontab(hour='*/10')
+            "schedule": crontab(hour='*/1')
         },
         "run_magicbricks_api": {
             "task": "app.tasks.run_magicbricks_api",
-            "schedule": crontab(hour='*/10')
+            "schedule": crontab(hour='*/1')
         },
         "removing_older_img": {
             "task": "app.tasks.removing_older_img",
@@ -46,7 +46,7 @@ celery_app.conf.beat_schedule = {
         },
         "save_access_token": {
             "task": "app.tasks.save_access_token",
-            "schedule": crontab(minute='*/2')
+            "schedule": crontab(minute='*/30')
         }
 }
 
@@ -262,7 +262,7 @@ def run_magicbricks_api():
 
         all_leads = leads['leadPojo']['leads']
 
-        if not all_leads:
+        if len(all_leads) == 0:
             return {'status': 'Empty'}
 
         for input in all_leads:
@@ -283,7 +283,7 @@ def run_magicbricks_api():
                 try:
                     access_token = get_access_token()
                     project_id = getProjectID(input['project'], access_token)
-                    print(input['project'], project_id)
+                    print((input['project'], project_id))
                     if 'error' in project_id:
                         access_token = get_access_token()
                         project_id = getProjectID('None (default)', access_token)
@@ -295,7 +295,8 @@ def run_magicbricks_api():
                     if 'name' not in input:
                         input['name'] = 'Magicbricks User'
                     if 'email' not in input:
-                        input['email'] = input['mobile'] + '@example.com'
+                        input['email'] = str(input['mobile']) + '@example.com'
+                    details = str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input)
                     data = {
                         'Configuration1': apartment_names,
                         'Country_Code': '+' + str(input['isd']),
@@ -304,9 +305,9 @@ def run_magicbricks_api():
                         'Phone': input['mobile'],
                         'Project_Enquired_for': dict({'id': project_id}),
                         'Full_Name': input['name'],
-                        'Automation_Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
                         'Lead_Source': 'Magicbricks automation',
                         'Last_Name': input['name'],
+                        'Initial_Enquiry_Particulars_Automation': details
                     }
                     if type(input['locality']) == str:
                         data['Interested_Localities'] = [input['locality']]

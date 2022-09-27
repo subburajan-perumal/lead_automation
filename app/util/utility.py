@@ -118,7 +118,7 @@ def mapping(input, id, type = 'lead_automation'):
         'Full_Name': input['lead_name'],
         'Last_Name': input['lead_name'],
         'Lead_Source': str(type),
-        'Automation_Updates': str(input)
+        'Initial_Enquiry_Particulars_Automation': str(input)
     }
 
     if type(input['locality_name']) == str:
@@ -190,7 +190,7 @@ def get_access_token():
     # import os
     # access_token = os.environ.get("access_token")
     # return access_token
-    
+
     from dotenv import load_dotenv, find_dotenv, get_key
     dotenv_file = find_dotenv()
     load_dotenv(dotenv_file)
@@ -301,8 +301,7 @@ def insert_records(record, access_token):
     response = post(url=url, headers=headers, data=dumps(request_body).encode('utf-8'))
     if response is not None:
         print("HTTP Status Code : " + str(response.status_code))
-        print(response.json())
-        return {'response' : response.json(), 'status_code': response.status_code}
+        return {'response' : str(response.content), 'status_code': response.status_code}
     
     return {'status': 'Failed'}
 
@@ -318,10 +317,7 @@ def insert_record_to_zoho(record, type = None):
             id = getProjectID(record['project_name'], access_token)
             print((record['project_name'], 'id: ', id))
             
-            retries = 5
-            n = 0
-            while 'error' in str(id) and n < retries:
-                n += 1
+            if 'error' in str(id):
                 access_token = get_access_token()
                 id = getProjectID('None (default)', access_token)
                 print(('None (default)', id))
@@ -338,10 +334,7 @@ def insert_record_to_zoho(record, type = None):
             id = getProjectID(record['project_name'], access_token)
             print((record['project_name'], id))
             
-            retries = 5
-            n = 0
-            while 'error' in str(id) and n < retries:
-                n += 1
+            if 'error' in str(id):
                 access_token = get_access_token()
                 id = getProjectID('None (default)', access_token)
                 print(('None (default)', id))
