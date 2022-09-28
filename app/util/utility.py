@@ -97,22 +97,29 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
 
 # LeadAutomation Mapping
 
-def mapping(input, id, type = 'lead_automation'):
-    if 'lead_email' not in input:
+def mapping(input, project_id, type = 'lead_automation'):
+    if 'lead_email' not in input or input['lead_email'] == None:
         input['lead_email'] = input['lead_phone'] + '@example.com'
-    if 'lead_name' not in input:
+    if 'lead_name' not in input or input['lead_name'] == None:
         input['lead_name'] = 'Housing User'
+    if 'property_field' not in input or input['property_field'] == None:
+        input['property_field'] = ['Apartment']
+    if 'apartment_names' not in input or input['apartment_names'] == None:
+        input['apartment_names'] = 'Residential'
+    if 'category_type' not in input or input['category_type'] == None:
+        input['category_type'] = 'residential'
+
     data = {
         'Configuration1': str(input['apartment_names']),
         'Country_Code': input['country_code'],
-        'Zoning': input['category_type'],
+        # 'Zoning': input['category_type'],
         'City': input['city_name'],
         'Email': input['lead_email'],
         'Phone': input['lead_phone'],
         'Project_Enquired_for': dict(
-            {'id': id}
+            {'id': project_id}
         ),
-        'Property_Type1': input['property_field'],
+        # 'Property_Type1': input['property_field'],
         'Minimum_Price': input['min_price'],
         'Maximum_Price': input['max_price'],
         'Full_Name': input['lead_name'],
