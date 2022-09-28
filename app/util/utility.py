@@ -118,7 +118,7 @@ def mapping(input, id, type = 'lead_automation'):
         'Full_Name': input['lead_name'],
         'Last_Name': input['lead_name'],
         'Lead_Source': str(type),
-        'Initial_Enquiry_Particulars_Automation': str(input)
+        'Initial_Enquiry_Particulars_Automation': str(input)[:200]
     }
 
     if type(input['locality_name']) == str:

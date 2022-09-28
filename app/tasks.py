@@ -297,6 +297,7 @@ def run_magicbricks_api():
                     if 'email' not in input:
                         input['email'] = str(input['mobile']) + '@example.com'
                     details = str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input)
+                    details = details[:200]
                     data = {
                         'Configuration1': apartment_names,
                         'Country_Code': '+' + str(input['isd']),
