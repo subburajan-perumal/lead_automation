@@ -1378,6 +1378,7 @@ def tvs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list
         browser.save_screenshot(save_path[0])
         submitbutton = browser.find_element(By.XPATH,'/html/body/div[3]/form/div/div/div/div[3]/input')
         submitbutton.click()
+        time.sleep(10)
         #browser.execute_script("arguments[0].click();", button)
         browser.save_screenshot(save_path[1])
         time.sleep(10)
