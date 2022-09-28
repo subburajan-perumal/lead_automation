@@ -292,11 +292,11 @@ def run_magicbricks_api():
                         apartment_names = '4 BHK'
                     elif '3 BHK' in input['msg']:
                         apartment_names = '3 BHK'
-                    if 'name' not in input:
+                    if 'name' not in input or input['name'] == None:
                         input['name'] = 'Magicbricks User'
-                    if 'email' not in input:
+                    if 'email' not in input or input['email'] == None:
                         input['email'] = str(input['mobile']) + '@example.com'
-                    details = str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input)
+                    details = str(input['msg']) + str('\n\n') + str(input)
                     details = details[:200]
                     data = {
                         'Configuration1': apartment_names,
