@@ -92,51 +92,6 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
         str(str(path2) + '/' + "post" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png"),
         str(str(path2) + '/' + "err" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png")
         ]
-# print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
-
-
-# LeadAutomation Mapping
-
-def mapping(input, project_id, type = 'lead_automation'):
-    if 'lead_email' not in input or input['lead_email'] == None:
-        input['lead_email'] = input['lead_phone'] + '@example.com'
-    if 'lead_name' not in input or input['lead_name'] == None:
-        input['lead_name'] = 'Housing User'
-    if 'property_field' not in input or input['property_field'] == None:
-        input['property_field'] = ['Apartment']
-    if 'apartment_names' not in input or input['apartment_names'] == None:
-        input['apartment_names'] = 'Residential'
-    if 'category_type' not in input or input['category_type'] == None:
-        input['category_type'] = 'residential'
-
-    data = {
-        'Configuration1': str(input['apartment_names']),
-        'Country_Code': input['country_code'],
-        # 'Zoning': input['category_type'],
-        'City': input['city_name'],
-        'Email': input['lead_email'],
-        'Phone': input['lead_phone'],
-        'Project_Enquired_for': dict(
-            {'id': project_id}
-        ),
-        # 'Property_Type1': input['property_field'],
-        'Minimum_Price': input['min_price'],
-        'Maximum_Price': input['max_price'],
-        'Full_Name': input['lead_name'],
-        'Last_Name': input['lead_name'],
-        'Lead_Source': str(type),
-        'Initial_Enquiry_Particulars_Automation': str(input)[:200]
-    }
-
-    if type(input['locality_name']) == str:
-        data['Interested_Localities'] = [input['locality_name']]
-    else:
-        data['Interested_Localities'] = list(input['locality_name'])
-
-    if input['service_type'] == 'new-projects':
-        data['Interested_in_wf'] = 'New'
-    
-    return data
 
 
 # MAPPING BULK DATA
@@ -311,54 +266,3 @@ def insert_records(record, access_token):
         return {'response' : str(response.content), 'status_code': response.status_code}
     
     return {'status': 'Failed'}
-
-
-# MAIN FUNCTION FOR INSERT RECORD
-
-def insert_record_to_zoho(record, type = None):
-    try:
-        print(('insert_record_to_zoho', type))
-        if not type:
-            access_token = get_access_token()
-            print(access_token)
-            id = getProjectID(record['project_name'], access_token)
-            print((record['project_name'], 'id: ', id))
-            
-            if 'error' in str(id):
-                access_token = get_access_token()
-                id = getProjectID('None (default)', access_token)
-                print(('None (default)', id))
-            
-            data = mapping(record, id)
-            print(data)
-            response = insert_records(data, access_token)
-            print(response)
-            return response
-        
-        elif type == 'housing':
-            access_token = get_access_token()
-            # print(access_token)
-            id = getProjectID(record['project_name'], access_token)
-            print((record['project_name'], id))
-            
-            if 'error' in str(id):
-                access_token = get_access_token()
-                id = getProjectID('None (default)', access_token)
-                print(('None (default)', id))
-            
-            data = mapping(record, id, type = 'Housing automation')
-            print(data)
-            response = insert_records(data, access_token)
-            print(response)
-            return response
-        
-        elif type == 'magicbricks':
-            access_token = get_access_token()
-            response = insert_records(data, access_token)
-            return response
-        
-        return {'status': 'success'}
-    
-    except Exception as e:
-        print('Uncaught exception in housing {}'.format(e))
-        return {'status': 'Exception'}
