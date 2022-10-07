@@ -423,6 +423,7 @@ def save_access_token():
         "URL": "https://www.zohoapis.com/crm/v2/Leads/",
         "CLIENT_ID": "REDACTED",
         "CLIENT_SECRET": "REDACTED",
+        # "REFRESH_TOKEN": "REDACTED",
         "REFRESH_TOKEN": "REDACTED",
         "REDIRECT_URI": "https://example.com",
         "NAME": "Zoho"

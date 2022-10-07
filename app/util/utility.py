@@ -88,9 +88,9 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
         str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", '_') + ".png"),
         str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
         str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
-        str(str(path2) + '/' + "pre" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png"),
-        str(str(path2) + '/' + "post" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png"),
-        str(str(path2) + '/' + "err" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png")
+        str(str(path2) + '/' + "pre" + "_" + str(subname) + "_hex_" + str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "post" + "_" + str(subname) + "_hex_" + str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "err" + "_" + str(subname) + "_hex_" + str(uuid4().hex) + ".png")
         ]
 
 
@@ -149,59 +149,11 @@ def send_mail(lead_id, path, sub_project_name, name1):
 # GET ACCESS TOKEN
 
 def get_access_token():
-    # import os
-    # access_token = os.environ.get("access_token")
-    # return access_token
-
     from dotenv import load_dotenv, find_dotenv, get_key
     dotenv_file = find_dotenv()
     load_dotenv(dotenv_file)
     access_token = get_key(dotenv_file, 'access_token', encoding='utf-8')
     return access_token
-
-
-'''
-# GET ACCESS TOKEN OLD
-
-def get_access_token_old():
-    from requests.structures import CaseInsensitiveDict
-    import os
-    zoho = {
-        "URL": "https://www.zohoapis.com/crm/v2/Leads/",
-        "CLIENT_ID": "REDACTED",
-        "CLIENT_SECRET": "REDACTED",
-        "REFRESH_TOKEN": "REDACTED",
-        "REDIRECT_URI": "https://example.com",
-        "NAME": "Zoho"
-        }
-
-    try:
-        url = 'https://accounts.zoho.com/oauth/v2/token?client_id={}&client_secret={}&refresh_token={}&grant_type=refresh_token'.format(
-                zoho['CLIENT_ID'],
-                zoho['CLIENT_SECRET'],
-                zoho['REFRESH_TOKEN'])
-
-        headers = CaseInsensitiveDict()
-        headers["Content-Length"] = "0"
-        resp = post(url, headers=headers)
-        output = resp.json()
-        print(output)
-        print("before :", os.environ.get("access-token"))
-        access_token = output['access_token']
-        os.environ["access_token"] = str(access_token)
-
-        access_token = os.environ.get("access_token")
-        print("after :", access_token)
-        # print(os.get(['access_token']))
-    except Exception:
-        try:
-            access_token = os.environ.get("access_token")
-            print(access_token)
-        except Exception as e:
-            print("Failed to create Access token. \n" + str(e))
-
-    return access_token
-'''
 
 
 # UPLOAD ATTACHMENT TO ZOHO
@@ -226,6 +178,28 @@ def upload_an_attachment(lead_id, path):
 # SEARCH PROJECT ID
 
 def getProjectID(project_name, access_token):
+    url = 'https://www.zohoapis.com/crm/v3/coql'
+    data = {
+    "select_query": "select id from Deals where Deal_Name like '{}' limit 1".format(project_name)
+    }
+    headers = {
+        'Authorization': 'Zoho-oauthtoken ' + str(access_token),
+    }
+    resp = post(url, data=data, headers=headers)
+
+    if resp.status_code == 200:
+        data = loads(resp.content)['data']
+        if data:
+            id = data[0]['id']
+            return id
+
+    return {'error': 'No such project'}
+
+
+'''
+# SEARCH PROJECT ID
+
+def getProjectID(project_name, access_token):
     url = 'https://www.zohoapis.com/crm/v2/Deals/search'
     params = {
         'fields': 'Deal_Name',
@@ -243,7 +217,7 @@ def getProjectID(project_name, access_token):
             return id
 
     return {'error': 'No such project'}
-
+'''
 
 # INSERT NEW RECORD IN ZOHO
 
