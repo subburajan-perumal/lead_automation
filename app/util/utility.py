@@ -7,6 +7,8 @@ from requests import get, post
 import pymongo
 from bson import json_util
 from celery.utils.log import get_task_logger
+import os
+import requests
 
 celery_logger = get_task_logger(__name__)
 
@@ -88,9 +90,9 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
         str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", '_') + ".png"),
         str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
         str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
-        str(str(path2) + '/' + "pre" + "_" + str(subname) + "_hex_" + str(uuid4().hex) + ".png"),
-        str(str(path2) + '/' + "post" + "_" + str(subname) + "_hex_" + str(uuid4().hex) + ".png"),
-        str(str(path2) + '/' + "err" + "_" + str(subname) + "_hex_" + str(uuid4().hex) + ".png")
+        str(str(path2) + '/' + "pre" + "_" + str(subname) +"_"+ str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "post" + "_" + str(subname) +"_" + str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "err" + "_" + str(subname) +"_" + str(uuid4().hex) + ".png")
         ]
 
 
@@ -164,12 +166,36 @@ def upload_an_attachment(lead_id, path):
     access_token = get_access_token()
     print('Access token: {}'.format(access_token))
     try:
-        CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(
-            lead_id,
-            access_token,
-            path)
-        out1, out2 = subprocess.getstatusoutput(CurlUrl)
-        print(out1, out2)
+
+        url = 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments'.format(lead_id)
+
+        headers = {
+            'Authorization': 'Zoho-oauthtoken {}'.format(access_token)
+        }
+
+        fullpath = path
+        path, filename = os.path.split(fullpath)
+        root, ext = os.path.splitext(filename)
+        the_rest = root.rsplit("_", 1)
+
+        filename = the_rest[0] + ext
+
+        files=[
+            ('file',(filename,open(path,'rb'),'image/png'))
+            ]
+
+        response = requests.post(url=url, files=files, headers=headers)
+
+        if response is not None:
+                print("HTTP Status Code : " + str(response.status_code))
+
+                print(response.json())
+        # CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(
+        #     lead_id,
+        #     access_token,
+        #     path)
+        # out1, out2 = subprocess.getstatusoutput(CurlUrl)
+        # print(out1, out2)
     except Exception:
         print("Failed to Upload...")
     return

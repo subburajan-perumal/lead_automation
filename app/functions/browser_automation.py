@@ -295,6 +295,9 @@ def brigade(subproject:str, browser: Firefox, site_data:dict, lead_data:dict,aut
 
 #working
 def casagrand(subproject, browser, site_data, lead_data, automate_path):
+    ph_number=PN.parse(lead_data['phone'])
+    country_name = (GC.description_for_number(ph_number,"en"))
+
     try:
         browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
         save_path = automate_path
@@ -344,9 +347,11 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
         f_project.send_keys(subproject)
         f_project.send_keys(Keys.RETURN)
 
+        country = browser.find_element(By.XPATH, '//*[@id="lead_country"]')
+        country.send_keys(country_name)
+
         browser.save_screenshot(save_path[0])    
     
-
         fs_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
         fs_save.click()
         time.sleep(10)
@@ -1024,7 +1029,7 @@ def radiance(subproject, browser, site_data, lead_data, path):
            
 
         
-        browser.implicitly_wait(5)
+        browser.implicitly_wait(15)
         browser.save_screenshot(save_path[1])
         browser.close()
         return 1
@@ -1081,7 +1086,7 @@ def radiance_(subproject, browser, site_data, lead_data, path):
         submitbutton = browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/footer/button[2]')
         submitbutton.click()
 
-        time.sleep(3)
+        time.sleep(15)
         browser.save_screenshot(save_path[1])
         return 1
     

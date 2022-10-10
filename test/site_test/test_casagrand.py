@@ -40,12 +40,15 @@ lead_data={
       "first_name": "Test",
     "last_name": "Test", 
     "email": "redacted@example.com", 
-    "phone": "+911111111111",
+    "phone": "+19514882916",
      "project_enquired_for": "",
       "interested_properties": "SPR Market of India", 
       "interested_localities": "Perambur",
        "initial_enquiry_particulars_automation": ""
     }
+
+ph_number=PN.parse(lead_data['phone'])
+country_name = (GC.description_for_number(ph_number,"en"))
 
 site_data={"_id":{"$oid":"623c25874dca8f32e924417b"},"name":"casagrand","url":"http://cp.sell.do/users/sign_in","email":"redacted@example.com","pass":"REDACTED","status":1,"project_list":[{"project_name":"CG Zenith","keywords":["Casagrand Zenith","Zenith"],"location":[]},{"project_name":"CG Esquire","keywords":["Casagrand Esquire"],"location":[]},{"project_name":"CG Tudor","keywords":["Casagrand Tudor","Brigade Bonito","Brigade Xanadu","Signature City"],"location":[]},{"project_name":"CG Savoye","keywords":["Casagrand Savoye","Godrej Azure","Radiance Sapphire","Olympia Opaline","TCP Altura"],"location":[]},{"project_name":"CG Supremus","keywords":["Casagrand Supremus"],"location":[]},{"project_name":"CG ECR 14","keywords":["Casagrand ECR 14"],"location":[]},{"project_name":"CG Crescendo Elite","keywords":["Casagrand Crescendo Elite"],"location":[]},{"project_name":"CG Crescendo Compact","keywords":["Casagrand Crescendo Compact"],"location":[]},{"project_name":"CG Millenia","keywords":["Casagrand Millenia"],"location":[]},{"project_name":"CG Royale","keywords":["Casagrand Royale"],"location":[]},{"project_name":"CG Utopia","keywords":["Casagrand Utopia","Peninsula"],"location":[]},{"project_name":"CG Athens","keywords":["Casagrand Athens"],"location":[]},{"project_name":"CG FirstCity","keywords":["Casagrand FirstCity"],"location":[]}]}
 
@@ -74,16 +77,15 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
         fl_password = browser.find_element(By.ID,"user_password")
         fl_password.send_keys(site_data["pass"])
         browser.find_element(By.XPATH,'//*[@id="new_user"]/div[4]/div[2]/button').click()
-        time.sleep(5)
+        time.sleep(10)
 
-        # Leads = browser.find_element(By.LINK_TEXT, ('Leads'))
         Leads = browser.find_element(By.XPATH, '/html/body/nav/div/ul[1]/li[2]/a')
         Leads.click()
-        time.sleep(5)
-
-        addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a") 
+        time.sleep(10)
+        
+        addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
         addlead.click()
-        time.sleep(5)
+        time.sleep(10)
 
         firstname = browser.find_element(By.ID, "lead_first_name")
         firstname.send_keys(fullname)
@@ -96,33 +98,40 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
 
         f_mail = browser.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/form/div[2]/div[2]/div[2]/div[1]/div/div/a')
         f_mail.click()
+        time.sleep(2)
         f_alt_mail = browser.find_element(By.XPATH, '/html/body/div[3]/div/input')
         f_alt_mail.click()
+        time.sleep(2)
         f_alt_mail.send_keys(lead_data['email'])
         f_alt_mail.send_keys(Keys.RETURN)
         f_phone = browser.find_element(By.XPATH, '//*[@id="lead_phone"]')
         f_phone.click()
+        time.sleep(2)
         f_phone.send_keys(lead_data['phone'])
         button2 = browser.find_element(By.XPATH, '//*[@id="s2id_lead_project_ids"]/a/span[2]')
         button2.click()
+        time.sleep(2)
         f_project = browser.find_element(By.XPATH, '/html/body/div[4]/div/input')
         f_project.send_keys(subproject)
         f_project.send_keys(Keys.RETURN)
 
-        # browser.save_screenshot(save_path[0])    
+        country = browser.find_element(By.XPATH, '//*[@id="lead_country"]')
+        country.send_keys(country_name)
     
+       # browser.save_screenshot(save_path[0])      
 
         fs_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
-        # fs_save.click()
+        fs_save.click()
+        time.sleep(10)
         
-        time.sleep(5)
         # browser.save_screenshot(save_path[1])
-        browser.close()
+        # browser.close()
         return 1
     except Exception as e:
         browserLog.exception(f"Site:{site_data['name']}")
         # browser.save_screenshot(save_path[2])
         return -1
+
 
 subproject="CG Tudor"
 path="."
