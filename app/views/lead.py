@@ -31,6 +31,10 @@ def leads_all():
                     for key, value in lead.items():
                         if key != 'project':
                             lead_detail[key] = value
+                        if key == 'created_at':
+                            lead_detail[key] = value['$date']
+                        if key == 'modified_time':
+                            lead_detail[key] = value['$date']                            
                     for key, value in project.items():
                         lead_detail[key] = value
                     leads_details.append(lead_detail)
@@ -47,7 +51,30 @@ def lead_today():
     try:
         db=mongo.db
         lead_all = db.leads.find({"project":{"$exists":"true"}},{"_id":0}).sort("_id",-1).limit(50)
-        result=json.loads(json_util.dumps(lead_all))
-        return render_template("/lead/view.html",data=result)
+        lead_all=json.loads(json_util.dumps(lead_all))
+
+        leads_details = []
+        try:
+            for lead in lead_all:
+                arr = []
+                for project in lead['project']:
+                    lead_detail = dict()
+                    for key, value in lead.items():
+                        if key != 'project' and key != 'created_at' and key != 'modified_time':
+                            lead_detail[key] = value
+                        if key == 'created_at':
+                            lead_detail[key] = value['$date']
+                        if key == 'modified_time':
+                            lead_detail[key] = value['$date']
+                    for key, value in project.items():
+                        if key == 'subproject':
+                            arr.append(value)
+                lead_detail['project'] = arr
+                leads_details.append(lead_detail)
+            leads_details = json.loads(json_util.dumps(leads_details))
+        except:
+            pass
+        return render_template("/lead/view.html",data=leads_details)
+
     except Exception as e:
         return(str(e))
