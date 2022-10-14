@@ -620,44 +620,69 @@ def gsquare(subproject, browser, site_data, lead_data, path):
 
 #working
 def hiranandani(subproject, browser, site_data, lead_data, path):
-    try:
-        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
-        save_path=path
-        phone=PN.parse(lead_data['phone'])
-        browser.get(site_data["url"])
-        tem = browser.find_element(By.CLASS_NAME, 'reffer-btn').click()
+        ph_number=PN.parse(lead_data['phone'])
+        phoneno=ph_number.national_number
+        country_name = (GC.description_for_number(ph_number,"en"))
+        try:
+            browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
+            save_path = path
+            fullname=str(lead_data['name'])
+            first_name,last_name=getName(fullname)
+            browser.get(site_data["url"])
+            time.sleep(30)
+            browser.find_element(By.XPATH, '/html/body/div[3]/div[2]/div/div[1]/button/span').click()
+            time.sleep(5)
 
-        name  = browser.find_element(By.NAME, "Pname")
-        name.send_keys(lead_data['name'])
+            browser.find_element(By.XPATH, '/html/body/header/div/div[2]/div/nav/a[6]').click()
+            time.sleep(5)
 
-        contact=browser.find_element(By.NAME,'pmob')
-        contact.send_keys(phone.national_number)
 
-        intrest_project = browser.find_element(By.NAME, 'interested')
-        new = Select(intrest_project)
-        new.select_by_index(2)
+            f_name =  browser.find_element(By.XPATH, "/html/body/section[8]/div/div[2]/div/form/div[1]/div/input[1]")
+            f_name.send_keys(lead_data['name'])
+            time.sleep(10)
 
-        email=browser.find_element(By.NAME,'pemail')
-        email.send_keys(lead_data['email'])
+            browser.find_element(By.XPATH, '/html/body/button').click()
+            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
 
-        add=browser.find_element(By.XPATH,'/html/body/div[3]/div/div/div/form/div[1]/div/div/div[6]/div/div[2]/span/span').click()
+            time.sleep(5)
 
-        intrest_project = browser.find_element(By.NAME, 'cname')
-        new = Select(intrest_project)
-        new.select_by_index(13)      
+            browser.find_element(By.XPATH, '/html/body/button').click()
+            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
 
-        browser.save_screenshot(save_path[0])
-        add=browser.find_element(By.XPATH,'/html/body/div[3]/div/div/div/form/button').click()
 
-        browser.implicitly_wait(5)
-        browser.save_screenshot(save_path[1])
-        browser.close()
-        return 1
+            country_code = browser.find_element(By.XPATH,'//*[@id="cc"]')
+            time.sleep(15)
+            country_code.send_keys(country_name)
+            time.sleep(15)
+            country_code.send_keys(Keys.ENTER)
 
-    except Exception as e:
-        browserLog.exception(f"Site:{site_data['name']}")
-        browser.save_screenshot(save_path[2])
-        return -1
+
+            f_phone = browser.find_element(By.XPATH, '//*[@id="mobile"]')
+            f_phone.click()
+            f_phone.send_keys(phoneno)
+            time.sleep(2)  
+
+            f_mail = browser.find_element(By.XPATH, '/html/body/section[8]/div/div[2]/div/form/div[2]/div/input')
+            f_mail.click()
+            f_mail.send_keys(lead_data['email'])
+            time.sleep(2)   
+
+            browser.save_screenshot(save_path[0])  
+       
+            fs_save = browser.find_element(By.XPATH, '/html/body/section[8]/div/div[2]/div/form/button')
+            fs_save.click()
+     
+
+            browser.save_screenshot(save_path[1])
+            browser.close()
+            return 1
+
+        except Exception as e:
+            browserLog.exception(f"Site:{site_data['name']}")
+            print(str(e))
+            browser.save_screenshot(save_path[2])
+            browser.close()
+            return -1
 
 #working
 def krishnagrp(subproject, browser, site_data, lead_data, path):
@@ -686,6 +711,11 @@ def krishnagrp(subproject, browser, site_data, lead_data, path):
         time.sleep(1)                        
         
         browser.save_screenshot(save_path[0])
+
+        #resizing the screenshot
+        img = cv2.imread(save_path[0])
+        imgResize = cv2.resize(img,(1200,700))
+        cv2.imwrite(save_path[0], imgResize)
         
         submit = browser.find_element_by_xpath('/html/body/section/div/div/div[2]/div/div/div/div[2]/div/div/div/form/div[9]/div/div/ input')
         submit.click()
@@ -693,12 +723,21 @@ def krishnagrp(subproject, browser, site_data, lead_data, path):
 
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
+
+        img = cv2.imread(save_path[1])
+        imgResize = cv2.resize(img,(1200,700))
+        cv2.imwrite(save_path[1], imgResize)
+
         browser.close()
         return 1
 
     except Exception as e:
         browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
+
+        img = cv2.imread(save_path[2])
+        imgResize = cv2.resize(img,(1200,700))
+        cv2.imwrite(save_path[2], imgResize)
         
         return -1
 

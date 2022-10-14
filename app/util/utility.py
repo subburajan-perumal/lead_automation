@@ -181,7 +181,7 @@ def upload_an_attachment(lead_id, path):
         filename = the_rest[0] + ext
 
         files=[
-            ('file',(filename,open(path,'rb'),'image/png'))
+            ('file',(filename,open(fullpath,'rb'),'image/png'))
             ]
 
         response = requests.post(url=url, files=files, headers=headers)
