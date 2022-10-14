@@ -132,6 +132,7 @@ async def bulk_leads():
         cur = db.find({'source': 'bulk_upload'}).sort("_id",-1).limit(50)
         result=json.loads(json_util.dumps(cur))
         for i in result:
+            i['phone'] = i['phone'][1:]
             x.append(i)
         return render_template('/bulk/list.html', x=x)
     except Exception as e:
