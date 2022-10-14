@@ -78,7 +78,7 @@ def lead_today():
             #     leads_details.append(lead_detail)
             # leads_details = json.loads(json_util.dumps(leads_details))
         except:
-            pass
+            leads_details = lead_all
         return render_template("/lead/view.html",data=leads_details)
 
     except Exception as e:
