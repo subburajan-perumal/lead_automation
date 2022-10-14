@@ -1128,7 +1128,12 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
 
         save_path=path
         browser.get(site_data["url"])
-        time.sleep(10)
+        time.sleep(30)
+
+        browser.switch_to.frame('sandboxFrame')
+        browser.switch_to.frame('userHtmlFrame')   
+        browser.find_element(By.XPATH, '/html/body/div/div[2]/div/div/div[2]/div/div/a[2]/div/div[2]').click() 
+        time.sleep(30)    
 
         browser.switch_to.frame('sandboxFrame')
         browser.switch_to.frame('userHtmlFrame')
@@ -1168,13 +1173,18 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
         email.send_keys(lead_data['email'])
 
         form=browser.find_element(By.XPATH, '//*[@id="addProject"]')
-        form.select_by_visible_text(subproject)
+        form.click()
+        time.sleep(10)
+        form.send_keys(subproject)
+        form.send_keys(Keys.RETURN)
 
         budget=browser.find_element(By.XPATH, '//*[@id="addBudget"]')
-        budget.select_by_visible_text("80L - 100L")
+        budget.send_keys("80L - 100L")
+        form.send_keys(Keys.RETURN)
 
         propType=browser.find_element(By.XPATH, '//*[@id="addType"]')
-        propType.select_by_visible_text("3BHK")
+        propType.send_keys("3BHK")
+        form.send_keys(Keys.RETURN)
 
         remarks=browser.find_element(By.XPATH, '//*[@id="addCRemark"]')
         remarks.click()

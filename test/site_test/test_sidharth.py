@@ -19,18 +19,18 @@ from selenium.webdriver.firefox.options import Options
 save_path = ['./', './', './']
 
 def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list):
+
     try:
+        # browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
+
         save_path=path
         browser.get(site_data["url"])
-        time.sleep(10)
-   
-        browser.switch_to.frame('sandboxFrame')
-        browser.switch_to.frame('userHtmlFrame')
-
-        # browser.find_element(By.ID, 'loginBtn').click()
-        browser.find_element(By.XPATH, '//*[@id="loginBtn"]').click()
-
         time.sleep(30)
+
+        browser.switch_to.frame('sandboxFrame')
+        browser.switch_to.frame('userHtmlFrame')   
+        browser.find_element(By.XPATH, '/html/body/div/div[2]/div/div/div[2]/div/div/a[2]/div/div[2]').click() 
+        time.sleep(30)    
 
         browser.switch_to.frame('sandboxFrame')
         browser.switch_to.frame('userHtmlFrame')
@@ -88,23 +88,22 @@ def sidharth(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path
         time.sleep(10)
         remarks.send_keys("NIL")
 
-        browser.save_screenshot(save_path[0])
+        # browser.save_screenshot(save_path[0])
 
         submitButton = browser.find_element(By.XPATH,'//*[@id="addFileSubmit"]')
-
-        browser.save_screenshot(save_path[1])
-
         submitButton.click()
         time.sleep(10)
+
+        # browser.save_screenshot(save_path[1])
                 
         return 1
 
     
     except Exception as e:
+        # browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
 
         return -1
-
 
 
 site_data = {
