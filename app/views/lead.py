@@ -67,11 +67,16 @@ def lead_today():
                         if key == 'modified_time':
                             lead_detail[key] = value['$date']
                     for key, value in project.items():
-                        if key == 'subproject':
-                            arr.append(value)
-                lead_detail['project'] = arr
-                leads_details.append(lead_detail)
+                        lead_detail[key] = value
+                    leads_details.append(lead_detail)
             leads_details = json.loads(json_util.dumps(leads_details))
+
+#only to print subproject in project
+            #             if key == 'subproject':
+            #                 arr.append(value)
+            #     lead_detail['project'] = arr
+            #     leads_details.append(lead_detail)
+            # leads_details = json.loads(json_util.dumps(leads_details))
         except:
             pass
         return render_template("/lead/view.html",data=leads_details)
