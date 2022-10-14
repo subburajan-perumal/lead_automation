@@ -681,6 +681,11 @@ def krishnagrp(subproject, browser, site_data, lead_data, path):
         time.sleep(1)                        
         
         browser.save_screenshot(save_path[0])
+
+        #resizing the screenshot
+        img = cv2.imread(save_path[0])
+        imgResize = cv2.resize(img,(1200,700))
+        cv2.imwrite(save_path[0], imgResize)
         
         submit = browser.find_element_by_xpath('/html/body/section/div/div/div[2]/div/div/div/div[2]/div/div/div/form/div[9]/div/div/ input')
         submit.click()
@@ -688,12 +693,21 @@ def krishnagrp(subproject, browser, site_data, lead_data, path):
 
         browser.implicitly_wait(5)
         browser.save_screenshot(save_path[1])
+
+        img = cv2.imread(save_path[1])
+        imgResize = cv2.resize(img,(1200,700))
+        cv2.imwrite(save_path[1], imgResize)
+
         browser.close()
         return 1
 
     except Exception as e:
         browserLog.exception(f"Site:{site_data['name']}")
         browser.save_screenshot(save_path[2])
+
+        img = cv2.imread(save_path[2])
+        imgResize = cv2.resize(img,(1200,700))
+        cv2.imwrite(save_path[2], imgResize)
         
         return -1
 
