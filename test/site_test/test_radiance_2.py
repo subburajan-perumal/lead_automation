@@ -14,7 +14,7 @@ import time
 
 # from app.tasks import lead
 
-driver="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
+driver="./geckodriver.exe"
 firefox_service = Service(driver)
 opt = Options()
 opt.add_argument ( "--incognito" )

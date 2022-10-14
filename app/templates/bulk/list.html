@@ -1,33 +1,40 @@
-<!doctype html>
+<!-- <!doctype html>
 <html>
-   <body>
+   <body> -->
    
-      <table border = 1>
-         <thead>
-            <td>LEADID</td>
-            <td>Full Name</td>
-            <td>Phone</td>
-            <td>Email</td>
-            <td>Project Enquired for</td>
-            <td>Interested Properties</td>
-            <td>created_time</td>
-            <td>source</td>
-         </thead>
-         
-         {% for x in x %}
-            <tr>
-               <td>{{x["_id"]}}</td>
-               <td>{{x["name"]}}</td>
-               <td>{{x["phone"]}}</td>
-               <td>{{x["email"]}}</td>
-               <td>{{x['created_at']}}</td>	
-               <td>{{x["modified_time"]}}</td>
-               <td>{{x['source']}}</td>	
-            </tr>
-         {% endfor %}
-      </table>
+{% extends "base.html" %}
+{% block content%}
       
-      <a href = "/upload">Go back to home page</a>
+<table border = 1>
+   <thead>
+      <td>LEADID</td>
+      <td>Full Name</td>
+      <td>Phone</td>
+      <td>Email</td>
+      <td>Project Enquired for</td>
+      <td>Interested Properties</td>
+      <td>created_time</td>
+      <td>source</td>
+   </thead>
+   
+   {% for x in x %}
+      <tr>
+         <td>{{x["lead_id"]}}</td>
+         <td>{{x["name"]}}</td>
+         <td>{{x["phone"]}}</td>
+         <td>{{x["email"]}}</td>
+         <td>{{x["project_enquired_for"]}}</td>
+         <td>{{x["interested_properties"]}}</td>
+         <td>{{x['created_time']}}</td>	
+         <td>{{x['source']}}</td>
+      </tr>
+   {% endfor %}
+</table>
+
+{% endblock %}
+
+      
+      <!-- <a href = "/upload">Go back to home page</a>
       
    </body>
-</html>
+</html> -->

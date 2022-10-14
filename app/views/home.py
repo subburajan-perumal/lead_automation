@@ -1,13 +1,14 @@
 from datetime import datetime
+import json
 import logging
-from urllib import response
 from celery.result import AsyncResult
 from flask import Blueprint, Response, jsonify, redirect, render_template, request
 from config import Config
 from app.util.utility import bulk_mapping
 from app.util.request_handler import find_format
 import time
-from app.tasks import lead
+from app.tasks import lead, bulk_lead
+
 
 # from .. import tasks
 logging.basicConfig(
@@ -78,268 +79,6 @@ def homepage_post():
         return Response("something went wrong\n", status=400)
 
 
-@home.get("/99acres")
-def get_99acres():
-    # logging.info(msg=request.get_data())
-    # return {"message":"99 acres endpoint working"}
-    
-    from app.util.utility import insert_record_to_zoho
-
-    try:
-        logging.info(msg="99acres request received")
-        logging.info(msg=request.headers)
-        logging.info(msg=request.get_data())
-        start_time = time.time()
-        data = {}
-        # out = "{}"
-        print(request)
-        print(request.get_data())
-
-        # print(request.get_json())
-        data = find_format(request)
-        if data == {}:
-            return Response("invalid request", 200)
-        if type(data) is list:
-            print(data)
-        elif type(data) is dict:
-            data['source'] = "99acres"
-            print(data)
-            result = lead.apply_async(kwargs=data, queue="lead")
-            _ = insert_record_to_zoho(data)
-            print("task executed succesfully")
-            # print(result.task_id)
-            # out={"task id" : result.task_id}
-        else:
-            print(data)
-
-        # insert_record_to_zoho(data)
-
-        end_time = time.time()
-        print(f"Response time {end_time-start_time}")
-        return Response("received", 200)
-
-    except Exception as e:
-        print(str(e))
-        logging.info("invalid request received")
-        return Response("something went wrong\n", status=400)
-
-
-
-@home.post("/99acres")
-def webhook_99acres():
-    from app.util.utility import insert_record_to_zoho
-
-    try:
-        logging.info(msg="99acres request received")
-        logging.info(msg=request.headers)
-        logging.info(msg=request.get_data())
-        start_time = time.time()
-        data = {}
-        # out = "{}"
-        print(request)
-        print(request.get_data())
-
-        # print(request.get_json())
-        data = find_format(request)
-        if data == {}:
-            return Response("invalid request", 200)
-        if type(data) is list:
-            print(data)
-        elif type(data) is dict:
-            data['source'] = "99acres"
-            print(data)
-            result = lead.apply_async(kwargs=data, queue="lead")
-            _ = insert_record_to_zoho(data)
-            print("task executed succesfully")
-            # print(result.task_id)
-            # out={"task id" : result.task_id}
-        else:
-            print(data)
-
-        # insert_record_to_zoho(data)
-
-        end_time = time.time()
-        print(f"Response time {end_time-start_time}")
-        return Response("received", 200)
-
-    except Exception as e:
-        print(str(e))
-        logging.info("invalid request received")
-        return Response("something went wrong\n", status=400)
-
-
-@home.get("/magicbricks")
-def get_magicbricks():
-    # logging.info(msg=request.get_data())
-    # return {"message":"magicbricks endpoint working"}
-    from app.util.utility import insert_record_to_zoho
-
-    try:
-        logging.info(msg="magicbricks request received")
-        logging.info(msg=request.headers)
-        logging.info(msg=request.get_data())
-        start_time = time.time()
-        data = {}
-        # out = "{}"
-        print(request)
-        print(request.get_data())
-
-        # print(request.get_json())
-        data = find_format(request)
-        if data == {}:
-            return Response("invalid request", 200)
-        if type(data) is list:
-            print(data)
-        elif type(data) is dict:
-            data['source'] = "magicbricks"
-            print(data)
-            result = lead.apply_async(kwargs=data, queue="lead")
-            _ = insert_record_to_zoho(data)
-            print("task executed succesfully")
-            # print(result.task_id)
-            # out={"task id" : result.task_id}
-        else:
-            print(data)
-
-        end_time = time.time()
-        print(f"Response time {end_time-start_time}")
-        return Response("received", 200)
-
-    except Exception as e:
-        print(str(e))
-        logging.info("invalid request received")
-        return Response("something went wrong\n", status=400)
-
-
-
-@home.post("/magicbricks")
-def webhook_magicbricks():
-    from app.util.utility import insert_record_to_zoho
-
-    try:
-        logging.info(msg="magicbricks request received")
-        logging.info(msg=request.headers)
-        logging.info(msg=request.get_data())
-        start_time = time.time()
-        data = {}
-        # out = "{}"
-        print(request)
-        print(request.get_data())
-
-        # print(request.get_json())
-        data = find_format(request)
-        if data == {}:
-            return Response("invalid request", 200)
-        if type(data) is list:
-            print(data)
-        elif type(data) is dict:
-            data['source'] = "magicbricks"
-            print(data)
-            result = lead.apply_async(kwargs=data, queue="lead")
-            _ = insert_record_to_zoho(data)
-            print("task executed succesfully")
-            # print(result.task_id)
-            # out={"task id" : result.task_id}
-        else:
-            print(data)
-
-        end_time = time.time()
-        print(f"Response time {end_time-start_time}")
-        return Response("received", 200)
-
-    except Exception as e:
-        print(str(e))
-        logging.info("invalid request received")
-        return Response("something went wrong\n", status=400)
-
-
-        
-@home.get("/housing")
-def get_housing():
-    # logging.info(msg=request.get_data())
-    # return {"message":"housing endpoint working"}
-    
-    from app.util.utility import insert_record_to_zoho
-
-    try:
-        logging.info(msg="housing request received")
-        logging.info(msg=request.headers)
-        logging.info(msg=request.get_data())
-        start_time = time.time()
-        data = {}
-        # out = "{}"
-        print(request)
-        print(request.get_data())
-
-        # print(request.get_json())
-        data = find_format(request)
-        if data == {}:
-            return Response("invalid request", 200)
-        if type(data) is list:
-            print(data)
-        elif type(data) is dict:
-            data['source'] = "housing"
-            print(data)
-            result = lead.apply_async(kwargs=data, queue="lead")
-            _ = insert_record_to_zoho(data)
-            print("task executed succesfully")
-            # print(result.task_id)
-            # out={"task id" : result.task_id}
-        else:
-            print(data)
-
-        end_time = time.time()
-        print(f"Response time {end_time-start_time}")
-        return Response("received", 200)
-
-    except Exception as e:
-        print(str(e))
-        logging.info("invalid request received")
-        return Response("something went wrong\n", status=400)
-
-
-
-@home.post("/housing")
-def webhook_housing():
-    from app.util.utility import insert_record_to_zoho
-
-    try:
-        logging.info(msg="housing request received")
-        logging.info(msg=request.headers)
-        logging.info(msg=request.get_data())
-        start_time = time.time()
-        data = {}
-        # out = "{}"
-        print(request)
-        print(request.get_data())
-
-        # print(request.get_json())
-        data = find_format(request)
-        if data == {}:
-            return Response("invalid request", 200)
-        if type(data) is list:
-            print(data)
-        elif type(data) is dict:
-            data['source'] = "housing"
-            print(data)
-            result = lead.apply_async(kwargs=data, queue="lead")
-            _ = insert_record_to_zoho(data)
-            print("task executed succesfully")
-            # print(result.task_id)
-            # out={"task id" : result.task_id}
-        else:
-            print(data)
-
-        end_time = time.time()
-        print(f"Response time {end_time-start_time}")
-        return Response("received", 200)
-
-    except Exception as e:
-        print(str(e))
-        logging.info("invalid request received")
-        return Response("something went wrong\n", status=400)
-
-
 def retry_mapping(lead):
     data = {
         'interested_properties': lead['subproject'],
@@ -385,12 +124,14 @@ def webhook_retry():
 @home.route('/bulk_leads_list')
 async def bulk_leads():
     from app.database import mongo
+    from bson import json_util
     try:
         db=mongo.db
-        db = db["leads"]
+        db = db["bulk_leads"]
         x=[]
-        cur = db.find({'source': 'bulk_upload'})
-        for i in cur[::-1]:
+        cur = db.find({'source': 'bulk_upload'}).sort("_id",-1).limit(50)
+        result=json.loads(json_util.dumps(cur))
+        for i in result:
             x.append(i)
         return render_template('/bulk/list.html', x=x)
     except Exception as e:
@@ -407,6 +148,8 @@ async def uploader_file():
     if request.method == "GET":
         return render_template("/bulk/upload.html")
     if request.method == "POST":
+        logging.info(msg="Bulk upload request received")
+        print('Bulk upload request received')
         try:
             f = request.files['file']
             db=mongo.db
@@ -414,11 +157,30 @@ async def uploader_file():
             data = df.to_dict(orient="records")
             for val in data:
                 try:
+                    lead_data = bulk_mapping(val)
                     val = bulk_mapping(val)
                     val['created_time'] = datetime.now()
+                    lead_data['source'] = 'bulk_upload'
                     val['source'] = 'bulk_upload'
-                    db.bulk_leads.insert_one(val)
-                    result = lead.apply_async(kwargs=val, queue="bulk_upload")
+                    db.bulk_leads.update_one(
+                        {
+                            'lead_phone': val['phone']
+                        },
+                        {
+                            '$set': val
+                        },
+                        upsert = True
+                    )
+                    # db.bulk_leads.insert_one(val)
+                    logging.info(msg='Lead raw')
+                    logging.info(msg=val)
+                    logging.info(msg='Lead parsed')
+                    logging.info(msg=lead_data)
+                    result = bulk_lead.apply_async(kwargs=lead_data, queue="bulk")
+                    # result = lead.apply_async(kwargs=lead_data, queue="lead")
+                    logging.info(msg='Added to bulk tasks')
+                    logging.info(msg=result)
+                    print(result)
                 except:
                     pass
         except:

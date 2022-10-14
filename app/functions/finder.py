@@ -1,10 +1,8 @@
 from datetime import datetime
 from pymongo import MongoClient
 from app.functions.site_base import SiteAutomator
-from celery.utils.log import get_task_logger
 import logging
 
-# logger = get_task_logger("finder")
 logging.basicConfig(
     # filename= Config.LOG_PATH+"lead_automation.log",
     level=logging.INFO,
@@ -38,9 +36,6 @@ def function_finder(lead_data: dict):
         CONN = MongoClient(MONGO_DB)
         DB = CONN['lead_automation']
         LEADS = DB['leads']
-        # SITE= DB['Site']
-        # print(SITE)
-        # print("db working")
 
     except Exception:
         logging.exception(msg="db connection failure")
@@ -63,7 +58,7 @@ def function_finder(lead_data: dict):
         # Enquired site
         site_keywords = []
         project_enquired = lead_data.get("project_enquired_for", "").split(";")
-        interested_project = lead_data.get("interest_properties", "").split(";")
+        interested_project = lead_data.get("interested_properties", "").split(";")
         interested_localities = lead_data.get("interested_localities", "").split(";")
         site_keywords.extend(project_enquired)
         site_keywords.extend(interested_project)
@@ -124,7 +119,7 @@ def function_finder(lead_data: dict):
         for _site in site_list:
             project_list = _site['project_list']
             logging.debug(msg=str(project_list))
-            match_keywords = common_member(site_keywords,project_list[0]['keywords'])
+            match_keywords = common_member(site_keywords,project_list['keywords'])
             print('Matched keywords .. ' + str(match_keywords))
             logging.info(msg=f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}; Matched keywords: {match_keywords}")
             logging.debug(msg="Matched_Keywords")

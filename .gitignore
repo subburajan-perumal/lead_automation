@@ -43,3 +43,7 @@ Site_col.json
 phase_2/mongo_schema
 phase_2/query
 backup_celery_worker.py
+logs/lead_automation.log
+celerybeat-schedule
+logs
+.env

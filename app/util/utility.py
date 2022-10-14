@@ -6,6 +6,12 @@ import pytz
 from requests import get, post
 import pymongo
 from bson import json_util
+from celery.utils.log import get_task_logger
+import os
+import requests
+
+celery_logger = get_task_logger(__name__)
+
 
 def cmpstring(string1, string2):
     str1 = "".join([i for i in string1 if i.isalpha()])
@@ -39,8 +45,8 @@ def getPhonenumber(numberlist: list):
             filter_number.append("+91"+number)
             print("filtered_array : ", filter_number)
     if len(filter_number) > 0:
-        
         return(filter_number[0])
+
     else:
         return None
 
@@ -84,54 +90,24 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
         str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", '_') + ".png"),
         str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
         str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
-        str(str(path2) + '/' + "pre" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png"),
-        str(str(path2) + '/' + "post" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png"),
-        str(str(path2) + '/' + "err" + "_" + str(subname) + "_" + str(uuid4().hex) + ".png")
+        str(str(path2) + '/' + "pre" + "_" + str(subname) +"_"+ str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "post" + "_" + str(subname) +"_" + str(uuid4().hex) + ".png"),
+        str(str(path2) + '/' + "err" + "_" + str(subname) +"_" + str(uuid4().hex) + ".png")
         ]
-# print(getsavePath("akshaya","Tango"))+str(leadname).replace(" ","_")
-
-
-# LeadAutomation Mapping
-
-def mapping(input, id, type = 'lead_automation'):
-    data = {
-        'Configuration1': input['apartment_names'],
-        'Country_Code': input['country_code'],
-        'Zoning': input['category_type'],
-        'City': input['city_name'],
-        'Email': input['lead_email'],
-        'Phone': input['lead_phone'],
-        'Project_Enquired_for': dict(
-            {
-            # 'name': input['project_name'], 
-            # 'id': input['project_id'],
-            'id': id
-            }),
-        # 'Project_Enquired_for': '$' + input['project_name'],
-        'Property_Type1': input['property_field'],
-        'Minimum_Price': input['min_price'],
-        'Maximum_Price': input['max_price'],
-        'Full_Name': input['lead_name'],
-        'Lead_Source': str(type)
-    }
-
-    if type(input['locality_name']) == str:
-        data['Interested_Localities'] = [input['locality_name']]
-    else:
-        data['Interested_Localities'] = list(input['locality_name'])
-
-    if input['service_type'] == 'new-projects':
-        data['Interested_in_wf'] = 'New'
-    
-    return data
 
 
 # MAPPING BULK DATA
 
 def bulk_mapping(data):
+    data['Phone'] = '+' + str(data['Phone'])
+    if 'Email' not in data:
+        data['Email'] = data['Phone'] + '@example.com'
     data = {
+        'lead_id': data['LEADID'][5:],
         'email': data['Email'],
         'phone': data['Phone'],
+        'mobile': data['Phone'],
+        'alt_phone': data['Phone'],
         'name': data['Full Name'],
         'project_enquired_for': data['Project Enquired for'],
         'interested_properties': data['Interested Properties']
@@ -175,57 +151,51 @@ def send_mail(lead_id, path, sub_project_name, name1):
 # GET ACCESS TOKEN
 
 def get_access_token():
-    from requests.structures import CaseInsensitiveDict
-    import os
-    zoho = {
-        "URL": "https://www.zohoapis.com/crm/v2/Leads/",
-        "CLIENT_ID": "REDACTED",
-        "CLIENT_SECRET": "REDACTED",
-        "REFRESH_TOKEN": "REDACTED",
-        "REDIRECT_URI": "https://example.com",
-        "NAME": "Zoho"
-        }
-
-    try:
-        url = 'https://accounts.zoho.com/oauth/v2/token?client_id={}&client_secret={}&refresh_token={}&grant_type=refresh_token'.format(
-                zoho['CLIENT_ID'],
-                zoho['CLIENT_SECRET'],
-                zoho['REFRESH_TOKEN'])
-
-        headers = CaseInsensitiveDict()
-        headers["Content-Length"] = "0"
-        resp = post(url, headers=headers)
-        output = resp.json()
-        print(output)
-        print("before :", os.environ.get("access-token"))
-        access_token = output['access_token']
-        os.environ["access_token"] = str(access_token)
-
-        access_token = os.environ.get("access_token")
-        print("after :", access_token)
-        # print(os.get(['access_token']))
-    except Exception:
-        try:
-            access_token = os.environ.get("access_token")
-            print(access_token)
-        except Exception as e:
-            print("Failed to create Access token. \n" + str(e))
-
+    from dotenv import load_dotenv, find_dotenv, get_key
+    dotenv_file = find_dotenv()
+    load_dotenv(dotenv_file)
+    access_token = get_key(dotenv_file, 'access_token', encoding='utf-8')
     return access_token
 
 
 # UPLOAD ATTACHMENT TO ZOHO
 
 def upload_an_attachment(lead_id, path):
+    print('Upload attachment: {}, {}'.format(lead_id, path))
     import subprocess
     access_token = get_access_token()
+    print('Access token: {}'.format(access_token))
     try:
-        CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(
-            lead_id,
-            access_token,
-            path)
-        out1, out2 = subprocess.getstatusoutput(CurlUrl)
-        print(out1, out2)
+
+        url = 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments'.format(lead_id)
+
+        headers = {
+            'Authorization': 'Zoho-oauthtoken {}'.format(access_token)
+        }
+
+        fullpath = path
+        path, filename = os.path.split(fullpath)
+        root, ext = os.path.splitext(filename)
+        the_rest = root.rsplit("_", 1)
+
+        filename = the_rest[0] + ext
+
+        files=[
+            ('file',(filename,open(fullpath,'rb'),'image/png'))
+            ]
+
+        response = requests.post(url=url, files=files, headers=headers)
+
+        if response is not None:
+                print("HTTP Status Code : " + str(response.status_code))
+
+                print(response.json())
+        # CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(
+        #     lead_id,
+        #     access_token,
+        #     path)
+        # out1, out2 = subprocess.getstatusoutput(CurlUrl)
+        # print(out1, out2)
     except Exception:
         print("Failed to Upload...")
     return
@@ -234,10 +204,32 @@ def upload_an_attachment(lead_id, path):
 # SEARCH PROJECT ID
 
 def getProjectID(project_name, access_token):
+    url = 'https://www.zohoapis.com/crm/v3/coql'
+    data = {
+    "select_query": "select id from Deals where Deal_Name like '{}' limit 1".format(project_name)
+    }
+    headers = {
+        'Authorization': 'Zoho-oauthtoken ' + str(access_token),
+    }
+    resp = post(url, data=data, headers=headers)
+
+    if resp.status_code == 200:
+        data = loads(resp.content)['data']
+        if data:
+            id = data[0]['id']
+            return id
+
+    return {'error': 'No such project'}
+
+
+'''
+# SEARCH PROJECT ID
+
+def getProjectID(project_name, access_token):
     url = 'https://www.zohoapis.com/crm/v2/Deals/search'
     params = {
         'fields': 'Deal_Name',
-        'criteria': '(Deal_Name:starts_with:{})'.format(project_name)
+        'criteria': '(Deal_Name:starts_with:{})or(Project_Alias_2:starts_with:{})or(Project_Alias:starts_with:{})'.format(project_name,project_name,project_name)
     }
     headers = {
         'Authorization': 'Zoho-oauthtoken ' + str(access_token),
@@ -251,7 +243,7 @@ def getProjectID(project_name, access_token):
             return id
 
     return {'error': 'No such project'}
-
+'''
 
 # INSERT NEW RECORD IN ZOHO
 
@@ -271,141 +263,6 @@ def insert_records(record, access_token):
     response = post(url=url, headers=headers, data=dumps(request_body).encode('utf-8'))
     if response is not None:
         print("HTTP Status Code : " + str(response.status_code))
-        print(response.json())
+        return {'response' : str(response.content), 'status_code': response.status_code}
     
-    return {'status': 'success'}
-
-
-# MAIN FUNCTION FOR INSERT RECORD
-
-def insert_record_to_zoho(record, type = None):
-    if not type:
-        access_token = get_access_token()
-        id = getProjectID(input['project_name'], access_token)
-        data = mapping(record, id)
-        insert_records(data, access_token)
-    elif type == 'housing':
-        access_token = get_access_token()
-        id = getProjectID(input['project_name'], access_token)
-        data = mapping(record, id, type = 'housing_automation')
-        insert_records(data, access_token)
-    elif type == 'magicbricks':
-        access_token = get_access_token()
-        insert_records(record, access_token)
-    return {'status': 'success'}
-
-
-# INSERT RECORD FROM HOUSING API
-
-def housing_api():
-    import requests
-    import hmac
-    import hashlib
-    from datetime import datetime, timedelta
-    import time
-    import pytz
-
-    date_time = datetime.now()
-    date_time = pytz.utc.localize(date_time)
-    timestamp = int(time.mktime(date_time.timetuple()))
-
-    today = datetime.today() + timedelta(days=1)
-    yesterday = today - timedelta(days=2)
-
-    yesterday = pytz.utc.localize(yesterday)
-    today = pytz.utc.localize(today)
-
-    yesterday = int(time.mktime(yesterday.timetuple()))
-    today = int(time.mktime(today.timetuple()))
-
-    id = 2674965
-    key = "REDACTED"
-    timestamp = str(timestamp)
-    byte_key = bytes(key, 'UTF-8')
-    message = timestamp.encode()
-    hash = hmac.new(byte_key, message, hashlib.sha256).hexdigest()
-    params = {
-        'start_date': str(yesterday),
-        'end_date': str(today),
-        'current_time': str(timestamp),
-        'hash': str(hash),
-        'id': id
-    }
-    url = 'https://leads.housing.com/api/v0/get-builder-leads'
-    resp = requests.get(url = url, params = params)
-    leads = resp.json()
-
-    for record in leads[::-1]:
-        try:
-            insert_record_to_zoho(record, type = 'housing') 
-        except:
-            pass
-    
-    return {'task': 'completed'}
-
-
-# INSERT RECORD FROM MAGICBRICKS API
-
-def magicbricks_api():
-    import requests
-    from datetime import datetime, timedelta
-    import pytz
-    from json import loads
-
-    today = datetime.today() + timedelta(days=1)
-    yesterday = today - timedelta(days=2)
-
-    yesterday = pytz.utc.localize(yesterday)
-    today = pytz.utc.localize(today)
-
-    yesterday = datetime.strptime(str(yesterday).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
-    today = datetime.strptime(str(today).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
-
-    key = 'REDACTED_MAGICBRICKS_KEY'
-    params = {
-        'key': key,
-        'endDate': today,
-        'startDate': yesterday,
-    }
-    url = 'http://rating.magicbricks.com/mbRating/download.json'
-    resp = requests.get(url = url, params = params)
-    leads = loads(resp.content)
-    print(leads)
-    leads_array = []
-
-    for input in leads['leadPojo']['leads']:
-        try:
-            access_token = get_access_token()
-            project_id = getProjectID(input['project'], access_token)
-            apartment_names = []
-            if '2 BHK' in input['msg']:
-                apartment_names.append('2 BHK')
-            if '3 BHK' in input['msg']:
-                apartment_names.append('3 BHK')
-            if '4 BHK' in input['msg']:
-                apartment_names.append('4 BHK')
-            data = {
-                'Configuration1': list(apartment_names),
-                'Country_Code': '+' + str(input['isd']),
-                'Interested_Localities': input['locality'],
-                'City': input['city'],
-                'Email': input['email'],
-                'Phone': input['mobile'],
-                'Project_Enquired_for': dict({'id': project_id}),
-                'Full_Name': input['name'],
-                'Automation Updates': str('Subject: ') + str(input['subject']) + str('\n\n') + str('Message: ') + str(input['msg']) + str('\n\n') + str(input),
-                'Lead_Source': 'magicbricks_automation'
-            }
-            leads_array.append(data)
-        except:
-          pass 
-
-    print(leads_array)
-
-    for record in leads_array:
-        try:
-            insert_records(record, access_token)
-        except:
-            pass
-
-    return {'tasks': 'completed'}
+    return {'status': 'Failed'}
