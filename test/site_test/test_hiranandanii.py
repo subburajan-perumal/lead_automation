@@ -48,7 +48,11 @@ def getName(name):
         return "" ""
 
 
-def hiranandani(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,automate_path:list, phoneno, country_name):
+def hiranandani(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,automate_path:list):
+        ph_number=PN.parse(lead_data['phone'])
+        phoneno=ph_number.national_number
+        country_code = ph_number.country_code
+        cc = str(country_code)
         try:
             browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
             save_path = automate_path
@@ -81,12 +85,13 @@ def hiranandani(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,
             # select = Select(element)
             # select.select_by_index(4)
 
-            country_code = browser.find_element(By.XPATH,'//*[@id="cc"]')
-            time.sleep(15)
-            country_code.send_keys(country_name)
-            time.sleep(15)
-            country_code.send_keys(Keys.ENTER)
+            # country_code = browser.find_element(By.XPATH,'//*[@id="cc"]')
+            # time.sleep(20)
+            # country_code.send_keys(country_name)
+            # country_code.send_keys(Keys.ENTER)
 
+            country_code = Select(browser.find_element(By.XPATH,'//*[@id="cc"]'))
+            country_code.select_by_value(cc)
 
             f_phone = browser.find_element(By.XPATH, '//*[@id="mobile"]')
             f_phone.click()
@@ -98,21 +103,21 @@ def hiranandani(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,
             f_mail.send_keys(lead_data['email'])
             time.sleep(2)   
 
-            browser.save_screenshot(save_path[0])  
+            # browser.save_screenshot(save_path[0])  
        
-            fs_save = browser.find_element(By.XPATH, '/html/body/section[8]/div/div[2]/div/form/button')
-            fs_save.click()
+            # fs_save = browser.find_element(By.XPATH, '/html/body/section[8]/div/div[2]/div/form/button')
+            # fs_save.click()
      
 
-            browser.save_screenshot(save_path[1])
-            browser.close()
+            # browser.save_screenshot(save_path[1])
+            # browser.close()
             return 1
 
         except Exception as e:
             browserLog.exception(f"Site:{site_data['name']}")
             print(str(e))
-            browser.save_screenshot(save_path[2])
-            browser.close()
+            # browser.save_screenshot(save_path[2])
+            # browser.close()
             return -1
 
 lead_data={
@@ -121,7 +126,7 @@ lead_data={
       "first_name": "subbu",
     "last_name": "Manikandan", 
     "email": "redacted@example.com", 
-    "phone": "9000000000",
+    "phone": "+2554845211096",
      "project_enquired_for": "",
       "interested_properties": "SPR Market of India", 
       "interested_localities": "Perambur",
@@ -135,10 +140,10 @@ site_data={"_id":{"$oid":"623c25874dca8f32e9244178"},
         "project_list":[{"project_name":"Tango","keywords":["Akshaya Tango","Alliance Galleria","Casagrand Esquire","Risland","Courtyards","Risington","Brigade Residences","Thoraipakkam","Perungudi","Sholinganallur","Pallavaram","House of Hiranandani","Gardenia","Tuxedo","Olympia Opaline","TCP Altura","Elevate 21","Anchorage","Mandarin","Alexandri","AkshayaTest"],"location":["Thoraipakkam","Perungudi","Sholinganallur","Pallavaram"]},{"project_name":"Republic","keywords":["Akshaya Re   public","Woodside","Green Enclave","Emerald Peninsula","Signature City"],"location":[]},{"project_name":"Today","keywords":["Akshaya Today","Savoye","Radiance Sapphire","PBEL","Godrej Azure","Kelambakkam","OMR","Navalur"],"location":["Kelambakkam","OMR","Navalur"]},{"project_name":"OrlandO","keywords":["Akshaya OrlandO"],"location":[]},{"project_name":"Earth","keywords":["Akshaya Earth"],"location":[]},{"project_name":"Shanti","keywords":["Akshaya Shanti"],"location":[]},{"project_name":"Poongavanam","keywords":["Akshaya Poongavanam"],"location":[]}]
     }
 
-ph_number=PN.parse(lead_data['phone'])
-phoneno=ph_number.national_number
-country_name = (GC.description_for_number(ph_number,"en"))
-print(country_name)
+# ph_number=PN.parse(lead_data['phone'])
+# phoneno=ph_number.national_number
+# country_code = ph_number.country_code
+# print(country_code)
 subproject="Tango"
 path="."
-hiranandani(subproject, browser, site_data, lead_data, path, phoneno, country_name)
+hiranandani(subproject, browser, site_data, lead_data, path)

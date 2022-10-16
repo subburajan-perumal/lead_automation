@@ -622,7 +622,8 @@ def gsquare(subproject, browser, site_data, lead_data, path):
 def hiranandani(subproject, browser, site_data, lead_data, path):
         ph_number=PN.parse(lead_data['phone'])
         phoneno=ph_number.national_number
-        country_name = (GC.description_for_number(ph_number,"en"))
+        country_code = ph_number.country_code
+        cc = str(country_code)
         try:
             browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
             save_path = path
@@ -650,11 +651,16 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
             browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
 
 
-            country_code = browser.find_element(By.XPATH,'//*[@id="cc"]')
-            time.sleep(15)
-            country_code.send_keys(country_name)
-            time.sleep(15)
-            country_code.send_keys(Keys.ENTER)
+            # country_code = browser.find_element(By.XPATH,'//*[@id="cc"]')
+            # time.sleep(15)
+            # country_code.send_keys(country_name)
+            # time.sleep(15)
+            # country_code.send_keys(Keys.ENTER)
+
+            country_code = Select(browser.find_element(By.XPATH,'//*[@id="cc"]'))
+            time.sleep(5)
+            country_code.select_by_value(cc)
+            time.sleep(5)
 
 
             f_phone = browser.find_element(By.XPATH, '//*[@id="mobile"]')
