@@ -213,6 +213,8 @@ def getProjectID(project_name, access_token):
     }
     resp = post(url, data=data, headers=headers)
 
+    print(resp.content)
+
     if resp.status_code == 200:
         data = loads(resp.content)['data']
         if data:
