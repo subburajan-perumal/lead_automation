@@ -720,8 +720,12 @@ def krishnagrp(subproject, browser, site_data, lead_data, path):
 
         #resizing the screenshot
         img = cv2.imread(save_path[0])
-        imgResize = cv2.resize(img,(1200,700))
-        cv2.imwrite(save_path[0], imgResize)
+
+        imgCropped = img[100:1200,250:820]
+        cv2.imwrite(save_path[0], imgCropped)       
+
+        imgCroppedResize = cv2.resize(imgCropped,(350,550))
+        cv2.imwrite(save_path[0], imgCroppedResize)
         
         submit = browser.find_element_by_xpath('/html/body/section/div/div/div[2]/div/div/div/div[2]/div/div/div/form/div[9]/div/div/ input')
         submit.click()
