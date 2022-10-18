@@ -205,15 +205,18 @@ def upload_an_attachment(lead_id, path):
 
 def getProjectID(project_name, access_token):
     url = 'https://www.zohoapis.com/crm/v3/coql'
-    data = {
-    "select_query": "select id from Deals where Deal_Name like '{}' limit 1".format(project_name)
-    }
+    data = "{\r\n \"select_query\": \"select id from Deals where Deal_Name like '{}' limit 1\"\r\n}".format(project_name)
     headers = {
         'Authorization': 'Zoho-oauthtoken ' + str(access_token),
     }
     resp = post(url, data=data, headers=headers)
 
+    print('getProjectID')
     print(resp.content)
+    try:
+        print(resp.request)
+    except:
+        pass
 
     if resp.status_code == 200:
         data = loads(resp.content)['data']
