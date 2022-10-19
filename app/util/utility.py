@@ -202,14 +202,17 @@ def upload_an_attachment(lead_id, path):
 
 
 # SEARCH PROJECT ID
-
+'''
 def getProjectID(project_name, access_token):
     url = 'https://www.zohoapis.com/crm/v3/coql'
-    data = "{\r\n \"select_query\": \"select id from Deals where Deal_Name like '{}' limit 1\"\r\n}".format(project_name)
+    # data = "{\r\n \"select_query\": \"select id from Deals where Deal_Name like '{}' limit 1\"\r\n}".format(project_name)
+    data = {
+        "select_query": "select id from Deals where Deal_Name like '{}' limit 1".format(project_name)
+    }
     headers = {
         'Authorization': 'Zoho-oauthtoken ' + str(access_token),
     }
-    resp = post(url, data=data, headers=headers)
+    resp = post(url, data=json.dumps(data), headers=headers)
 
     print('getProjectID')
     print(resp.content)
@@ -225,9 +228,9 @@ def getProjectID(project_name, access_token):
             return id
 
     return {'error': 'No such project'}
-
-
 '''
+
+
 # SEARCH PROJECT ID
 
 def getProjectID(project_name, access_token):
@@ -248,7 +251,8 @@ def getProjectID(project_name, access_token):
             return id
 
     return {'error': 'No such project'}
-'''
+
+
 
 # INSERT NEW RECORD IN ZOHO
 
