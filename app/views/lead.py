@@ -42,6 +42,7 @@ def leads_all():
                         lead_detail[key] = value
                     leads_details.append(lead_detail)
             leads_details = json.loads(json_util.dumps(leads_details))
+            print("lead_all posted")
         except:
             leads_details = lead_all
         return render_template("/lead/leads.html", data=leads_details)
@@ -87,47 +88,53 @@ def lead_today():
 
 
 @lead.get("/error_retry")
-def index():
+def error_retry():
     return render_template('/lead/error_retry.html')
 
 @lead.post("/error_retry")
 def getvalue():
     if request.method == "POST":
+        logging.error("error_retry_working")
         projectname = request.form['projectname']
         phone_no = request.form['phone_no']
-        print(projectname, phone_no)
+        logging.error(projectname)
+        logging.error(phone_no)
         try:
-            db=mongo.db
-            # MONGO_DB = "REDACTED"
-            # CONN = MongoClient(MONGO_DB)
-            # DB = CONN['lead_automation']
+            MONGO_DB = "REDACTED"
+            CONN = MongoClient(MONGO_DB)
+            DB = CONN['lead_automation']
+            logging.error("data connected successfully")
 
             #site_data
 
-            site_data = db.Site.find_one({"project_list.project_name": projectname})
-            print(site_data)
-            print("site data fetched successfully")
+            site_data = DB.Site.find_one({"project_list.project_name": projectname})
+            logging.error(site_data)
+            logging.error("site data fetched successfully")
 
             #lead_data
 
-            lead_data  = db.leads.find_one({'phone': phone_no})
-            print(lead_data)
-            print("lead data fetched successfully")
+            lead_data  = DB.leads.find_one({'phone': phone_no})
+            logging.error(lead_data)
+            logging.error("lead data fetched successfully")
 
             site_name = site_data['name']
+            logging.error("site_name" + site_name)
             site_projectname = projectname
             browserAutomation = SiteAutomator(  
                                             phone = lead_data["phone"],
                                             email= lead_data["email"],
                                             lead_data= lead_data,
-                                            match_keywords= None,
+                                            match_keywords= "",
                                             site_data= site_data
                                             )
-            browserAutomation.projectCheck(site_name, site_projectname)
-            print("browser automation worked for error retry successfully")
+            # browserAutomation.projectCheck(site_name, site_projectname)
+            logging.error("browser_automation working")
             browserAutomation.automated_flow()
+            logging.error("browser automation automated_flow")
             browserAutomation.upload_data()
+            logging.error("browser automation upload_data")
             browserAutomation.teardown()
+            logging.error("browser automation teardown")
         
         
         
