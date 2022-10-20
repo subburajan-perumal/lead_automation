@@ -97,19 +97,20 @@ def getvalue():
         phone_no = request.form['phone_no']
         print(projectname, phone_no)
         try:
-            MONGO_DB = "REDACTED"
-            CONN = MongoClient(MONGO_DB)
-            DB = CONN['lead_automation']
+            db=mongo.db
+            # MONGO_DB = "REDACTED"
+            # CONN = MongoClient(MONGO_DB)
+            # DB = CONN['lead_automation']
 
             #site_data
 
-            site_data = DB.Site.find_one({"project_list.project_name": projectname})
+            site_data = db.Site.find_one({"project_list.project_name": projectname})
             print(site_data)
             print("site data fetched successfully")
 
             #lead_data
 
-            lead_data  = DB.leads.find_one({'phone': phone_no})
+            lead_data  = db.leads.find_one({'phone': phone_no})
             print(lead_data)
             print("lead data fetched successfully")
 
