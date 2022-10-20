@@ -229,7 +229,7 @@ def run_housing_api():
                         ),
                         'Full_Name': record['lead_name'],
                         'Last_Name': record['lead_name'],
-                        'Lead_Source': 'Housing automation',
+                        'Lead_Source': 'Housing',
                         'Initial_Enquiry_Particulars_Automation': str(record)[:200]
                     }
 
@@ -350,7 +350,7 @@ def run_magicbricks_api():
                         'Phone': input['mobile'],
                         'Project_Enquired_for': dict({'id': project_id}),
                         'Full_Name': input['name'],
-                        'Lead_Source': 'Magicbricks automation',
+                        'Lead_Source': 'Magicbricks',
                         'Last_Name': input['name'],
                         'Initial_Enquiry_Particulars_Automation': details
                     }

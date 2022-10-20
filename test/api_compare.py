@@ -41,7 +41,7 @@ data = {
     'Phone': input['mobile'],
     'Project_Enquired_for': dict({'id': project_id}),
     'Full_Name': input['name'],
-    'Lead_Source': 'Magicbricks automation',
+    'Lead_Source': 'Magicbricks',
     'Last_Name': input['name'],
     'Initial_Enquiry_Particulars_Automation': details
 }
