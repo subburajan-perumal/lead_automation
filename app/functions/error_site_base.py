@@ -68,9 +68,9 @@ required_store = {
 }
 
 
-class SiteAutomator:
+class SiteAutomator1:
 
-    def __init__(self, phone, email, lead_data, match_keywords, site_data) -> None:
+    def __init__(self, phone, email, lead_data, match_keywords, site_data,sub_project_name) -> None:
         logger.error("site_automator_data")
         logger.error(phone)
         logger.error(email)
@@ -89,7 +89,10 @@ class SiteAutomator:
         self.LEAD = self.DB["leads"]
         self.SITE = ""
         self.field_flag = None
-        # self.projectexist = True
+        self.projectexist = False
+        self.sub_project_name = sub_project_name
+        logger.error("subprojectname")
+        logger.error(self.sub_project_name )
 
         self.driver = Config.WEB_DRIVER
 
@@ -113,17 +116,19 @@ class SiteAutomator:
             logging.error("Having problem in webdriver")  
 
     def projectCheck(self, project, sub_project_name):
+        logger.error("project check")
+        logger.error(project)
+        logger.error(sub_project_name)
         try:
-
             logger.info("checking for existing project in db")
             self.sub_project_name = sub_project_name
 
-            # try:
-            #     days = int(self.site_data['days'])
-            # except:
-            #     days = 30
+            try:
+                days = int(self.site_data['days'])
+            except:
+                days = 30
 
-            # filterdate = datetime.now()-timedelta(days)
+            filterdate = datetime.now()-timedelta(days)
             self.projectexist = self.LEAD.find_one(
                 {
                     "email": self.lead_data["email"],
@@ -133,10 +138,10 @@ class SiteAutomator:
                             "subproject": self.sub_project_name
                         }
                     },
-                    # "project.applied_time":
-                    # {
-                    #     "$gte": filterdate
-                    # },
+                    "project.applied_time":
+                    {
+                        "$gte": filterdate
+                    },
                     "project.status":
                     {
                         "$eq": 1
@@ -144,31 +149,50 @@ class SiteAutomator:
                 },
                 {"project.$": 1})
 
-            if self.projectexist:
-                self.result = 0
-                logger.info("lead already exist")
-                # print("lead already exist")
+            # if self.projectexist:
+            #     self.result = 0
+            #     logger.info("lead already exist")
+            #     # print("lead already exist")
+            logger.error("project check completed")
+            logger.error(self.projectexist)
 
         except Exception as e:
-            print("Error occured due to "+str(e))
+            logger.error("Error occured due to "+str(e))
             # return -1, -1
         # self.automated_flow()
 
     def automated_flow(self):
+        logger.error("automated flow started")
+        logger.error(self.result)
         try:
             # if self.result=="failed":return
             if not self.projectexist:
                 self.path = "./storage/"+self.site_data["name"]
+                logger.error("self path")
+                logger.error(self.path)
                 self.path_zoho = "./storage/"+ 'zoho'
+                logger.error("self path zoho")
+                logger.error(self.path_zoho)
                 if not os.path.exists(self.path):
                     os.mkdir(self.path)
                 if not os.path.exists(self.path_zoho):
                     os.mkdir(self.path_zoho)
                 self.automate_path = getsavePath(
                     self.path, self.path_zoho, self.site_data['name'], self.sub_project_name, self.lead_data['name'])
+                logger.error(self.sub_project_name)
+                logger.error(self.browser)
+                logger.error(self.site_data)
+                logger.error(self.lead_data)
+                logger.error(self.automate_path)
                 v_automator = project_store[self.site_data['name']]
+                logger.error("v_automator")
+                logger.error(v_automator)
+                logger.error(type(v_automator))
+                logger.error(self.site_data['name'])
                 self.result = v_automator(
                    self.sub_project_name, self.browser, self.site_data, self.lead_data, self.automate_path)
+                logger.error("automated flow working properly")
+                logger.error(self.result)
         except Exception as e:
             self.result = 2
             logger.exception("automte flow error: {}".format(e))
@@ -178,7 +202,7 @@ class SiteAutomator:
 
     def upload_data(self):
         import shutil
-
+        logger.error("upload data started")
         try:
             # ZOHO attachment
             if self.result == 1 or self.result == -1:
@@ -194,6 +218,7 @@ class SiteAutomator:
                     # print("uploaded file : ", os.path.abspath(self.automate_path[0]))
                     logger.info(f"upload file{ self.automate_path[4] }")
                     # print("uploaded file : ", self.automate_path[1])
+                    logger.error("try statement 1 success")
                 
                 except:
                     upload_an_attachment(
@@ -220,6 +245,7 @@ class SiteAutomator:
                         upload_an_attachment(
                             self.lead_data["lead_id"], os.path.abspath(self.automate_path[5]))
                         logger.info(f"upload file{ self.automate_path[5] }")
+                        logger.error("try statement 2 success")
 
                     except:
                         # if os.path.exists(self.automate_path[0]):
@@ -228,6 +254,7 @@ class SiteAutomator:
                             self.lead_data["lead_id"], os.path.abspath(self.automate_path[2]))
                         logger.info(f"upload file{ self.automate_path[2] }")
 
+                logger.error('upload_data worked successfully')
 
                 # print("uploaded file : ", self.path[0])
 

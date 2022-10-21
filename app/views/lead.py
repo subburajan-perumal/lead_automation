@@ -4,7 +4,7 @@ from app.database import mongo
 from bson import json_util
 import json
 from pymongo import MongoClient
-from app.functions.error_site_base import SiteAutomator
+from app.functions.error_site_base import SiteAutomator1
 
 
 # from .. import tasks
@@ -121,14 +121,15 @@ def getvalue():
             logging.error("site_name" + site_name)
             site_projectname = projectname
             logging.error("projectname" + projectname)
-            browserAutomation = SiteAutomator(  
+            browserAutomation = SiteAutomator1(  
                                             phone = lead_data["phone"],
                                             email= lead_data["email"],
                                             lead_data= lead_data,
-                                            match_keywords= "",
-                                            site_data= site_data
+                                            match_keywords= [],
+                                            site_data= site_data,
+                                            sub_project_name = site_projectname
                                             )
-            browserAutomation.projectCheck(site_name, site_projectname)
+            # browserAutomation.projectCheck(site_name, site_projectname)
             logging.error("browser_automation working")
             browserAutomation.automated_flow()
             logging.error("browser automation automated_flow")
@@ -140,6 +141,7 @@ def getvalue():
         
         
         except Exception as e:
+            logging.error("error in whole function")
             return jsonify({"Status": "Error", "Error": str(e)})
 
 
