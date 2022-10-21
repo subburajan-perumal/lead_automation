@@ -89,7 +89,7 @@ class SiteAutomator:
         self.LEAD = self.DB["leads"]
         self.SITE = ""
         self.field_flag = None
-        self.projectexist = True
+        # self.projectexist = True
 
         self.driver = Config.WEB_DRIVER
 
@@ -118,12 +118,12 @@ class SiteAutomator:
             logger.info("checking for existing project in db")
             self.sub_project_name = sub_project_name
 
-            try:
-                days = int(self.site_data['days'])
-            except:
-                days = 30
+            # try:
+            #     days = int(self.site_data['days'])
+            # except:
+            #     days = 30
 
-            filterdate = datetime.now()-timedelta(days)
+            # filterdate = datetime.now()-timedelta(days)
             self.projectexist = self.LEAD.find_one(
                 {
                     "email": self.lead_data["email"],
@@ -133,10 +133,10 @@ class SiteAutomator:
                             "subproject": self.sub_project_name
                         }
                     },
-                    "project.applied_time":
-                    {
-                        "$gte": filterdate
-                    },
+                    # "project.applied_time":
+                    # {
+                    #     "$gte": filterdate
+                    # },
                     "project.status":
                     {
                         "$eq": 1

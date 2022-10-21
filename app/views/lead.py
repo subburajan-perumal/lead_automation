@@ -128,7 +128,7 @@ def getvalue():
                                             match_keywords= "",
                                             site_data= site_data
                                             )
-            # browserAutomation.projectCheck(site_name, site_projectname)
+            browserAutomation.projectCheck(site_name, site_projectname)
             logging.error("browser_automation working")
             browserAutomation.automated_flow()
             logging.error("browser automation automated_flow")
