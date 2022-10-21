@@ -4,7 +4,7 @@ from app.database import mongo
 from bson import json_util
 import json
 from pymongo import MongoClient
-from app.functions.site_base import SiteAutomator
+from app.functions.error_site_base import SiteAutomator
 
 
 # from .. import tasks
@@ -120,6 +120,7 @@ def getvalue():
             site_name = site_data['name']
             logging.error("site_name" + site_name)
             site_projectname = projectname
+            logging.error("projectname" + projectname)
             browserAutomation = SiteAutomator(  
                                             phone = lead_data["phone"],
                                             email= lead_data["email"],
