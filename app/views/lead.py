@@ -97,8 +97,10 @@ def getvalue():
         logging.error("error_retry_working")
         projectname = request.form['projectname']
         phone_no = request.form['phone_no']
+        lead_id = request.form['lead_id']
         logging.error(projectname)
         logging.error(phone_no)
+        logging.error(lead_id)
         try:
             MONGO_DB = "REDACTED"
             CONN = MongoClient(MONGO_DB)
@@ -127,7 +129,8 @@ def getvalue():
                                             lead_data= lead_data,
                                             match_keywords= [],
                                             site_data= site_data,
-                                            sub_project_name = site_projectname
+                                            sub_project_name = site_projectname,
+                                            lead_id = lead_id
                                             )
             # browserAutomation.projectCheck(site_name, site_projectname)
             logging.error("browser_automation working")
@@ -145,4 +148,4 @@ def getvalue():
             return jsonify({"Status": "Error", "Error": str(e)})
 
 
-    return 'data collected'
+    return render_template("/lead/error_retry_output.html")

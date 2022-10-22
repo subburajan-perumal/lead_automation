@@ -11,3 +11,7 @@ proc_name="lead_automation_server"
 ssl=""
 certfile=""
 capture_output= True
+keepalive = 120
+timeout = 600
+worker_class = "gthread"
+threads = 3

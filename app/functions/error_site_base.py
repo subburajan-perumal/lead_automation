@@ -15,6 +15,7 @@ logger = get_task_logger(__name__)
 # async def browsertimer(v_browser):
 #     time.sleep(100)
 #     v_browser.quit()
+
 MONGO_USER = "REDACTED"
 MONGO_PASSWORD = "REDACTED"
 print(os.curdir)
@@ -70,7 +71,7 @@ required_store = {
 
 class SiteAutomator1:
 
-    def __init__(self, phone, email, lead_data, match_keywords, site_data,sub_project_name) -> None:
+    def __init__(self, phone, email, lead_data, match_keywords, site_data,sub_project_name,lead_id) -> None:
         logger.error("site_automator_data")
         logger.error(phone)
         logger.error(email)
@@ -79,6 +80,7 @@ class SiteAutomator1:
         logger.error(site_data)
         self.email = email
         self.lead_data = lead_data
+        self.lead_id = lead_id
         self.path = ""
         self.result = 0
         self.site_data = site_data
@@ -210,9 +212,9 @@ class SiteAutomator1:
                     shutil.copy(self.automate_path[0], self.automate_path[3])
                     shutil.copy(self.automate_path[1], self.automate_path[4])
                     upload_an_attachment(
-                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[3]))
+                        self.lead_id, os.path.abspath(self.automate_path[3]))
                     upload_an_attachment(
-                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[4]))
+                        self.lead_id, os.path.abspath(self.automate_path[4]))
                     # print("upload lead working")
                     logger.info(f"upload file{ self.automate_path[3] }")
                     # print("uploaded file : ", os.path.abspath(self.automate_path[0]))
@@ -222,9 +224,9 @@ class SiteAutomator1:
                 
                 except:
                     upload_an_attachment(
-                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[0]))
+                        self.lead_id, os.path.abspath(self.automate_path[0]))
                     upload_an_attachment(
-                        self.lead_data["lead_id"], os.path.abspath(self.automate_path[1]))    
+                        self.lead_id, os.path.abspath(self.automate_path[1]))    
                     # print("upload lead working")
                     logger.info(f"upload file{ self.automate_path[0] }")
                     # print("uploaded file : ", os.path.abspath(self.automate_path[0]))
@@ -243,7 +245,7 @@ class SiteAutomator1:
                         # if os.path.exists(self.automate_path[0]):
                         # upload_an_attachment(
                         upload_an_attachment(
-                            self.lead_data["lead_id"], os.path.abspath(self.automate_path[5]))
+                            self.lead_id, os.path.abspath(self.automate_path[5]))
                         logger.info(f"upload file{ self.automate_path[5] }")
                         logger.error("try statement 2 success")
 
@@ -251,7 +253,7 @@ class SiteAutomator1:
                         # if os.path.exists(self.automate_path[0]):
                         # upload_an_attachment(
                         upload_an_attachment(
-                            self.lead_data["lead_id"], os.path.abspath(self.automate_path[2]))
+                            self.lead_id, os.path.abspath(self.automate_path[2]))
                         logger.info(f"upload file{ self.automate_path[2] }")
 
                 logger.error('upload_data worked successfully')
@@ -260,7 +262,7 @@ class SiteAutomator1:
 
                 # print("uploaded file : ", self.path[2])
                 # print("failed  lead uploaded")
-                logger.info(f"lead_id :{self.lead_data['lead_id']}")
+                logger.info(f"lead_id :{self.lead_id}")
                 print(f"lead path :  {self.path}")
                 # print("lead_id :", self.lead_data["lead_id"])
                 logger.info("attachments uploaded")
@@ -275,7 +277,8 @@ class SiteAutomator1:
                 "subproject": self.sub_project_name,  # Tango
                 "applied_time": getTime(),
                 "status": self.result,
-                "match_keywords": list(self.match_keywords)
+                "match_keywords": list(self.match_keywords),
+                "lead_id": self.lead_id
             }
             dbresult = self.LEAD.update_one(
                 {
