@@ -104,7 +104,7 @@ def function_finder(lead_data: dict):
                             }
                         ]
                     }
-                },
+                }
                 # {
                 #     "$project":
                 #     {"project_list.project_name":1}
@@ -120,6 +120,8 @@ def function_finder(lead_data: dict):
             project_list = _site['project_list']
             logging.debug(msg=str(project_list))
             match_keywords = common_member(site_keywords,project_list['keywords'])
+            logging.info('Match keywords in finder.py')
+            logging.info(match_keywords)
             print('Matched keywords .. ' + str(match_keywords))
             logging.info(msg=f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}; Matched keywords: {match_keywords}")
             logging.debug(msg="Matched_Keywords")

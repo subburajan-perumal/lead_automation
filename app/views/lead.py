@@ -74,7 +74,12 @@ def lead_today():
                             arr.append(value)
                         if key == 'subproject':
                             arr.append(value)
+                    for key,value in project.items():
+                        if key == 'match_keywords':
+                            lead_detail[key] = value
                 lead_detail['project'] = arr
+                    # for key, value in project.items():
+                    #     lead_detail[key] = value
                 leads_details.append(lead_detail)
             leads_details = json.loads(json_util.dumps(leads_details))
         except:

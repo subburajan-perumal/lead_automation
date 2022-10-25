@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content%}
-
+<style>
+    .multiline{
+    white-space: pre-wrap;
+    }
+</style>
 
 <table class="table">
 <tr>
@@ -9,7 +13,7 @@
     <th>Email</th>
     <th>Phone</th>
     <th>Created_at</th>
-    <th>Project</th>
+    <th>Project Name</th>
     <th>Matched Keywords</th>
 </tr>
 
@@ -21,10 +25,13 @@
     <td> {{ i.email }}</td>
     <td>{{ i.phone }}</td>
     <td>{{ i.created_at }}</td>
-    <td> {{ i.project }}</td>
+    <td class = "commaSeparated">{{i.project}}</td>
     <td>{{ i.match_keywords }}</td>
 </tr>
 
 {% endfor %}
 </table>
+<script>
+    var allTheData = document.querySelector('.commaSeparated').textContent.trim().split(',').join(" </br>")
+ </script>
 {% endblock %}
