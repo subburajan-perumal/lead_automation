@@ -73,6 +73,8 @@ def lead(**lead_data):
         if len(LA.keywords) == 0:
             LA.get_keywords("None (default)", ";")
         site_list = LA.search_by_keyword()
+        print("site_list in task.py")
+        print(site_list)
         site_list = json.loads(json_util.dumps(site_list))
         task_list = []
         for _site in site_list:
@@ -471,9 +473,12 @@ def browserAutomate(_site, lead_data):
     site_keywords.extend(project_enquired)
     site_keywords.extend(interested_project)
     site_keywords.extend(interested_localities)
+    print("site_keywords in tasks.py")
     print(site_keywords)    
     ##
     match_keywords = common_member(site_keywords, _site['project_list']['keywords'])
+    print("match keywords in tasks.py")
+    print(match_keywords) 
     celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
     browserAutomation = SiteAutomator(  
                                     phone = lead_data["phone"],

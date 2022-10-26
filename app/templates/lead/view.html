@@ -32,6 +32,21 @@
 {% endfor %}
 </table>
 <script>
-    var allTheData = document.querySelector('.commaSeparated').textContent.trim().split(',').join(" </br>")
+    var allTheData = document.querySelector('.commaSeparated').textContent.trim().split(',');
+    var separateList = '<ul>';
+    allTheData.forEach(function(value) {
+       separateList += '<li>' + value + '</li>';
+    });
+    separateList += '</ul>';
+    document.querySelector(".commaSeparated").innerHTML = separateList;
+ </script>
+ <!-- <script>
+    var str = document.querySelector('.commaSeparated');
+    var strArr = str.split(',');
+    var data = "";
+    for(var i=0; i<strArr.length; i++){
+        data += strArr[i] + "<br/>"
+    }
+    document.getElementsByClassName(".commaSeparated").innerHTML = data; -->
  </script>
 {% endblock %}

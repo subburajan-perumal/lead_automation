@@ -104,7 +104,7 @@ def function_finder(lead_data: dict):
                             }
                         ]
                     }
-                }
+                },
                 # {
                 #     "$project":
                 #     {"project_list.project_name":1}
