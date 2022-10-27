@@ -234,6 +234,8 @@ class SiteAutomator:
                 "status": self.result,
                 "match_keywords": list(self.match_keywords)
             }
+            logger.info("Inserting lead detail")
+            logger.info(lead_detail)
             print("Inserting lead detail")
             print(lead_detail)
             dbresult = self.LEAD.update_one(

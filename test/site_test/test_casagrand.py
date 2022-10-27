@@ -120,7 +120,7 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
     
        # browser.save_screenshot(save_path[0])      
 
-        fs_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
+        fs_save = browser.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[6]/input')
         fs_save.click()
         time.sleep(10)
         

@@ -148,11 +148,15 @@ class SiteAutomator:
                     os.mkdir(self.path)
                 if not os.path.exists(self.path_zoho):
                     os.mkdir(self.path_zoho)
+                logger.info("Automated flow working in bulk")
+                print("Automated flow working in bulk")
                 self.automate_path = getsavePath(
                     self.path, self.path_zoho, self.site_data['name'], self.sub_project_name, self.lead_data['name'])
+                print("self automate path working")
                 v_automator = project_store[self.site_data['name']]
                 self.result = v_automator(
                    self.sub_project_name, self.browser, self.site_data, self.lead_data, self.automate_path)
+                print("v automate path working")
         except Exception as e:
             self.result = 2
             logger.exception("automte flow error: {}".format(e))

@@ -1,3 +1,4 @@
+from asyncio.log import logger
 from celery import Celery
 from app.util.utility import getPhonenumber
 from config import CeleryConfig
@@ -473,12 +474,20 @@ def browserAutomate(_site, lead_data):
     site_keywords.extend(project_enquired)
     site_keywords.extend(interested_project)
     site_keywords.extend(interested_localities)
+    logger.info("site_keywords in tasks.py")
+    logger.info(site_keywords) 
     print("site_keywords in tasks.py")
     print(site_keywords)    
+    logger.info("project keywords in tasks.py")
+    logger.info(_site['project_list']['keywords']) 
+    print("project keywords in tasks.py")
+    print(_site['project_list']['keywords']) 
     ##
     match_keywords = common_member(site_keywords, _site['project_list']['keywords'])
     print("match keywords in tasks.py")
-    print(match_keywords) 
+    print(match_keywords)
+    if match_keywords == None:
+        return "No matched keywords found"
     celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
     browserAutomation = SiteAutomator(  
                                     phone = lead_data["phone"],
@@ -513,6 +522,8 @@ def browserAutomateBulk(_site, lead_data):
     print(site_keywords)    
     ##
     match_keywords = common_member(site_keywords, _site['project_list']['keywords'])
+    if match_keywords == None:
+        return "No matched keywords found"
     celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
     browserAutomation = SiteAutomator(  
                                     phone = lead_data["phone"],

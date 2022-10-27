@@ -64,7 +64,7 @@ def radiance_(subproject, browser, site_data, lead_data, path):
         namelead.send_keys(lead_data['name'])
         time.sleep(1)
 
-        projectlead=browser.find_element_by_xpath('/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/lightning-combobox/div[1]/lightning-base-combobox/div/div[1]/button')
+        projectlead=browser.find_element(By.XPATH, '/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/lightning-combobox/div[1]/lightning-base-combobox/div/div[1]/button')
         projectlead.click()
         projectlead.send_keys(subproject)        
         projectlead.send_keys(Keys.RETURN)

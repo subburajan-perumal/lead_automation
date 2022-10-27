@@ -37,9 +37,13 @@ def leads_all():
                         if key == 'created_at':
                             lead_detail[key] = value['$date']
                         if key == 'modified_time':
-                            lead_detail[key] = value['$date']                            
+                            lead_detail[key] = value['$date']
+                        if key == 'applied_time':
+                            lead_detail[key] = value['$date']                                                  
                     for key, value in project.items():
                         lead_detail[key] = value
+                        if key == 'applied_time':
+                            lead_detail[key] = value['$date']                   
                     leads_details.append(lead_detail)
             leads_details = json.loads(json_util.dumps(leads_details))
             print("lead_all posted")

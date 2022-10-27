@@ -20,7 +20,7 @@ def common_member(a, b):
     if len(a_set.intersection(b_set)) > 0:
         return list(a_set.intersection(b_set))
     else:
-        return []
+        return None
      
 
 def function_finder(lead_data: dict):

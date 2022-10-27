@@ -165,11 +165,11 @@ def alliance(subproject:str, browser:Firefox, site_data:dict, lead_data:dict, au
 
 
         save_path = automate_path
-        fullname=str(lead_data['name'])
+        # fullname=str(lead_data['name'])
         phone=PN.parse(lead_data["phone"])
         phoneno=PN.format_number(phone,PN.PhoneNumberFormat.E164)
         #testting
-        first_name,last_name=lead_data['first_name'],lead_data['last_name']
+        # first_name,last_name=lead_data['first_name'],lead_data['last_name']
         browser.get(site_data["url"])
         fl_search=browser.find_element(By.ID,'email')
         fl_search.send_keys(site_data["email"])
@@ -352,7 +352,7 @@ def casagrand(subproject, browser, site_data, lead_data, automate_path):
 
         browser.save_screenshot(save_path[0])    
     
-        fs_save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
+        fs_save = browser.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[6]/input')
         fs_save.click()
         time.sleep(10)
         
@@ -766,7 +766,7 @@ def lancor(subproject:str, browser:Firefox, site_data:dict, lead_data: dict, pat
 
         Leads = browser.find_element(By.LINK_TEXT, "Leads")
         Leads.click()
-        addlead = browser.find_element(By.XPATH, "//a[@href='/broker/1893/leads/new']")
+        addlead = browser.find_element(By.XPATH, "/html/body/div/div/div[1]/div/ul/li/ul/li[2]/a")
         addlead.click()
 
         firstname = browser.find_element(By.ID, "lead_first_name")
@@ -794,7 +794,7 @@ def lancor(subproject:str, browser:Firefox, site_data:dict, lead_data: dict, pat
         project.send_keys(Keys.RETURN)
         browser.save_screenshot(save_path[0])
 
-        save = browser.find_element(By.XPATH, '//*[@id="new_lead"]/div[6]/input')
+        save = browser.find_element(By.XPATH, '/html/body/div/div/div[2]/form/div[6]/input')
         save.click()
         
         time.sleep(5)
@@ -1116,7 +1116,7 @@ def radiance_(subproject, browser, site_data, lead_data, path):
         namelead.send_keys(lead_data['name'])
         time.sleep(1)
 
-        projectlead=browser.find_element_by_xpath('/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/lightning-combobox/div[1]/lightning-base-combobox/div/div[1]/button')
+        projectlead=browser.find_element(By.XPATH, '/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/lightning-combobox/div[1]/lightning-base-combobox/div/div[1]/button')
         projectlead.click()
         projectlead.send_keys(subproject)        
         projectlead.send_keys(Keys.RETURN)
