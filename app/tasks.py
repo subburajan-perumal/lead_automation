@@ -511,7 +511,6 @@ def browserAutomateBulk(_site, lead_data):
     celery_logger.info("browser started")
     site_name = _site['name']
     site_projectname = _site['project_list']['project_name']
-    ##
     site_keywords = []
     project_enquired = lead_data.get("project_enquired_for", "").split(";")
     interested_project = lead_data.get("interested_properties", "").split(";")
@@ -520,7 +519,6 @@ def browserAutomateBulk(_site, lead_data):
     site_keywords.extend(interested_project)
     site_keywords.extend(interested_localities)
     print(site_keywords)    
-    ##
     match_keywords = common_member(site_keywords, _site['project_list']['keywords'])
     if match_keywords == None:
         return "No matched keywords found"

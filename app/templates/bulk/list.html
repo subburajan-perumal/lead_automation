@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <!-- <!doctype html>
 <html>
    <body> -->
@@ -5,20 +6,22 @@
 {% extends "base.html" %}
 {% block content%}
       
-<table border = 1>
-   <thead>
-      <td>LEADID</td>
-      <td>Full Name</td>
-      <td>Phone</td>
-      <td>Email</td>
-      <td>Project Enquired for</td>
-      <td>Interested Properties</td>
-      <td>created_time</td>
-      <td>source</td>
-   </thead>
+<table class="table">
+   <tr>
+      <th>No</th>
+      <th>LEADID</th>
+      <th>Full Name</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Project Enquired for</th>
+      <th>Interested Properties</th>
+      <th>created_time</th>
+      <th>source</th>
+   </tr>
    
    {% for x in x %}
       <tr>
+         <td>{{loop.index}}</td>
          <td>{{x["lead_id"]}}</td>
          <td>{{x["name"]}}</td>
          <td>{{x["phone"]}}</td>

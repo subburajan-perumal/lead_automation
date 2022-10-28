@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from flask import Blueprint, render_template, request,jsonify
 from app.database import mongo
 from bson import json_util
@@ -36,14 +37,21 @@ def leads_all():
                             lead_detail[key] = value
                         if key == 'created_at':
                             lead_detail[key] = value['$date']
+                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
+                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
+                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S") 
                         if key == 'modified_time':
-                            lead_detail[key] = value['$date']
-                        if key == 'applied_time':
-                            lead_detail[key] = value['$date']                                                  
+                            lead_detail[key] = value['$date'] 
+                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
+                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
+                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S")                                                  
                     for key, value in project.items():
                         lead_detail[key] = value
                         if key == 'applied_time':
-                            lead_detail[key] = value['$date']                   
+                            lead_detail[key] = value['$date']
+                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
+                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
+                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S")                    
                     leads_details.append(lead_detail)
             leads_details = json.loads(json_util.dumps(leads_details))
             print("lead_all posted")
@@ -71,17 +79,23 @@ def lead_today():
                             lead_detail[key] = value
                         if key == 'created_at':
                             lead_detail[key] = value['$date']
+                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
+                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
+                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S") 
                         if key == 'modified_time':  
-                            lead_detail[key] = value['$date']                            
+                            lead_detail[key] = value['$date'] 
+                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
+                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
+                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S")                            
                     for key, value in project.items():
                         if key == 'projectname':
                             arr.append(value)
                         if key == 'subproject':
                             arr.append(value)
-                    for key,value in project.items():
                         if key == 'match_keywords':
                             lead_detail[key] = value
                 lead_detail['project'] = arr
+                lead_detail['project_list'] = ','.join(map(str, lead_detail['project']))
                     # for key, value in project.items():
                     #     lead_detail[key] = value
                 leads_details.append(lead_detail)

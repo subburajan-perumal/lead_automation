@@ -131,12 +131,35 @@ async def bulk_leads():
         x=[]
         cur = db.find({'source': 'bulk_upload'}).sort("_id",-1).limit(50)
         result=json.loads(json_util.dumps(cur))
-        for i in result:
-            i['phone'] = i['phone'][1:]
-            x.append(i)
-        return render_template('/bulk/list.html', x=x)
+        leads_details = []
+        for lead in result:
+            lead['phone'] = lead['phone'][1:]
+            lead_detail = dict()
+            for key, value in lead.items():
+                lead_detail[key] = value
+                if key == "created_time":
+                    lead_detail[key] = value['$date']
+                    lead_detail[key] = str(lead_detail[key]).split(".")[0]
+                    lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
+                    lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S") 
+            leads_details.append(lead_detail)                
+        leads_details = json.loads(json_util.dumps(leads_details))
+
+        return render_template('/bulk/list.html', x=leads_details)
     except Exception as e:
         return jsonify({"Status": "Error", "Error": str(e)})
+
+       # for i in result:
+        #     i['phone'] = i['phone'][1:]
+        #     x.append(i)
+        #     for key,value in i.items():
+        #         if key == "created_time":
+        #             i[key] = value["$date"]
+        #             i[key] = str(i[key]).split(".")[0]
+        #             i[key] = datetime.strptime(str(i[key]), "%Y-%m-%dT%H:%M:%S")    
+        #             i[key] = i[key].strftime("%d/%m/%Y") + " " + i[key].strftime("%H:%M:%S") 
+        #         x.append(i) 
+
 
 
 # UPLOAD BULK CSV

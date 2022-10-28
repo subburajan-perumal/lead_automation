@@ -25,28 +25,25 @@
     <td> {{ i.email }}</td>
     <td>{{ i.phone }}</td>
     <td>{{ i.created_at }}</td>
-    <td class = "commaSeparated">{{i.project}}</td>
+    <td class = "commaSeperated">{{i.project_list}}</td>
     <td>{{ i.match_keywords }}</td>
 </tr>
 
 {% endfor %}
 </table>
 <script>
-    var allTheData = document.querySelector('.commaSeparated').textContent.trim().split(',');
+    var div_list = document.querySelectorAll('.commaSeperated');
+    console.log(div_list);
+    var div_array = [...div_list];
+    console.log(div_array); 
+    div_array.forEach(div => {
+    var alldata = div.textContent.trim().split(',');
     var separateList = '<ul>';
-    allTheData.forEach(function(value) {
-       separateList += '<li>' + value + '</li>';
+    alldata.forEach(function(value) {
+    separateList += '<li>' + value + '</li>';
     });
     separateList += '</ul>';
-    document.querySelector(".commaSeparated").innerHTML = separateList;
- </script>
- <!-- <script>
-    var str = document.querySelector('.commaSeparated');
-    var strArr = str.split(',');
-    var data = "";
-    for(var i=0; i<strArr.length; i++){
-        data += strArr[i] + "<br/>"
-    }
-    document.getElementsByClassName(".commaSeparated").innerHTML = data; -->
- </script>
+    div.innerHTML = separateList;
+    });
+</script>
 {% endblock %}
