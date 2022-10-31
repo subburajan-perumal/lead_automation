@@ -88,16 +88,16 @@ def lead_today():
                             lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
                             lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S")                            
                     for key, value in project.items():
-                        if key == 'projectname':
-                            arr.append(value)
+                        # if key == 'projectname':
+                        #     arr.append(value)
                         if key == 'subproject':
                             arr.append(value)
                         if key == 'match_keywords':
                             lead_detail[key] = value
                 lead_detail['project'] = arr
+                #Removing duplicates from lead_detail['project']
+                lead_detail['project'] = [*set(lead_detail['project'])]
                 lead_detail['project_list'] = ','.join(map(str, lead_detail['project']))
-                    # for key, value in project.items():
-                    #     lead_detail[key] = value
                 leads_details.append(lead_detail)
             leads_details = json.loads(json_util.dumps(leads_details))
         except:
