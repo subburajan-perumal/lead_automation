@@ -94,11 +94,13 @@ def lead_today():
                         if key == 'subproject':
                             arr.append(value)
                         if key == 'match_keywords':
+                            # lead_detail[key] = value
                             for n in value:
-                                mrr.apppend(n)
-                lead_detail['project'] = [*set(arr)]
-                lead_detail['match_keywords'] = [*set(mrr)]
+                                mrr.append(n)
                 #Removing duplicates from lead_detail['project']
+                lead_detail['match_keywords'] = [*set(mrr)]
+                lead_detail['project'] = [*set(arr)]
+                
                 lead_detail['project_list'] = ','.join(map(str, lead_detail['project']))
                 leads_details.append(lead_detail)
             leads_details = json.loads(json_util.dumps(leads_details))
