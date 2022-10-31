@@ -131,6 +131,7 @@ Start Celery Beats
 ```
 celery -A app.tasks beat -l debug
 ```
+service lead_automation_server restart
 
 <footer>
 
