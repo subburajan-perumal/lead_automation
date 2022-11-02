@@ -284,8 +284,8 @@ def run_magicbricks_api():
 
         print('Magicbricks')
 
-        today = datetime.now() + timedelta(days=1)
-        yesterday = today - timedelta(days=2)
+        today = datetime.now() + timedelta(days=2)
+        yesterday = today - timedelta(days=4)
         today = today.astimezone(pytz.timezone('Asia/Kolkata'))
         yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
 
