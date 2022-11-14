@@ -505,7 +505,7 @@ def browserAutomate(_site, lead_data):
 
 
 @shared_task()
-def browserAutomateBulk(_site, lead_data):
+async def browserAutomateBulk(_site, lead_data):
     from app.functions.site_automator_bulk import SiteAutomator
 
     celery_logger.info("browser started")
