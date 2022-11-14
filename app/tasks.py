@@ -100,7 +100,7 @@ def lead(**lead_data):
 
 
 @celery_app.task()
-def bulk_lead(**lead_data):
+async def bulk_lead(**lead_data):
     try:
         celery_logger.info("bulk lead automator started")
         print("bulk lead automator started")
