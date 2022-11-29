@@ -25,6 +25,7 @@ celery_app.conf.task_default_queue = 'default'
 celery_app.conf.task_routes = {
     'app.tasks.run_housing_api': {'queue': 'lead'},
     'app.tasks.run_magicbricks_api': {'queue': 'lead'},
+    'app.tasks.run_99acres_api': {'queue': 'lead'},
     'app.tasks.bulk_lead': {'queue': 'bulk'},
     'app.tasks.lead': {'queue': 'lead'},
     'app.tasks.removing_older_img': {'queue': 'lead'},
@@ -39,6 +40,10 @@ celery_app.conf.beat_schedule = {
         },
         "run_magicbricks_api": {
             "task": "app.tasks.run_magicbricks_api",
+            "schedule": crontab(hour='*/1')
+        },
+        "run_99acres_api": {
+            "task": "app.tasks.run_99acres_api",
             "schedule": crontab(hour='*/1')
         },
         "removing_older_img": {
@@ -373,6 +378,124 @@ def run_magicbricks_api():
                     api_leads.update_one(
                             {
                                 'mobile': input['mobile']
+                            },
+                            {
+                                '$set': input
+                            },
+                            upsert = True
+                        )
+
+                except Exception as e:
+                    logs.append(str(e))
+
+        return logs
+    
+    except Exception as e:
+        return {'error': str(e)}
+
+
+
+# 99ACRES AUTOMATION
+
+@celery_app.task
+def run_99acres_api():
+    try:
+        import requests
+        from datetime import datetime, timedelta
+        import pytz
+        import xmltodict
+        from bson import json_util
+        from app.util.utility import insert_records, get_access_token, getProjectID
+        from pymongo import MongoClient
+
+        print('99acres')
+
+        today = datetime.now()
+        yesterday = today - timedelta(days=1)
+        today = today.astimezone(pytz.timezone('Asia/Kolkata'))
+        yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
+        today = datetime.strptime(str(today).split('.')[0], "%Y-%m-%d %H:%M:%S")
+        yesterday = datetime.strptime(str(yesterday).split('.')[0], "%Y-%m-%d %H:%M:%S")
+
+        # FORMAT: 2022-11-29 23:59:59
+
+        username = 'REDACTED_99ACRES_USER'
+        password = 'REDACTED'
+
+        url = "https://www.99acres.com/99api/v1/getmy99Response/REDACTED_99ACRES_TOKEN/uid/"
+
+        payload={'xml': '<?xml version=\\\'1.0\\\'?><query><user_name>{}</user_name><pswd>{}</pswd><start_date>{}</start_date><end_date>{}</end_date></query>'.format(username, password, yesterday, today)}
+        files=[]
+        headers = {}
+        response = requests.request("POST", url, headers=headers, data=payload, files=files)
+        data_dict = xmltodict.parse(response.content)
+        all_leads = data_dict['Xml']['Resp']
+        formatted_leads = []
+
+        for lead in all_leads:
+            try:
+                data = dict()
+                if 'Name' not in lead['CntctDtl'] or lead['CntctDtl'] == None:
+                    data['Full_Name'] = '99acres User'
+                else:
+                    data['Full_Name'] = lead['CntctDtl']['Name']
+                if 'Email' not in lead['CntctDtl'] or lead['CntctDtl'] == None:
+                    data['Email'] = str(lead['CntctDtl']['Phone']) + '@example.com'
+                else:
+                    data['Email'] = lead['CntctDtl']['Email']
+                if 'Project_Enquired_for' not in lead['QryDtl']:
+                    data['Project_Enquired_for'] = None
+                else:
+                    data['Project_Enquired_for'] = lead['QryDtl']['ProjName']
+                if 'QryInfo' not in lead['QryDtl']:
+                    data['Automation Updates'] = 'NIL'
+                else:
+                    data['Automation Updates'] = str('Subject: ') + lead['QryDtl']['QryInfo'][:200]
+                try:
+                    data['Country_Code'] = str(lead['CntctDtl']['Phone']).split('-')[0]
+                except:
+                    data['Country_Code'] = '+91'
+                formatted_leads.append(data)
+            
+            except:
+                pass        
+
+        CONN = MongoClient(MONGO_DB)
+        DB = CONN['lead_automation']
+        api_leads = DB['API_leads']
+        logs = []
+
+        if len(formatted_leads) == 0:
+            return {'status': 'Empty'}
+
+        for input in formatted_leads:
+            history = api_leads.find(
+                {
+                    'Phone': input['Phone'],
+                    'latest_update': {
+                        '$gte': datetime.now() - timedelta(days=1)
+                    }
+                }
+            )
+            history = json.loads(json_util.dumps(history))
+            # print(history)
+
+            if len(history) == 0:
+                try:
+                    access_token = get_access_token()
+                    project_id = getProjectID(input['Project_Enquired_for'], access_token)
+                    print((input['Project_Enquired_for'], project_id))
+                    if 'error' in project_id:
+                        access_token = get_access_token()
+                        project_id = getProjectID('None', access_token)
+                    response = insert_records(input, access_token)
+                    print(response)
+                    logs.append(response)
+                    input['latest_update'] = datetime.now()
+                    input['response'] = response
+                    api_leads.update_one(
+                            {
+                                'Phone': input['Phone']
                             },
                             {
                                 '$set': input
