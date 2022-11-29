@@ -410,8 +410,8 @@ def run_99acres_api():
 
         print('99acres')
 
-        today = datetime.now()
-        yesterday = today - timedelta(days=1)
+        today = datetime.now() + timedelta(days=1)
+        yesterday = today - timedelta(days=3)
         today = today.astimezone(pytz.timezone('Asia/Kolkata'))
         yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
         today = datetime.strptime(str(today).split('.')[0], "%Y-%m-%d %H:%M:%S")
@@ -430,6 +430,7 @@ def run_99acres_api():
         response = requests.request("POST", url, headers=headers, data=payload, files=files)
         data_dict = xmltodict.parse(response.content)
         all_leads = data_dict['Xml']['Resp']
+        print(all_leads)
         formatted_leads = []
 
         for lead in all_leads:
@@ -452,14 +453,15 @@ def run_99acres_api():
                 else:
                     data['Automation Updates'] = str('Subject: ') + lead['QryDtl']['QryInfo'][:200]
                 try:
-                    data['Country_Code'] = str(lead['CntctDtl']['Phone']).split('-')[0]
+                    data['Country_Code'] = str(lead['CntctDtl']['Phone']).split('-')[0][1:]
                 except:
-                    data['Country_Code'] = '+91'
+                    data['Country_Code'] = '91'
                 formatted_leads.append(data)
             
             except:
                 pass        
 
+        print(formatted_leads)
         CONN = MongoClient(MONGO_DB)
         DB = CONN['lead_automation']
         api_leads = DB['API_leads']
@@ -481,6 +483,7 @@ def run_99acres_api():
             # print(history)
 
             if len(history) == 0:
+                print(input)
                 try:
                     access_token = get_access_token()
                     project_id = getProjectID(input['Project_Enquired_for'], access_token)
