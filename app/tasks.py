@@ -410,8 +410,8 @@ def run_99acres_api():
 
         print('99acres')
 
-        today = datetime.now() + timedelta(days=1)
-        yesterday = today - timedelta(days=3)
+        today = datetime.now()
+        yesterday = today - timedelta(days=1)
         today = today.astimezone(pytz.timezone('Asia/Kolkata'))
         yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
         today = datetime.strptime(str(today).split('.')[0], "%Y-%m-%d %H:%M:%S")
@@ -421,7 +421,6 @@ def run_99acres_api():
 
         username = 'REDACTED_99ACRES_USER'
         password = 'REDACTED'
-
         url = "https://www.99acres.com/99api/v1/getmy99Response/REDACTED_99ACRES_TOKEN/uid/"
 
         payload={'xml': '<?xml version=\\\'1.0\\\'?><query><user_name>{}</user_name><pswd>{}</pswd><start_date>{}</start_date><end_date>{}</end_date></query>'.format(username, password, yesterday, today)}
@@ -430,7 +429,6 @@ def run_99acres_api():
         response = requests.request("POST", url, headers=headers, data=payload, files=files)
         data_dict = xmltodict.parse(response.content)
         all_leads = data_dict['Xml']['Resp']
-        print(all_leads)
         formatted_leads = []
 
         for lead in all_leads:
@@ -444,10 +442,14 @@ def run_99acres_api():
                     data['Email'] = str(lead['CntctDtl']['Phone']) + '@example.com'
                 else:
                     data['Email'] = lead['CntctDtl']['Email']
-                if 'Project_Enquired_for' not in lead['QryDtl']:
-                    data['Project_Enquired_for'] = None
+                if 'Phone' not in lead['CntctDtl'] or lead['CntctDtl'] == None:
+                    data['Phone'] = None
                 else:
+                    data['Phone'] = lead['CntctDtl']['Phone']                    
+                try:
                     data['Project_Enquired_for'] = lead['QryDtl']['ProjName']
+                except:
+                    data['Project_Enquired_for'] = None
                 if 'QryInfo' not in lead['QryDtl']:
                     data['Automation Updates'] = 'NIL'
                 else:
@@ -456,6 +458,7 @@ def run_99acres_api():
                     data['Country_Code'] = str(lead['CntctDtl']['Phone']).split('-')[0][1:]
                 except:
                     data['Country_Code'] = '91'
+            
                 formatted_leads.append(data)
             
             except:
@@ -480,10 +483,9 @@ def run_99acres_api():
                 }
             )
             history = json.loads(json_util.dumps(history))
-            # print(history)
 
             if len(history) == 0:
-                print(input)
+                print('input: ', input)
                 try:
                     access_token = get_access_token()
                     project_id = getProjectID(input['Project_Enquired_for'], access_token)
@@ -491,10 +493,23 @@ def run_99acres_api():
                     if 'error' in project_id:
                         access_token = get_access_token()
                         project_id = getProjectID('None', access_token)
-                    response = insert_records(input, access_token)
-                    print(response)
+
+                    data = {
+                        'Configuration1': '2 BHK',
+                        'Country_Code': '+' + str(input['Country_Code']),
+                        'Email': input['Email'],
+                        'Phone': input['Phone'],
+                        'Project_Enquired_for': dict({'id': project_id}),
+                        'Full_Name': input['Full_Name'],
+                        'Lead_Source': '99acres',
+                        'Last_Name': input['Full_Name'],
+                        'Initial_Enquiry_Particulars_Automation': input['Automation Updates']
+                    }                    
+                    
+                    response = insert_records(data, access_token)
                     logs.append(response)
                     input['latest_update'] = datetime.now()
+                    input['details'] = data
                     input['response'] = response
                     api_leads.update_one(
                             {
