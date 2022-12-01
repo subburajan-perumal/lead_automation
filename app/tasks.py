@@ -597,7 +597,7 @@ def save_access_token():
     access_token = get_key(dotenv_file, 'access_token', encoding='utf-8')
     print("after :", access_token)
   
-    return access_token    
+    return access_token
 
 
 @shared_task()
