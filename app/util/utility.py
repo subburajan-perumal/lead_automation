@@ -213,20 +213,17 @@ def getProjectID(project_name, access_token):
         'Authorization': 'Zoho-oauthtoken ' + str(access_token),
     }
     resp = post(url, data=json.dumps(data), headers=headers)
-
     print('getProjectID')
     print(resp.content)
     try:
         print(resp.request)
     except:
         pass
-
     if resp.status_code == 200:
         data = loads(resp.content)['data']
         if data:
             id = data[0]['id']
             return id
-
     return {'error': 'No such project'}
 '''
 
