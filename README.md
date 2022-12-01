@@ -79,11 +79,15 @@ genv/bin/celery -A app.celery worker --loglevel=INFO --concurrency=2 -n bulk_lea
 ```
 
 
-## Start Celery Workers
+## Start Celery Workers - STEP 2
 ```sh
 $ genv/bin/celery multi restart  leadworker selenium -E -A app.celery -c 1 -c:selenium 4  -Q:leadworker lead,celery,default -Q:selenium browser,default,celery --pidfile=/run/celery/%N.pid
 ```
 
+### START CRON TASKS - STEP 3
+```
+celery -A app.tasks beat -l debug
+```
 
 
 ## Leadworker
