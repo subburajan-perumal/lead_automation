@@ -71,6 +71,7 @@ class SiteAutomator:
 
     def __init__(self, phone, email, lead_data, match_keywords, site_data) -> None:
         self.email = email
+        self.phone = phone
         self.lead_data = lead_data
         self.path = ""
         self.result = 0
@@ -151,7 +152,7 @@ class SiteAutomator:
                 logger.info("Automated flow working in bulk")
                 print("Automated flow working in bulk")
                 self.automate_path = getsavePath(
-                    self.path, self.path_zoho, self.site_data['name'], self.sub_project_name, self.lead_data['name'])
+                    self.path, self.path_zoho, self.site_data['name'], self.sub_project_name, self.lead_data['name'],self.phone)
                 print("self automate path working")
                 v_automator = project_store[self.site_data['name']]
                 self.result = v_automator(

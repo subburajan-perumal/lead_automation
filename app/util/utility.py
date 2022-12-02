@@ -68,7 +68,7 @@ def getName(name):
 # (site,sub_projectname,path,leadname)
 
 
-def getsavePath(path, path2, site_name, sub_project_name, leadname):
+def getsavePath(path, path2, site_name, sub_project_name, leadname,phone):
     from config import Config
     MONGO_DB = Config.MONGO_URI
     try:
@@ -87,9 +87,9 @@ def getsavePath(path, path2, site_name, sub_project_name, leadname):
         subname = sub_project_name
 
     return [
-        str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", '_') + ".png"),
-        str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
-        str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_") + ".png"),
+        str(str(path) + '/' + "pre" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", '_')+"_"+str(phone)+".png"),
+        str(str(path) + '/' + "post" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_")+"_"+str(phone)+".png"),
+        str(str(path) + '/' + "err" + "_" + site_name + "_" + str(sub_project_name) +"_"+str(leadname).replace(" ", "_")+"_"+str(phone)+".png"),
         str(str(path2) + '/' + "pre" + "_" + str(subname) +"_"+ str(uuid4().hex) + ".png"),
         str(str(path2) + '/' + "post" + "_" + str(subname) +"_" + str(uuid4().hex) + ".png"),
         str(str(path2) + '/' + "err" + "_" + str(subname) +"_" + str(uuid4().hex) + ".png")

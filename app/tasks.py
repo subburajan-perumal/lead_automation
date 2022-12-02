@@ -144,7 +144,7 @@ async def bulk_lead(**lead_data):
         return result
     except Exception:
         celery_logger.exception("problem in sending lead")
-        return "problem in sending lead"
+        return {"msg": "problem in sending lead"}
 
 # HOUSING AUTOMATION
 
