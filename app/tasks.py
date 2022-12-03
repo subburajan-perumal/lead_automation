@@ -105,7 +105,7 @@ def lead(**lead_data):
 
 
 @celery_app.task()
-async def bulk_lead(**lead_data):
+def bulk_lead(**lead_data):
     try:
         celery_logger.info("bulk lead automator started")
         print("bulk lead automator started")
@@ -141,7 +141,7 @@ async def bulk_lead(**lead_data):
         print(output)
         result = "success"
         celery_logger.info("task sent to browser queue")
-        return result
+        return {"result": "success"}
     except Exception:
         celery_logger.exception("problem in sending lead")
         return {"msg": "problem in sending lead"}
@@ -646,7 +646,7 @@ def browserAutomate(_site, lead_data):
 
 
 @shared_task()
-async def browserAutomateBulk(_site, lead_data):
+def browserAutomateBulk(_site, lead_data):
     from app.functions.site_automator_bulk import SiteAutomator
 
     celery_logger.info("browser started")
