@@ -23,9 +23,9 @@ celery_app = Celery(__name__,
 celery_app.conf.task_default_queue = 'default'
 
 celery_app.conf.task_routes = {
-    'app.tasks.run_housing_api': {'queue': 'lead'},
-    'app.tasks.run_magicbricks_api': {'queue': 'lead'},
-    'app.tasks.run_99acres_api': {'queue': 'lead'},
+    'app.tasks.run_housing_api': {'queue': 'api_lead'},
+    'app.tasks.run_magicbricks_api': {'queue': 'api_lead'},
+    'app.tasks.run_99acres_api': {'queue': 'api_lead'},
     'app.tasks.bulk_lead': {'queue': 'bulk'},
     'app.tasks.lead': {'queue': 'lead'},
     'app.tasks.removing_older_img': {'queue': 'lead'},
