@@ -69,8 +69,15 @@ def lead(**lead_data):
         print("lead automator started")
         lead_data["email"] = str(lead_data["email"]).lower()
         lead_data["phone"] = getPhonenumber([lead_data[field] for field in phone_field])
+        logger.info(lead_data['phone'])
+        print(lead_data['phone'])
         if lead_data['phone'] is None:
             return "phonenumber not found"
+
+        logger.info("lead data in tasks.py")
+        logger.info(lead_data) 
+        print("lead data in tasks.py")
+        print(lead_data)
 
         LA = LeadAutomator(lead_data=lead_data)
         LA.create_lead()
@@ -82,6 +89,12 @@ def lead(**lead_data):
         print("site_list in task.py")
         print(site_list)
         site_list = json.loads(json_util.dumps(site_list))
+
+        logger.info("site list in tasks.py")
+        logger.info(site_list) 
+        print("site list in tasks.py")
+        print(site_list)
+
         task_list = []
         for _site in site_list:
             site_name = _site['name']
@@ -603,7 +616,10 @@ def save_access_token():
 @shared_task()
 def browserAutomate(_site, lead_data):
     from app.functions.site_base import SiteAutomator
-
+    print("site list")
+    print(_site)
+    print("lead_data")
+    print(lead_data)
     celery_logger.info("browser started")
     site_name = _site['name']
     site_projectname = _site['project_list']['project_name']
@@ -638,6 +654,7 @@ def browserAutomate(_site, lead_data):
                                     site_data=_site
                                         )
     browserAutomation.projectCheck(site_name, site_projectname)
+    print("Project check successful")
     browserAutomation.automated_flow()
     # upload_result = browserAutomation.upload_data()
     # print(f"data upload :{upload_result}")
