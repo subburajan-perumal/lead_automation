@@ -558,7 +558,10 @@ def removing_older_img():
     for filename in glob.iglob(path, recursive=True):
         if os.path.getmtime(os.path.join(path, filename)) < now - days * 86400:
             if os.path.isfile(os.path.join(path, filename)):
-                print(filename)
+                logger.info("filename")
+                logger.info(path, filename)
+                print("filename")
+                print(path, filename)
                 try:
                     os.remove(os.path.join(path, filename))
                 except:
@@ -571,11 +574,12 @@ def removing_older_img():
 def save_access_token():
     from requests.structures import CaseInsensitiveDict
     import os
-    from requests import post
+    from requests import post,get
     from dotenv import load_dotenv, set_key, find_dotenv, get_key
-
+    
+    url = "https://fefc-2400-6180-100-d0-00-b54-e001.ngrok.io"
     print('Save access token running')
-
+    get(url)
     zoho = {
         "URL": "https://www.zohoapis.com/crm/v2/Leads/",
         "CLIENT_ID": "REDACTED",
