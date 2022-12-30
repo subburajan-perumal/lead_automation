@@ -67,29 +67,6 @@ def hiranandani(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,
             browser.find_element(By.XPATH, '/html/body/header/div/div[2]/div/nav/a[6]').click()
             time.sleep(5)
 
-
-            f_name =  browser.find_element(By.XPATH, "/html/body/section[8]/div/div[2]/div/form/div[1]/div/input[1]")
-            f_name.send_keys(lead_data['name'])
-            time.sleep(10)
-
-            browser.find_element(By.XPATH, '/html/body/button').click()
-            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
-
-            time.sleep(5)
-
-            browser.find_element(By.XPATH, '/html/body/button').click()
-            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
-
-
-            # element = browser.find_element(By.XPATH, '//*[@id="cc"]')
-            # select = Select(element)
-            # select.select_by_index(4)
-
-            # country_code = browser.find_element(By.XPATH,'//*[@id="cc"]')
-            # time.sleep(20)
-            # country_code.send_keys(country_name)
-            # country_code.send_keys(Keys.ENTER)
-
             country_code = Select(browser.find_element(By.XPATH,'//*[@id="cc"]'))
             country_code.select_by_value(cc)
 
@@ -103,10 +80,24 @@ def hiranandani(subproject:str, browser:Firefox, site_data:dict, lead_data:dict,
             f_mail.send_keys(lead_data['email'])
             time.sleep(2)   
 
+
+            browser.find_element(By.XPATH, '/html/body/button').click()
+            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
+
+            time.sleep(5)
+
+            browser.find_element(By.XPATH, '/html/body/button').click()
+            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
+
+
+            f_name =  browser.find_element(By.XPATH, "/html/body/section[8]/div/div[2]/div/form/div[1]/div/input[1]")
+            f_name.send_keys(lead_data['name'])
+            time.sleep(10)
+
             # browser.save_screenshot(save_path[0])  
        
-            # fs_save = browser.find_element(By.XPATH, '/html/body/section[8]/div/div[2]/div/form/button')
-            # fs_save.click()
+            fs_save = browser.find_element(By.XPATH, '/html/body/section[8]/div/div[2]/div/form/button')
+            fs_save.click()
      
 
             # browser.save_screenshot(save_path[1])

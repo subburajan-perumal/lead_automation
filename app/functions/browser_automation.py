@@ -637,31 +637,8 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
             browser.find_element(By.XPATH, '/html/body/header/div/div[2]/div/nav/a[6]').click()
             time.sleep(5)
 
-
-            f_name =  browser.find_element(By.XPATH, "/html/body/section[8]/div/div[2]/div/form/div[1]/div/input[1]")
-            f_name.send_keys(lead_data['name'])
-            time.sleep(10)
-
-            browser.find_element(By.XPATH, '/html/body/button').click()
-            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
-
-            time.sleep(5)
-
-            browser.find_element(By.XPATH, '/html/body/button').click()
-            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
-
-
-            # country_code = browser.find_element(By.XPATH,'//*[@id="cc"]')
-            # time.sleep(15)
-            # country_code.send_keys(country_name)
-            # time.sleep(15)
-            # country_code.send_keys(Keys.ENTER)
-
             country_code = Select(browser.find_element(By.XPATH,'//*[@id="cc"]'))
-            time.sleep(5)
             country_code.select_by_value(cc)
-            time.sleep(5)
-
 
             f_phone = browser.find_element(By.XPATH, '//*[@id="mobile"]')
             f_phone.click()
@@ -672,6 +649,20 @@ def hiranandani(subproject, browser, site_data, lead_data, path):
             f_mail.click()
             f_mail.send_keys(lead_data['email'])
             time.sleep(2)   
+
+
+            browser.find_element(By.XPATH, '/html/body/button').click()
+            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
+
+            time.sleep(5)
+
+            browser.find_element(By.XPATH, '/html/body/button').click()
+            browser.find_element(By.XPATH, '/html/body/div[5]/div/div/div[1]/button/span').click()
+
+
+            f_name =  browser.find_element(By.XPATH, "/html/body/section[8]/div/div[2]/div/form/div[1]/div/input[1]")
+            f_name.send_keys(lead_data['name'])
+            time.sleep(10)   
 
             browser.save_screenshot(save_path[0])  
        
