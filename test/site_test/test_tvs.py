@@ -14,7 +14,7 @@ import time
 
 
 
-driver="/home/subburaj/LEAD_AUTOMATION/lead_automation/geckodriver"
+driver="./geckodriver.exe"
 firefox_service = Service(driver)
 opt = Options()
 opt.add_argument ( "--incognito" )
@@ -23,6 +23,7 @@ browser = webdriver.Firefox (
                             service = firefox_service,
                             # service_log_path=WEBDRIVER_LOG
                             )
+
 
 site_data = {"_id": {"$oid": "623c25874dca8f32e924418a"}, 
 "name": "tvs",
@@ -36,7 +37,7 @@ site_data = {"_id": {"$oid": "623c25874dca8f32e924418a"},
     "LightHouse", "Alliance Galleria", "Light House", "Tuxedo", "Radiance The Pride", "Elevate 21", "TVS Emerald LightHouse"], "location":[], "projectStatus":1}, {"project_name": "TVS Emerald Manapakkam", "keywords": [], "location":[], "projectStatus":1}, {"project_name": "TVS Emerald Hamlet", "keywords": ["Emerald Hamlet", "Adityaram", "Sobha Gardenia", "Amethyst", "House of Hiranandani", "Silver Springs", "Tango", "TCP Altura"], "location":[], "projectStatus":1}], "url2": "https://cp.tvsemerald.com/admin/leads?locale=en", "site_data": {"username": "redacted@example.com", "password": "REDACTED", "channel_partnername": "Lead Automation", "phone_no": "9000000000"}}
 lead_data = {
     "lead_id":"L000001",
-    "name":"first_name lastname",
+    "name":"firstname",
     "first_name":"testfirstname",
     "last_name":"testlastname",
     "email" :"redacted@example.com",
@@ -86,9 +87,9 @@ def tvs(subproject, browser, site_data, lead_data, path):
         lastnamelead.send_keys(lead_data['name'])
         time.sleep(1)
 
-        emaillead=browser.find_element(By.XPATH,'//*[@id="lead_email"]')
-        emaillead.send_keys(lead_data['email'])
-        time.sleep(1)                
+        # emaillead=browser.find_element(By.XPATH,'//*[@id="lead_email"]')
+        # emaillead.send_keys(lead_data['email'])
+        # time.sleep(1)                
 
         #projectlead=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/div/lightning-combobox/div[1]/lightning-base-combobox/div/div[1]/button')
         #projectlead=Select(browser.find_element(By.ID,'combobox-button-618'))
@@ -135,7 +136,7 @@ def tvs(subproject, browser, site_data, lead_data, path):
         #contact.send_keys(phone)
         time.sleep(1)
 
-        projectlead=browser.find_element(By.XPATH,'/html/body/div[3]/form/div/div/div/div[2]/div/div[2]/div[4]/div/div/div/div[1]')
+        projectlead=browser.find_element(By.XPATH,'/html/body/div[3]/form/div/div/div/div[2]/div/div[2]/div[2]/div[2]/div/div/div[1]')
         #projectlead=browser.find_element_by_xpath('/html/body/div[3]/form/div/div/div/div[2]/div/div[2]/div[4]/div/div/div/div[1]/div')        
         #time.sleep(5)        
         projectlead.click()
@@ -178,6 +179,7 @@ def tvs(subproject, browser, site_data, lead_data, path):
         return -1
         
 
-
-result=tvs("TVS Emerald Green Enclave", browser, site_data, lead_data, ".")
-print(result)
+subproject="TVS Emerald Aaranya"
+# subproject="Villabelvedere/Eternity"
+path="./geckodriver.exe"
+tvs(subproject, browser, site_data, lead_data, path)

@@ -1547,4 +1547,83 @@ def xs(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list)
 
         return -1
 
+#arun_excello
+
+def arun_excello(subproject:str,browser:Firefox,site_data:dict, lead_data:dict, path:list):
+    try:
+        browserLog.info(f"Site: {site_data['name']}, Project:{subproject}")
+        save_path=path
+        first_name,last_name=getName(lead_data['name'])
+        browser.get(site_data["url"])
+        phone_no= PN.parse(lead_data['phone'])
     
+        search=browser.find_element(By.XPATH,'/html/body/header/nav/div/div/div[5]/div/a')        
+        search.click()
+        #time.sleep(3)       
+
+        time.sleep(1)
+        email=browser.find_element(By.XPATH,'//*[@id="user_login"]')
+        email.send_keys(site_data["email"])
+
+        time.sleep(1)
+        pwdd=browser.find_element(By.XPATH,'//*[@id="user_password"]')
+        pwdd.send_keys(site_data["pass"])
+        
+        time.sleep(1)        
+        submit=browser.find_element(By.XPATH,'/html/body/section/div/div/div[1]/div/form[2]/div[4]/input')
+        submit.send_keys(Keys.RETURN)
+        time.sleep(10)
+
+        browser.get("https://cp.arunexcello.com/admin/cp_lead_activities?locale=en")
+
+        time.sleep(3)
+        addlead=browser.find_element(By.XPATH,'/html/body/div[1]/section/div/div[1]/div[2]/div/a')
+        addlead.send_keys(Keys.RETURN)
+        time.sleep(3)
+        
+        firstnamelead=browser.find_element(By.XPATH,'//*[@id="lead_first_name"]')
+        firstnamelead.send_keys(lead_data['name'])
+        time.sleep(1)
+
+        lastnamelead=browser.find_element(By.XPATH,'//*[@id="lead_last_name"]')
+        lastnamelead.send_keys(lead_data['name'])
+        time.sleep(1)
+
+        emaillead=browser.find_element(By.XPATH,'//*[@id="lead_email"]')
+        emaillead.send_keys(lead_data['email'])
+        time.sleep(1)                     
+
+        contact=browser.find_element(By.XPATH,'//*[@id="lead_phone"]')
+        time.sleep(1)        
+        contact.click()        
+        time.sleep(1)
+        contact.send_keys(Keys.BACKSPACE)
+        time.sleep(1)
+        contact.send_keys(Keys.BACKSPACE)
+        time.sleep(1)
+        contact.send_keys(Keys.BACKSPACE)
+        time.sleep(1)
+        contact.send_keys(Keys.BACKSPACE)
+        time.sleep(1)        
+        contact.send_keys(lead_data['phone'])         
+        time.sleep(1)
+
+        project=Select(browser.find_element(By.ID,'lead_project_id'))
+        project.select_by_visible_text(subproject)
+
+        browser.save_screenshot(save_path[0])
+        time.sleep(10)
+        
+        submitbutton = browser.find_element(By.XPATH,'/html/body/div[4]/form/div/div/div/div[2]/div[4]/input')
+        submitbutton.click()
+        time.sleep(10)
+
+        browser.save_screenshot(save_path[1])
+        browser.close()
+  
+        return 1
+      
+    except Exception as e:
+        browserLog.exception(f"Site:{site_data['name']}")
+        browser.save_screenshot(save_path[2])
+        return -1   
