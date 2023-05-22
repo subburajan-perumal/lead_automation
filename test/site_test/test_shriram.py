@@ -43,33 +43,34 @@ def shriram(subproject, browser, site_data, lead_data, path):
         phoneno=phone.national_number
     
         agree = browser.find_element(
-            By.XPATH, '//*[@id="Rera"]/div/div/div[3]/button').click()
+            By.XPATH, '/html/body/div[1]/div[4]/div/div/div[3]/button').click()
         time.sleep(5)
 
-        radiobox = browser.find_element(By.XPATH, '//*[@id="label_9_24_0"]')
+        radiobox = browser.find_element(By.XPATH, '/html/body/div[1]/section[2]/div/article/div[2]/div/div/div[2]/div/div/div/form/div[1]/div/div[1]/div[1]/label')
         radiobox.click()
         partner = browser.find_element(
-            By.XPATH, '//*[@id="input_9_14_chosen"]/a/span')
+            By.XPATH, '/html/body/div[1]/section[2]/div/article/div[2]/div/div/div[2]/div/div/div/form/div[2]/div[1]/div/div[1]/span/span[1]/span/span[1]/span')
         partner.click()
+        time.sleep(1)
         partner1 = browser.find_element(
-            By.XPATH, '//*[@id="input_9_14_chosen"]/div/div/input')
+            By.XPATH, '/html/body/span/span/span[1]/input')
         partner1.send_keys(site_data["channel_partner"])
         partner1.send_keys(Keys.RETURN)
-        coustmer_name = browser.find_element(By.XPATH, '//*[@id="input_9_2"]')
+        coustmer_name = browser.find_element(By.XPATH, '//*[@id="edit-customer-name"]')
         coustmer_name.send_keys(lead_data['name'])
-        coustmer_email = browser.find_element(By.XPATH, '//*[@id="input_9_3"]')
+        coustmer_email = browser.find_element(By.XPATH, '//*[@id="customers-email"]')
         coustmer_email.send_keys(lead_data['email'])
-        code = Select(browser.find_element(By.XPATH, '//*[@id="input_9_56"]'))
+        code = Select(browser.find_element(By.XPATH, '//*[@id="edit-country-code"]'))
         code.select_by_visible_text('India (+91)')
-        coustmer_phone = browser.find_element(By.XPATH, '//*[@id="input_9_4"]')
+        coustmer_phone = browser.find_element(By.XPATH, '//*[@id="phone"]')
         coustmer_phone.send_keys(phoneno)
         resident = Select(browser.find_element(
-            By.XPATH, '//*[@id="input_9_57"]'))
+            By.XPATH, '//*[@id="edit-customer-residential-status"]'))
         resident.select_by_visible_text('Local')
-        coustmer_city = browser.find_element(By.XPATH, '//*[@id="input_9_58"]')
+        coustmer_city = browser.find_element(By.XPATH, '//*[@id="res_city"]')
         coustmer_city.send_keys('Chennai')
         project_city = Select(browser.find_element(
-            By.XPATH, '//*[@id="input_9_6"]'))
+            By.XPATH, '//*[@id="uc_city"]'))
         project_city.select_by_visible_text('Chennai')
         time.sleep(3)
         area = Select(browser.find_element(By.XPATH, '//*[@id="input_9_16"]'))

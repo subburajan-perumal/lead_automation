@@ -48,7 +48,9 @@ project_store = {
     "tvs": tvs,
     "vijayaraja": vr,
     "xs": xs,
-    "arun_excello" : arun_excello
+    "arun_excello" : arun_excello,
+    "urban_tree" : urban_tree,
+    "xs_real" : xs_real
 }
 required_store = {
     "adityaram": {"function": adityaram, "required_field": ["phone", "email"]},

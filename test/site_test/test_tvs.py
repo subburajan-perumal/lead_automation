@@ -27,7 +27,7 @@ browser = webdriver.Firefox (
 
 site_data = {"_id": {"$oid": "623c25874dca8f32e924418a"}, 
 "name": "tvs",
- "url": "https://cp.tvsemerald.com/users/sign_in", 
+ "url": "https://cp.tvsemerald.com/users/sign_in?locale=en", 
  "email": "redacted@example.com", 
  "pass": "REDACTED",
   "cpname": "Lead Automation", 
