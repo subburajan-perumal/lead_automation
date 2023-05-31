@@ -1090,35 +1090,38 @@ def radiance_(subproject, browser, site_data, lead_data, path):
         phone=PN.parse(lead_data['phone'])
         phoneno=phone.national_number
         browser.get(site_data["url"])
-        search=browser.find_element(By.XPATH,'/html/body/div[1]/div[1]/div/div/div[2]/div[3]/form/div[2]/div/input[1]')        
+
+        search=browser.find_element(By.XPATH,'//*[@id="username"]')        
         search.send_keys(site_data["email"])
         time.sleep(1)
         pwdd=browser.find_element(By.XPATH,'//*[@id="password"]')
         pwdd.send_keys(site_data["pass"])
-        submit=browser.find_element(By.XPATH,'/html/body/div[1]/div[1]/div/div/div[2]/div[3]/form/input[2]')
-        submit.send_keys(Keys.RETURN)
-
+        submit=browser.find_element(By.XPATH,'//*[@id="Login"]')
+        submit.click()
         time.sleep(3)
+        
         browser.get(site_data["url2"])
-
         time.sleep(3)
+
         newlead=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/div[1]/div/div/div/div/div[3]/button[1]')
         newlead.send_keys(Keys.RETURN)
         time.sleep(3)
         
         namelead=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[1]/div/div/input')
         namelead.send_keys(lead_data['name'])
+
+        
         time.sleep(1)
 
         projectlead=browser.find_element(By.XPATH, '/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[1]/div[2]/div/lightning-combobox/div[1]/lightning-base-combobox/div/div[1]/button')
         projectlead.click()
         projectlead.send_keys(subproject)        
         projectlead.send_keys(Keys.RETURN)
-        emaillead=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[2]/div[1]/div/div/lightning-input/div/input')
+        emaillead=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[2]/div[1]/div/div/lightning-input/div/div/input')
         emaillead.send_keys(lead_data['email'])
         time.sleep(1)        
 
-        contact=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[2]/div[2]/div[2]/div/lightning-input/div/input')
+        contact=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/div/div[2]/div/div/c-related-source-data-table-lwc/c-create-new-lead/section/div/div/div/div[2]/div[2]/div[2]/div/lightning-input/div/div/input')
         contact.send_keys(phoneno)
         time.sleep(1)
 
