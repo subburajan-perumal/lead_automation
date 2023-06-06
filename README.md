@@ -138,5 +138,17 @@ celery -A app.tasks beat -l debug
 service lead_automation_server restart
 
 <footer>
+  
+Credentials
+```
+automation_user  
+REDACTED
+```
+  
+```
+Root
+IP: REDACTED_IP
+Pass: REDACTED  
+```  
 
 <footer>
