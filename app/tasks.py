@@ -23,7 +23,6 @@ celery_app = Celery(__name__,
 celery_app.conf.task_default_queue = 'default'
 
 celery_app.conf.task_routes = {
-    'app.tasks.run_housing_api': {'queue': 'api_lead'},
     'app.tasks.run_magicbricks_api': {'queue': 'api_lead'},
     'app.tasks.run_99acres_api': {'queue': 'api_lead'},
     'app.tasks.bulk_lead': {'queue': 'bulk'},
@@ -34,10 +33,6 @@ celery_app.conf.task_routes = {
     }
 
 celery_app.conf.beat_schedule = {
-        "run_housing_api": {
-            "task": "app.tasks.run_housing_api",
-            "schedule": crontab(hour='*/1')
-        },
         "run_magicbricks_api": {
             "task": "app.tasks.run_magicbricks_api",
             "schedule": crontab(hour='*/1')
@@ -158,135 +153,6 @@ def bulk_lead(**lead_data):
     except Exception:
         celery_logger.exception("problem in sending lead")
         return {"msg": "problem in sending lead"}
-
-# HOUSING AUTOMATION
-
-@celery_app.task
-def run_housing_api():
-    try:
-        import requests
-        import hmac
-        import hashlib
-        from datetime import datetime, timedelta
-        import time
-        import pytz
-        from app.util.utility import insert_records, get_access_token, getProjectID
-        from pymongo import MongoClient
-
-        print('Housing')
-
-        today = datetime.now() + timedelta(days=1)
-        yesterday = today - timedelta(days = 2)
-        today = today.astimezone(pytz.timezone('Asia/Kolkata'))
-        yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
-
-        yesterday = int(time.mktime(yesterday.timetuple()))
-        today = int(time.mktime(today.timetuple()))
-        timestamp = today
-
-        id = 2674965
-        key = "REDACTED"
-        timestamp = str(timestamp)
-        byte_key = bytes(key, 'UTF-8')
-        message = timestamp.encode()
-        hash = hmac.new(byte_key, message, hashlib.sha256).hexdigest()
-        params = {
-            'start_date': str(yesterday),
-            'end_date': str(today),
-            'current_time': str(timestamp),
-            'hash': str(hash),
-            'id': id
-        }
-        url = 'https://leads.housing.com/api/v0/get-builder-leads'
-        resp = requests.get(url = url, params = params)
-        leads = resp.json()
-        logs = []
-
-        CONN = MongoClient(MONGO_DB)
-        DB = CONN['lead_automation']
-        api_leads = DB['API_leads']
-
-        for record in leads[::-1]:
-            history = api_leads.find(
-                {
-                    'lead_phone': record['lead_phone'],
-                    'latest_update': {
-                        '$gte': datetime.now() - timedelta(days=1)
-                    }
-                }  
-            )
-            history = json.loads(json_util.dumps(history))
-            # print(history)
-            
-            if len(history) == 0:
-                print(record)
-                try:
-                    access_token = get_access_token()
-                    project_id = getProjectID(record['project_name'], access_token)
-                    print((record['project_name'], project_id))
-                    
-                    if 'error' in project_id:
-                        access_token = get_access_token()
-                        project_id = getProjectID('None', access_token)
-
-                    if 'lead_email' not in record or record['lead_email'] == None:
-                        record['lead_email'] = record['lead_phone'] + '@example.com'
-                    if 'lead_name' not in record or record['lead_name'] == None:
-                        record['lead_name'] = 'Housing User'
-                    apartment_names = '2 BHK'
-                    if '4 BHK' in str(record['apartment_names']):
-                        apartment_names = '4 BHK'
-                    elif '3 BHK' in str(record['apartment_names']):
-                        apartment_names = '3 BHK'
-
-                    data = {
-                        'Configuration1': apartment_names,
-                        'Country_Code': str(record['country_code']),
-                        'City': record['city_name'],
-                        'Email': record['lead_email'],
-                        'Phone': record['lead_phone'],
-                        'Project_Enquired_for': dict(
-                            {'id': project_id}
-                        ),
-                        'Full_Name': record['lead_name'],
-                        'Last_Name': record['lead_name'],
-                        'Lead_Source': 'Housing',
-                        'Initial_Enquiry_Particulars_Automation': str(record)[:200]
-                    }
-
-                    if not record['locality_name']:
-                        data['Interested_Localities'] = None
-                    elif type(record['locality_name']) == str:
-                        data['Interested_Localities'] = [record['locality_name']]
-                    else:
-                        data['Interested_Localities'] = list(record['locality_name'])
-
-                    if record['service_type'] == 'new-projects':
-                        data['Interested_in_wf'] = 'New'                    
-                    
-                    print(('data', data))
-                    response = insert_records(data, access_token)
-                    print(('response', response))
-                    logs.append(response)
-                    record['latest_update'] = datetime.now()
-                    record['response'] = response
-                    api_leads.update_one(
-                        {
-                            'lead_phone': record['lead_phone']
-                        },
-                        {
-                            '$set': record
-                        },
-                        upsert = True
-                    )
-                except Exception as e:
-                    logs.append(str(e))
-
-        return logs
-
-    except Exception as e:
-        return {'error': str(e)}
-
 
 # MAGICBRICKS AUTOMATION
 
