@@ -1,43 +1,35 @@
 import json
+import logging
+
 from flask import Request
+
+from config import required_field
 
 
 def find_format(P_request: Request):
+    """Read a Zoho webhook body (JSON or form-encoded) into a lead dict.
+
+    Returns {} when the body can't be read or is missing any of config.required_field.
+    """
     try:
+        content_type = P_request.content_type or ""
 
-        print("fomat finder working")
-        content_type = P_request.content_type.split("/")
-        req_data = {}
-
-        if "x-www-form-urlencoded" in content_type:
-            print("default post P_request")
-            print(P_request)
-            req_data = P_request.get_data()
-
-        elif "form-data" in content_type:
-            tempdata = P_request.get_data()
-            req_data = json.loads(tempdata.decode())
-
-        elif "json" in content_type:
-            if(type(P_request.get_json()) is dict):
-                req_data = P_request.get_json()
-                if 'phone' in req_data and 'email' in req_data and 'lead_id' in req_data and 'name' in req_data:
-                    return req_data
-                else:
-                    req_data = {}
-                    print(req_data)
-                # data=''.join(key for key,value in data if key.isalnum())
-            # multiple json in single P_request
-            elif(type(P_request.get_json()) == list):
-                print("json array")
-                # for _ in P_request.get_json():
-
+        if "json" in content_type:
+            req_data = P_request.get_json(silent=True)
+        elif "x-www-form-urlencoded" in content_type or "multipart/form-data" in content_type:
+            req_data = P_request.form.to_dict()
         else:
-            req_data = {}
-        return req_data
+            # Some Zoho webhook configurations post JSON with a text/plain content type.
+            req_data = json.loads(P_request.get_data(as_text=True) or "{}")
 
-    except Exception as e:
-        print(str(e))
-        print("problem in finding data type")
-        req_data = {}
-        return req_data
+        if not isinstance(req_data, dict):
+            return {}
+        if all(req_data.get(field) not in (None, "") for field in required_field):
+            return req_data
+        logging.info("request missing required fields: %s",
+                     [field for field in required_field if req_data.get(field) in (None, "")])
+        return {}
+
+    except Exception:
+        logging.exception("problem in finding data type")
+        return {}

@@ -1,5 +1,5 @@
 from datetime import datetime
-from pymongo import MongoClient
+from app.database import get_db
 from app.functions.site_base import SiteAutomator
 import logging
 
@@ -9,8 +9,6 @@ logging.basicConfig(
     # format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
     encoding='utf-8'
     )
-
-MONGO_DB = "REDACTED"
 
 def common_member(a, b):   
     a_set = set(a)
@@ -33,8 +31,7 @@ def function_finder(lead_data: dict):
         string :  return the success and failed message of the execution
     """
     try:
-        CONN = MongoClient(MONGO_DB)
-        DB = CONN['lead_automation']
+        DB = get_db()
         LEADS = DB['leads']
 
     except Exception:

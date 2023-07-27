@@ -1,16 +1,12 @@
-from pymongo import MongoClient
+from app.database import get_db
 from app.util.utility import getTime
-from datetime import datetime
-from config import Config
-MONGO_DB = Config.MONGO_URI
 
 
 class LeadAutomator:
 
     def __init__(self, lead_data):
         self.lead_data = lead_data
-        self.CONN = MongoClient(MONGO_DB)
-        self.DB = self.CONN['lead_automation']
+        self.DB = get_db()
         self.LEADS = self.DB['leads']
         self.SITE = self.DB['Site']
         self.keywords = []
@@ -32,7 +28,7 @@ class LeadAutomator:
                                     "phone": self.lead_data["phone"]
                                 })
         # print(user_detail)
-        fullname = self.lead_data['name']
+        fullname = self.lead_data.get('name', "")
         if self.user_detail is None:
             lead_creation = {
                             "name": fullname,
@@ -40,7 +36,7 @@ class LeadAutomator:
                             "email": self.lead_data["email"],
                             "created_at": getTime(),
                             "modified_time": getTime(),
-                            "source": self.lead_data["source"],
+                            "source": self.lead_data.get("source", "zoho"),
                             }
             self.LEADS.insert_one(lead_creation)
 

@@ -1,18 +1,21 @@
-from json import dumps, loads
 from datetime import datetime
-import json
-from uuid import uuid4
-import pytz
-from requests import get, post
-import pymongo
-from bson import json_util
-from celery.utils.log import get_task_logger
+import math
 import os
-import requests
+from uuid import uuid4
+
 import phonenumbers as PN
+import pytz
+import redis
+import requests
+from celery.utils.log import get_task_logger
+
+from config import Config
 
 
 celery_logger = get_task_logger(__name__)
+
+ZOHO_TOKEN_CACHE_KEY = "lead_automation:zoho_access_token"
+HTTP_TIMEOUT = 30
 
 
 def cmpstring(string1, string2):
@@ -23,42 +26,38 @@ def cmpstring(string1, string2):
 
 def getTime():
     IST = pytz.timezone("Asia/Kolkata")
-    now = datetime.now(IST)
-    # print("now =", now)
-    # dd/mm/YY H:M:S
-    # dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    return now
+    return datetime.now(IST)
 
 
-def isValidPhoneNumber(phone_number: str) -> bool:
+def isValidPhoneNumber(phone_number) -> bool:
     return PN.is_possible_number(phone_number)
 
 
 def getPhonenumber(numberlist: list):
+    """Return the first possible phone number in the list, in E.164 format, else None.
 
-    filtered_number = []
-
+    Missing fields and unparseable values are skipped instead of failing the whole lead.
+    """
     for number in numberlist:
-        number = PN.parse(number, region="IN")
-        if isValidPhoneNumber(number):
-            international_format = PN.format_number(number, PN.PhoneNumberFormat.E164)
-            filtered_number.append(international_format)
-
-    return filtered_number[0] if filtered_number else None
+        if number is None or str(number).strip() == "":
+            continue
+        try:
+            parsed = PN.parse(str(number), region="IN")
+        except PN.NumberParseException:
+            continue
+        if isValidPhoneNumber(parsed):
+            return PN.format_number(parsed, PN.PhoneNumberFormat.E164)
+    return None
 
 
 def getName(name):
-    splited_name = name.split(" ")
-
-    if len(splited_name) == 1:
-
-        return splited_name[0], splited_name[0]
-    elif len(splited_name) == 2:
-        return splited_name[0], splited_name[1]
-    elif len(splited_name) == 3:
-        return splited_name[0] + splited_name[1], splited_name[2]
-    else:
-        return "" ""
+    """Split a full name into (first, last). Single names are used for both."""
+    parts = str(name or "").split()
+    if not parts:
+        return "", ""
+    if len(parts) == 1:
+        return parts[0], parts[0]
+    return " ".join(parts[:-1]), parts[-1]
 
 
 # pre_akshaya_Adityaram_phase_5_krishnamoorthy perumal.png
@@ -66,272 +65,219 @@ def getName(name):
 
 
 def getsavePath(path, path2, site_name, sub_project_name, leadname, phone):
-    from config import Config
+    from app.database import get_db
 
-    MONGO_DB = Config.MONGO_URI
+    # The Zoho copy of each screenshot is named after the project's filename alias, if it has one.
+    subname = sub_project_name
     try:
-        # Connecting to Lead Automation MongoDB server to get filename(subname)
-        CONN = pymongo.MongoClient(MONGO_DB)
-        DB = CONN["lead_automation"]
-        SITE = DB["Site"]
-
-        result = SITE.find({"project_list.project_name": sub_project_name})
-        result = json.loads(json_util.dumps(result))
-
-        for elem in result[0]["project_list"]:
-            if elem["project_name"] == sub_project_name:
+        site = get_db()["Site"].find_one({"project_list.project_name": sub_project_name})
+        for elem in (site or {}).get("project_list", []):
+            if elem.get("project_name") == sub_project_name and elem.get("filename"):
                 subname = elem["filename"]
-    except:
-        subname = sub_project_name
+                break
+    except Exception:
+        celery_logger.exception("could not look up the project filename; using the project name")
 
+    lead_part = "{}_{}_{}_{}".format(site_name, sub_project_name, str(leadname).replace(" ", "_"), phone)
     return [
-        str(
-            str(path)
-            + "/"
-            + "pre"
-            + "_"
-            + site_name
-            + "_"
-            + str(sub_project_name)
-            + "_"
-            + str(leadname).replace(" ", "_")
-            + "_"
-            + str(phone)
-            + ".png"
-        ),
-        str(
-            str(path)
-            + "/"
-            + "post"
-            + "_"
-            + site_name
-            + "_"
-            + str(sub_project_name)
-            + "_"
-            + str(leadname).replace(" ", "_")
-            + "_"
-            + str(phone)
-            + ".png"
-        ),
-        str(
-            str(path)
-            + "/"
-            + "err"
-            + "_"
-            + site_name
-            + "_"
-            + str(sub_project_name)
-            + "_"
-            + str(leadname).replace(" ", "_")
-            + "_"
-            + str(phone)
-            + ".png"
-        ),
-        str(
-            str(path2)
-            + "/"
-            + "pre"
-            + "_"
-            + str(subname)
-            + "_"
-            + str(uuid4().hex)
-            + ".png"
-        ),
-        str(
-            str(path2)
-            + "/"
-            + "post"
-            + "_"
-            + str(subname)
-            + "_"
-            + str(uuid4().hex)
-            + ".png"
-        ),
-        str(
-            str(path2)
-            + "/"
-            + "err"
-            + "_"
-            + str(subname)
-            + "_"
-            + str(uuid4().hex)
-            + ".png"
-        ),
+        "{}/pre_{}.png".format(path, lead_part),
+        "{}/post_{}.png".format(path, lead_part),
+        "{}/err_{}.png".format(path, lead_part),
+        "{}/pre_{}_{}.png".format(path2, subname, uuid4().hex),
+        "{}/post_{}_{}.png".format(path2, subname, uuid4().hex),
+        "{}/err_{}_{}.png".format(path2, subname, uuid4().hex),
     ]
 
 
 # MAPPING BULK DATA
 
 
+def _is_blank(value):
+    return value is None or (isinstance(value, float) and math.isnan(value)) or str(value).strip() == ""
+
+
 def bulk_mapping(data):
-    data["Phone"] = "+" + str(data["Phone"])
-    if "Email" not in data:
-        data["Email"] = data["Phone"] + "@example.com"
-    data = {
-        "lead_id": data["LEADID"][5:],
-        "email": data["Email"],
-        "phone": data["Phone"],
-        "mobile": data["Phone"],
-        "alt_phone": data["Phone"],
+    phone = data["Phone"]
+    # pandas reads a phone column as float (919876543210.0), which then fails to parse.
+    if isinstance(phone, float) and phone.is_integer():
+        phone = int(phone)
+    phone = str(phone).strip()
+    if not phone.startswith("+"):
+        phone = "+" + phone
+
+    email = data.get("Email")
+    if _is_blank(email):
+        email = phone + "@example.com"
+
+    return {
+        "lead_id": str(data["LEADID"])[5:],
+        "email": email,
+        "phone": phone,
+        "mobile": phone,
+        "alt_phone": phone,
         "name": data["Full Name"],
-        "project_enquired_for": data["Project Enquired for"],
-        "interested_properties": data["Interested Properties"],
+        "project_enquired_for": "" if _is_blank(data.get("Project Enquired for")) else data["Project Enquired for"],
+        "interested_properties": "" if _is_blank(data.get("Interested Properties")) else data["Interested Properties"],
     }
-    return data
 
 
 # SEND MAIL VIA MAILGUN
 
 
 def send_mail(lead_id, path, sub_project_name, name1):
-    import subprocess
+    """Email the automation team about a failed registration, with the screenshot attached.
 
-    # EXAMPLE CURL
-    # curl -s --user REDACTED_SECRET_7 https://api.mailgun.net/v3/REDACTED_MAILGUN_DOMAIN/messages -F from='Automation Error <mailgun@REDACTED_MAILGUN_DOMAIN>' -F to=redacted@example.com -F to=redacted@example.com -F subject="Error. Testing Test - Mithila" -F text="Error. Lead registration failure.Lead ID: 920786000201726133 Project: Mithila Name: Testing Test" -F attachment=@"./krishnagrp/Testing Test_+919098124992738_Krishna Mithila.png"
-    Mailgun = {
-        "MAILGUN_DOMAIN": "REDACTED_MAILGUN_DOMAIN",
-        "MAILGUN_URL": "https://api.mailgun.net/v3/REDACTED_MAILGUN_DOMAIN/messages",
-        "MAILGUN_KEY": "REDACTED_SECRET_8",
-        "FROM_MAIL": "mailgun@REDACTED_MAILGUN_DOMAIN",
-        "TO_MAIL": ["redacted@example.com", "redacted@example.com"],
-        # "TO_MAIL":["redacted@example.com","redacted@example.com"],
-        "PASS": "REDACTED",
-        "NAME": "Mailgun",
+    Uses the Mailgun HTTP API directly. Lead names come from outside the system, so they
+    must never be interpolated into a shell command.
+    """
+    if not (Config.MAILGUN_API_KEY and Config.MAILGUN_DOMAIN and Config.MAILGUN_TO):
+        celery_logger.warning("Mailgun is not configured; skipping failure email for lead %s", lead_id)
+        return None
+
+    subject = "Error. {} - {}".format(name1, sub_project_name)
+    text = "Error. Lead registration failure. Lead ID: {} Project: {} Name: {}".format(
+        lead_id, sub_project_name, name1
+    )
+    data = {
+        "from": "Automation Error <mailgun@{}>".format(Config.MAILGUN_DOMAIN),
+        "to": Config.MAILGUN_TO,
+        "subject": subject,
+        "text": text,
     }
     try:
-        print("Sending mail...")
-        subject = "Error. {} - {}".format(name1, sub_project_name)
-        text = (
-            "Error. Lead registration failure. Lead ID: {} Project: {} Name: {}".format(
-                lead_id, sub_project_name, name1
+        if path and os.path.isfile(path):
+            with open(path, "rb") as attachment:
+                response = requests.post(
+                    "https://api.mailgun.net/v3/{}/messages".format(Config.MAILGUN_DOMAIN),
+                    auth=("api", Config.MAILGUN_API_KEY),
+                    data=data,
+                    files=[("attachment", (os.path.basename(path), attachment, "image/png"))],
+                    timeout=HTTP_TIMEOUT,
+                )
+        else:
+            response = requests.post(
+                "https://api.mailgun.net/v3/{}/messages".format(Config.MAILGUN_DOMAIN),
+                auth=("api", Config.MAILGUN_API_KEY),
+                data=data,
+                timeout=HTTP_TIMEOUT,
             )
-        )
-
-        curlurl = "curl -s --user 'api:{}' {} -F from='Automation Error <mailgun@{}>' -F to={} -F to={} -F subject='{}' -F text='{}' -F attachment=@'{}'".format(
-            Mailgun["MAILGUN_KEY"],
-            Mailgun["MAILGUN_URL"],
-            Mailgun["MAILGUN_DOMAIN"],
-            Mailgun["TO_MAIL"][0],
-            Mailgun["TO_MAIL"][1],
-            subject,
-            text,
-            path,
-        )
-
-        s, o = subprocess.getstatusoutput(curlurl)
-        print(s, o, sep="\n")
-
-    except Exception as e:
-        print("Exception occured due to: ", str(e))
-        print("Exception in sending mail...")
-
-    return
+        response.raise_for_status()
+        return response.status_code
+    except requests.RequestException:
+        celery_logger.exception("failed to send failure email for lead %s", lead_id)
+        return None
 
 
-# GET ACCESS TOKEN
+# ZOHO ACCESS TOKEN
+
+
+def _redis():
+    return redis.Redis.from_url(Config.REDIS_URL)
+
+
+def refresh_access_token():
+    """Exchange the Zoho refresh token for a new access token and cache it in Redis."""
+    response = requests.post(
+        "{}/oauth/v2/token".format(Config.ZOHO_ACCOUNTS_URL),
+        params={
+            "client_id": Config.ZOHO_CLIENT_ID,
+            "client_secret": Config.ZOHO_CLIENT_SECRET,
+            "refresh_token": Config.ZOHO_REFRESH_TOKEN,
+            "grant_type": "refresh_token",
+        },
+        timeout=HTTP_TIMEOUT,
+    )
+    response.raise_for_status()
+    payload = response.json()
+    access_token = payload.get("access_token")
+    if not access_token:
+        raise RuntimeError("Zoho token refresh failed: {}".format(payload.get("error", "no access_token in response")))
+
+    # Zoho tokens live for an hour; expire the cached copy five minutes early.
+    ttl = max(int(payload.get("expires_in", 3600)) - 300, 60)
+    try:
+        _redis().set(ZOHO_TOKEN_CACHE_KEY, access_token, ex=ttl)
+    except redis.RedisError:
+        celery_logger.warning("could not cache the Zoho access token in Redis")
+    return access_token
 
 
 def get_access_token():
-    from dotenv import load_dotenv, find_dotenv, get_key
+    try:
+        cached = _redis().get(ZOHO_TOKEN_CACHE_KEY)
+        if cached:
+            return cached.decode("utf-8")
+    except redis.RedisError:
+        celery_logger.warning("Redis unavailable; requesting a fresh Zoho access token")
+    return refresh_access_token()
 
-    dotenv_file = find_dotenv()
-    load_dotenv(dotenv_file)
-    access_token = get_key(dotenv_file, "access_token", encoding="utf-8")
-    return access_token
+
+def _zoho_request(method, path, **kwargs):
+    """Call the Zoho CRM API, refreshing the access token once if Zoho rejects it."""
+    url = "{}{}".format(Config.ZOHO_API_URL, path)
+    headers = kwargs.pop("headers", {})
+    for attempt in range(2):
+        token = get_access_token() if attempt == 0 else refresh_access_token()
+        headers["Authorization"] = "Zoho-oauthtoken {}".format(token)
+        response = requests.request(method, url, headers=headers, timeout=HTTP_TIMEOUT, **kwargs)
+        if response.status_code != 401:
+            return response
+    return response
 
 
 # UPLOAD ATTACHMENT TO ZOHO
 
 
 def upload_an_attachment(lead_id, path):
-    print("Upload attachment: {}, {}".format(lead_id, path))
-    import subprocess
+    if not lead_id:
+        celery_logger.warning("no Zoho lead id; not uploading %s", path)
+        return None
+    if not os.path.isfile(path):
+        celery_logger.warning("screenshot %s does not exist; nothing to upload", path)
+        return None
 
-    access_token = get_access_token()
-    print("Access token: {}".format(access_token))
+    # Drop the uuid suffix so the attachment shows a readable name in Zoho.
+    root, ext = os.path.splitext(os.path.basename(path))
+    filename = root.rsplit("_", 1)[0] + ext
     try:
-
-        url = "https://www.zohoapis.com/crm/v2/Leads/{}/Attachments".format(lead_id)
-
-        headers = {"Authorization": "Zoho-oauthtoken {}".format(access_token)}
-
-        fullpath = path
-        path, filename = os.path.split(fullpath)
-        root, ext = os.path.splitext(filename)
-        the_rest = root.rsplit("_", 1)
-
-        filename = the_rest[0] + ext
-
-        files = [("file", (filename, open(fullpath, "rb"), "image/png"))]
-
-        response = requests.post(url=url, files=files, headers=headers)
-
-        if response is not None:
-            print("HTTP Status Code : " + str(response.status_code))
-
-            print(response.json())
-        # CurlUrl = "curl 'https://www.zohoapis.com/crm/v2/Leads/{}/Attachments' -X POST -H 'Authorization: Zoho-oauthtoken {}' -F 'file=@{}'".format(
-        #     lead_id,
-        #     access_token,
-        #     path)
-        # out1, out2 = subprocess.getstatusoutput(CurlUrl)
-        # print(out1, out2)
+        with open(path, "rb") as screenshot:
+            response = _zoho_request(
+                "POST",
+                "/crm/v2/Leads/{}/Attachments".format(lead_id),
+                files=[("file", (filename, screenshot, "image/png"))],
+            )
+        celery_logger.info("attachment upload for lead %s: HTTP %s", lead_id, response.status_code)
+        return response.status_code
     except Exception:
-        print("Failed to Upload...")
-    return
-
-
-# SEARCH PROJECT ID
-"""
-def getProjectID(project_name, access_token):
-    url = 'https://www.zohoapis.com/crm/v3/coql'
-    # data = "{\r\n \"select_query\": \"select id from Deals where Deal_Name like '{}' limit 1\"\r\n}".format(project_name)
-    data = {
-        "select_query": "select id from Deals where Deal_Name like '{}' limit 1".format(project_name)
-    }
-    headers = {
-        'Authorization': 'Zoho-oauthtoken ' + str(access_token),
-    }
-    resp = post(url, data=json.dumps(data), headers=headers)
-
-    print('getProjectID')
-    print(resp.content)
-    try:
-        print(resp.request)
-    except:
-        pass
-
-    if resp.status_code == 200:
-        data = loads(resp.content)['data']
-        if data:
-            id = data[0]['id']
-            return id
-
-    return {'error': 'No such project'}
-"""
+        celery_logger.exception("failed to upload %s to Zoho lead %s", path, lead_id)
+        return None
 
 
 # SEARCH PROJECT ID
 
 
-def getProjectID(project_name, access_token):
-    url = "https://www.zohoapis.com/crm/v2/Deals/search"
+def _zoho_criteria_value(value):
+    # Zoho search criteria treat these characters as syntax unless escaped.
+    value = str(value)
+    for char in ("\\", "(", ")", ","):
+        value = value.replace(char, "\\" + char)
+    return value
+
+
+def getProjectID(project_name, access_token=None):
+    """Zoho Deal id for a project name or alias, or {"error": ...} when there is no match."""
+    name = _zoho_criteria_value(project_name)
     params = {
         "fields": "Deal_Name",
-        "criteria": "(Deal_Name:starts_with:{})or(Project_Alias_2:starts_with:{})or(Project_Alias:starts_with:{})".format(
-            project_name, project_name, project_name
-        ),
+        "criteria": "(Deal_Name:starts_with:{0})or(Project_Alias_2:starts_with:{0})or(Project_Alias:starts_with:{0})".format(name),
     }
-    headers = {
-        "Authorization": "Zoho-oauthtoken " + str(access_token),
-    }
-    resp = get(url, params=params, headers=headers)
+    response = _zoho_request("GET", "/crm/v2/Deals/search", params=params)
 
-    if resp.status_code == 200:
-        data = loads(resp.content)["data"]
+    # Zoho answers 204 with an empty body when nothing matches.
+    if response.status_code == 200:
+        data = response.json().get("data")
         if data:
-            id = data[0]["id"]
-            return id
+            return data[0]["id"]
 
     return {"error": "No such project"}
 
@@ -339,22 +285,11 @@ def getProjectID(project_name, access_token):
 # INSERT NEW RECORD IN ZOHO
 
 
-def insert_records(record, access_token):
-    url = "https://www.zohoapis.com/crm/v2/Leads/upsert"
-    headers = {
-        "Authorization": "Zoho-oauthtoken " + str(access_token),
+def insert_records(record, access_token=None):
+    request_body = {
+        "data": [record],
+        "duplicate_check_fields": ["Email", "Phone"],
+        "trigger": ["workflow"],
     }
-    request_body = dict()
-    record_list = list()
-    duplicate_check_fields = ["Email", "Phone"]
-    trigger = ["workflow"]
-    record_list.append(record)
-    request_body["data"] = record_list
-    request_body["duplicate_check_fields"] = duplicate_check_fields
-    request_body["trigger"] = trigger
-    response = post(url=url, headers=headers, data=dumps(request_body).encode("utf-8"))
-    if response is not None:
-        print("HTTP Status Code : " + str(response.status_code))
-        return {"response": str(response.content), "status_code": response.status_code}
-
-    return {"status": "Failed"}
+    response = _zoho_request("POST", "/crm/v2/Leads/upsert", json=request_body)
+    return {"response": str(response.content), "status_code": response.status_code}

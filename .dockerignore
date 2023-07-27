@@ -17,3 +17,8 @@ site_data.json
 zohodata.json
 lead_automation_v1.zip
 notes.txt
+
+.env
+logs
+storage
+venv

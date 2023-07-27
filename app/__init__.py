@@ -5,20 +5,16 @@ and creata a app
 
 from app.database import mongo
 from flask import Flask
-from celery import Celery
 from app.views.home import home
 from app.views.error_handler import errorHandler
 from config import config
-from config import CeleryConfig
 from app.views.site import site
 from app.views.lead import lead
+# One Celery app for the whole project, so `-A app.celery` and `-A app.tasks` start the same workers.
+from app.tasks import celery_app as celery  # noqa: F401
 import logging
 import os
 logging.basicConfig(level=logging.DEBUG)
-
-celery = Celery(__name__,
-                broker=CeleryConfig.BROKER_URL,
-                result_backend=CeleryConfig.RESULT_BACKEND)
 
 
 def create_app(config_name=None):
@@ -32,10 +28,11 @@ def create_app(config_name=None):
     if config_name is None:
         config_name = os.getenv("FLASK_CONFIG", "development")
     app = Flask(__name__)
-    
+
     app.config.from_object(config[config_name])
+    if not app.config["TESTING"]:
+        config[config_name].validate()
     app.logger.info("Lead Automation App created ")
-    # app.config.from_object(config[config_name])
     mongo.init_app(app)
     app.register_blueprint(home)
     app.register_blueprint(errorHandler)

@@ -1,20 +1,20 @@
 from datetime import datetime
 import json
 import logging
-from celery.result import AsyncResult
-from flask import Blueprint, Response, jsonify, redirect, render_template, request
-from config import Config
-from app.util.utility import bulk_mapping
-from app.util.request_handler import find_format
 import time
-from app.tasks import lead, bulk_lead
+
+from bson import json_util
+from celery.result import AsyncResult
+from flask import Blueprint, Response, jsonify, redirect, render_template, request, url_for
+
+from app.database import mongo
+from app.tasks import bulk_lead, celery_app, lead
+from app.util.request_handler import find_format
+from app.util.utility import bulk_mapping
 
 
-# from .. import tasks
 logging.basicConfig(
-    # filename= Config.LOG_PATH+"lead_automation.log",
     level=logging.INFO,
-    # format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
     encoding='utf-8'
     )
 
@@ -22,16 +22,13 @@ logging.basicConfig(
 # blueprint for the app route
 home = Blueprint("home", __name__)
 
-secret_key="REDACTED_FLASK_SECRET"
 
 @home.get("/tasks/<task_id>")
 def get_status(task_id):
-    logging.info(msg=request.get_data())
-    task_result = AsyncResult(task_id, backend=Config.CELERY_RESULT_BACKEND)
+    task_result = AsyncResult(task_id, app=celery_app)
     result = {
         "task_id": task_id,
-        # "task_status": task_result.status,
-        # "task_result": task_result.result
+        "task_status": task_result.status,
     }
     return jsonify(result), 200
 
@@ -45,168 +42,107 @@ def test_page():
 def homepage_post():
     try:
         logging.info(msg="request received")
-        logging.info(msg=request.headers)
-        logging.info(msg=request.get_data())
         start_time = time.time()
-        data = {}
-        # out = "{}"
-        print(request)
-        print(request.get_data())
-
-        # print(request.get_json())
         data = find_format(request)
-        if data == {}:
+        if not data:
             return Response("invalid request", 200)
-        if type(data) is list:
-            print(data)
-        elif type(data) is dict:
+        if isinstance(data, dict):
             data['source'] = "zoho"
-            print(data)
-            result = lead.apply_async(kwargs=data, queue="lead")
-            print("task executed succesfully")
-            # print(result.task_id)
-            # out={"task id" : result.task_id}
-        else:
-            print(data)
-
-        end_time = time.time()
-        print(f"Response time {end_time-start_time}")
+            lead.apply_async(kwargs=data, queue="lead")
+            logging.info("lead %s queued", data.get("lead_id"))
+        logging.info(f"Response time {time.time() - start_time}")
         return Response("received", 200)
 
-    except Exception as e:
-        print(str(e))
-        logging.info("invalid request received")
+    except Exception:
+        logging.exception("invalid request received")
         return Response("something went wrong\n", status=400)
 
 
-def retry_mapping(lead):
-    data = {
-        'interested_properties': lead['subproject'],
-        'email': lead['email'],
-        'name': lead['name'],
-        'phone': lead['phone']
+def retry_mapping(lead_request):
+    return {
+        'interested_properties': lead_request['subproject'],
+        'email': lead_request['email'],
+        'name': lead_request['name'],
+        'phone': lead_request['phone'],
+        'lead_id': lead_request.get('lead_id'),
+        'source': 'retry',
     }
-    return data
 
 
 @home.post("/retry_leads")
 def webhook_retry():
     try:
         logging.info(msg="retry_leads request received")
-        logging.info(msg=request.headers)
-        start_time = time.time()
-        data = {}
-        print(request)
-        print(request.get_data())
-        data = find_format(request)
-        if data == {}:
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict) or not all(k in data for k in ('subproject', 'email', 'name', 'phone')):
             return Response("invalid request", 200)
-        if type(data) is list:
-            print(data)
-        elif type(data) is dict:
-            data['source'] = "retry"
-            result = lead.apply_async(kwargs=retry_mapping(data), queue="lead")
-            print("task executed succesfully")
-        else:
-            print(data)
-        end_time = time.time()
-        print(f"Response time {end_time-start_time}")
+        lead.apply_async(kwargs=retry_mapping(data), queue="lead")
         return Response("received", 200)
 
-    except Exception as e:
-        print(str(e))
-        logging.info("invalid request received")
+    except Exception:
+        logging.exception("invalid request received")
         return Response("something went wrong\n", status=400)
+
+
+def _format_timestamp(value):
+    raw = value.get('$date') if isinstance(value, dict) else value
+    try:
+        parsed = datetime.strptime(str(raw).split(".")[0].replace("Z", ""), "%Y-%m-%dT%H:%M:%S")
+    except ValueError:
+        return str(raw)
+    return parsed.strftime("%d/%m/%Y %H:%M:%S")
 
 
 # UPLOAD
 
 @home.route('/bulk_leads_list')
-async def bulk_leads():
-    from app.database import mongo
-    from bson import json_util
+def bulk_leads():
     try:
-        db=mongo.db
-        db = db["bulk_leads"]
-        x=[]
-        cur = db.find({'source': 'bulk_upload'}).sort("_id",-1).limit(50)
-        result=json.loads(json_util.dumps(cur))
+        cur = mongo.db["bulk_leads"].find({'source': 'bulk_upload'}).sort("_id", -1).limit(50)
         leads_details = []
-        for lead in result:
-            lead['phone'] = lead['phone'][1:]
-            lead_detail = dict()
-            for key, value in lead.items():
-                lead_detail[key] = value
-                if key == "created_time":
-                    lead_detail[key] = value['$date']
-                    lead_detail[key] = str(lead_detail[key]).split(".")[0]
-                    lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
-                    lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S") 
-            leads_details.append(lead_detail)                
-        leads_details = json.loads(json_util.dumps(leads_details))
+        for bulk_row in json.loads(json_util.dumps(cur)):
+            bulk_row['phone'] = str(bulk_row.get('phone', ''))[1:]
+            if 'created_time' in bulk_row:
+                bulk_row['created_time'] = _format_timestamp(bulk_row['created_time'])
+            leads_details.append(bulk_row)
 
         return render_template('/bulk/list.html', x=leads_details)
     except Exception as e:
+        logging.exception("could not list bulk leads")
         return jsonify({"Status": "Error", "Error": str(e)})
-
-       # for i in result:
-        #     i['phone'] = i['phone'][1:]
-        #     x.append(i)
-        #     for key,value in i.items():
-        #         if key == "created_time":
-        #             i[key] = value["$date"]
-        #             i[key] = str(i[key]).split(".")[0]
-        #             i[key] = datetime.strptime(str(i[key]), "%Y-%m-%dT%H:%M:%S")    
-        #             i[key] = i[key].strftime("%d/%m/%Y") + " " + i[key].strftime("%H:%M:%S") 
-        #         x.append(i) 
-
 
 
 # UPLOAD BULK CSV
 
-@home.route("/bulk_upload", methods=["GET","POST"])
-async def uploader_file():
-    from app.database import mongo
+@home.route("/bulk_upload", methods=["GET", "POST"])
+def uploader_file():
     import pandas as pd
 
     if request.method == "GET":
         return render_template("/bulk/upload.html")
-    if request.method == "POST":
-        logging.info(msg="Bulk upload request received")
-        print('Bulk upload request received')
+
+    logging.info(msg="Bulk upload request received")
+    try:
+        df = pd.read_csv(request.files['file'])
+    except Exception:
+        logging.exception("could not read the uploaded CSV")
+        return Response("Could not read the uploaded file. Upload a CSV with the bulk lead columns.", status=400)
+
+    queued = failed = 0
+    for row_number, row in enumerate(df.to_dict(orient="records"), start=2):
         try:
-            f = request.files['file']
-            db=mongo.db
-            df = pd.read_csv(f)
-            data = df.to_dict(orient="records")
-            for val in data:
-                try:
-                    lead_data = bulk_mapping(val)
-                    val = bulk_mapping(val)
-                    val['created_time'] = datetime.now()
-                    lead_data['source'] = 'bulk_upload'
-                    val['source'] = 'bulk_upload'
-                    db.bulk_leads.update_one(
-                        {
-                            'lead_phone': val['phone']
-                        },
-                        {
-                            '$set': val
-                        },
-                        upsert = True
-                    )
-                    # db.bulk_leads.insert_one(val)
-                    logging.info(msg='Lead raw')
-                    logging.info(msg=val)
-                    logging.info(msg='Lead parsed')
-                    logging.info(msg=lead_data)
-                    result = bulk_lead.apply_async(kwargs=lead_data, queue="bulk")
-                    # result = lead.apply_async(kwargs=lead_data, queue="lead")
-                    logging.info(msg='Added to bulk tasks')
-                    logging.info(msg=result)
-                    print(result)
-                except:
-                    pass
-        except:
-            pass
-        return redirect('http://automation.example.com/bulk_leads_list')
+            lead_data = bulk_mapping(row)
+            lead_data['source'] = 'bulk_upload'
+            record = dict(lead_data, created_time=datetime.now())
+            mongo.db.bulk_leads.update_one(
+                {'phone': record['phone']},
+                {'$set': record},
+                upsert=True
+            )
+            bulk_lead.apply_async(kwargs=lead_data, queue="bulk")
+            queued += 1
+        except Exception:
+            failed += 1
+            logging.exception("bulk upload: skipped CSV row %s", row_number)
+    logging.info("bulk upload: %s queued, %s skipped", queued, failed)
+    return redirect(url_for('home.bulk_leads'))

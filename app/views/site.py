@@ -1,22 +1,17 @@
 """
 website routing
 """
-import os
+import json
+import logging
 
-# from bson.objectid import ObjectId
-# from bson.json_util import dumps as bson_dumps
 from flask import Blueprint, request, render_template
-from pymongo import MongoClient
 from wtforms import Form, StringField, URLField
 from wtforms import validators
-# from bson.json_util import dumps
+
+from app.database import mongo
 
 
 site = Blueprint("site", __name__, url_prefix="/site", template_folder="")
-
-
-mongocursor = MongoClient(os.getenv("MONGO_DB"))
-db = mongocursor['lead_automation']
 
 
 class SiteForm(Form):
@@ -45,17 +40,16 @@ def view_site():
     Returns:
         html: this load page from site view
     """
-    print("view site working")
-    data = ""
+    data = []
     try:
-        data = db.Site.aggregate(
+        data = list(mongo.db.Site.aggregate(
             [
                 {
                     "$project":
                     {
                         "name": 1,
                         "status": 1,
-                        "projectlist": {"$size": ["$project_list"]}
+                        "projectlist": {"$size": {"$ifNull": ["$project_list", []]}}
                     }
                 },
                 {
@@ -63,14 +57,9 @@ def view_site():
                         {"name": 1}
                 }
             ]
-        )
-        # data=dumps(data)
-
-    except Exception as e:
-        print("exception occured")
-        print(str(e))
-    # for i in data:
-    #     print(i)
+        ))
+    except Exception:
+        logging.exception("could not list sites")
 
     return render_template("site/view_site.html", data=data)
 
@@ -83,39 +72,53 @@ def site_add():
     Returns:
         html: show the form for add the site
     """
-    print("site route working")
     form = SiteForm()
     return render_template("site/addsite.html", form=form)
+
+
+def _json_field(form_value, key, default):
+    raw = form_value.get(key, "").strip()
+    return json.loads(raw) if raw else default
 
 
 @site.post("/add")
 def add_to_db():
     """
-    Handle the post request from the route /add
+    Handle the post request from the route /add: store a new builder site.
+    Site data is a JSON object (merged into the site document, e.g. login details);
+    project list is a JSON array of projects, each with project_name and keywords.
     Returns:
         html: acknowledgement of the post request
     """
+    form_value = request.form.to_dict()
+    name = form_value.get("site_name", "").strip()
+    if not name:
+        return render_template("site/message.html", message="site name is required"), 400
     try:
-        form_value = request.form.to_dict()
-        print(form_value)
-        form_name = form_value.get("site_name", "")
-        form_uri = form_value.get("uri", "")
-        form_sitedata = form_value.get("sitedata", "")
+        site_data = _json_field(form_value, "sitedata", {})
+        project_list = _json_field(form_value, "projectlist", [])
+    except json.JSONDecodeError as error:
+        return render_template("site/message.html", message="invalid JSON: {}".format(error)), 400
+    if not isinstance(site_data, dict) or not isinstance(project_list, list):
+        return render_template("site/message.html",
+                               message="site data must be a JSON object and project list a JSON array"), 400
+    if mongo.db.Site.find_one({"name": name}):
+        return render_template("site/message.html", message="site '{}' already exists".format(name)), 409
 
-        form_projectlist = form_value.get("projectlist", "")
-
-        print(form_name, form_uri, form_sitedata, form_projectlist, sep="\n")
-
-        return render_template("site/message.html", message="sumbitted data")
-
-    except Exception as d_exception:
-        print("error occured")
-        print(str(d_exception))
-        return render_template("site/message.html", message="failed")
-        # db.Site.insert_one()
+    document = dict(site_data)
+    document.update({
+        "name": name,
+        "url": form_value.get("uri", "").strip(),
+        "status": 1,
+        "project_list": project_list,
+    })
+    mongo.db.Site.insert_one(document)
+    return render_template("site/message.html", message="site '{}' added".format(name))
 
 
-@site.get("/site/<site_name>")
+@site.get("/<site_name>")
 def find_site(site_name):
-    site_detail = db.Site.find_one({"name": site_name})
-    return render_template("meassage", message=site_detail)
+    site_detail = mongo.db.Site.find_one({"name": site_name}, {"_id": 0})
+    if site_detail is None:
+        return render_template("site/message.html", message="no site named '{}'".format(site_name)), 404
+    return render_template("site/message.html", message=site_detail)

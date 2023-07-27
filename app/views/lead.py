@@ -1,178 +1,127 @@
-import logging
-from datetime import datetime
-from flask import Blueprint, render_template, request,jsonify
-from app.database import mongo
-from bson import json_util
 import json
-from pymongo import MongoClient
-from app.functions.error_site_base import SiteAutomator1
+import logging
+from datetime import datetime, time as dtime
+
+import pytz
+from bson import json_util
+from flask import Blueprint, jsonify, render_template, request
+
+from app.database import mongo
 
 
-# from .. import tasks
 logging.basicConfig(
-    # filename= Config.LOG_PATH+"lead_automation.log",
     level=logging.INFO,
-    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
+    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
     encoding='utf-8'
     )
 
+IST = pytz.timezone("Asia/Kolkata")
 
 # blueprint for the app route
-lead = Blueprint("lead", __name__,url_prefix="/lead")
+lead = Blueprint("lead", __name__, url_prefix="/lead")
+
+
+def _format_timestamp(value):
+    raw = value.get('$date') if isinstance(value, dict) else value
+    try:
+        parsed = datetime.strptime(str(raw).split(".")[0].replace("Z", ""), "%Y-%m-%dT%H:%M:%S")
+    except ValueError:
+        return str(raw)
+    return parsed.strftime("%d/%m/%Y %H:%M:%S")
+
+
+def _lead_fields(lead_row):
+    """Top-level lead fields with timestamps made readable, without the project list."""
+    detail = {key: value for key, value in lead_row.items() if key != 'project'}
+    for key in ('created_at', 'modified_time'):
+        if key in detail:
+            detail[key] = _format_timestamp(detail[key])
+    return detail
 
 
 @lead.get("/all")
 def leads_all():
+    """One row per (lead, project) registration attempt, newest leads first."""
     try:
-        db=mongo.db
-        lead_all = db.leads.find({"project":{"$exists":"true"}},{"_id":0}).sort("_id",-1).limit(100)
-        lead_all = json.loads(json_util.dumps(lead_all))
+        lead_all = mongo.db.leads.find({"project": {"$exists": True}}, {"_id": 0}).sort("_id", -1).limit(100)
         leads_details = []
-        try:
-            for lead in lead_all:
-                for project in lead['project']:
-                    lead_detail = dict()
-                    for key, value in lead.items():
-                        if key != 'project':
-                            lead_detail[key] = value
-                        if key == 'created_at':
-                            lead_detail[key] = value['$date']
-                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
-                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
-                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S") 
-                        if key == 'modified_time':
-                            lead_detail[key] = value['$date'] 
-                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
-                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
-                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S")                                                  
-                    for key, value in project.items():
-                        lead_detail[key] = value
-                        if key == 'applied_time':
-                            lead_detail[key] = value['$date']
-                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
-                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
-                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S")                    
-                    leads_details.append(lead_detail)
-            leads_details = json.loads(json_util.dumps(leads_details))
-            print("lead_all posted")
-        except:
-            leads_details = lead_all
+        for lead_row in json.loads(json_util.dumps(lead_all)):
+            for project in lead_row.get('project') or []:
+                lead_detail = _lead_fields(lead_row)
+                lead_detail.update(project)
+                if 'applied_time' in project:
+                    lead_detail['applied_time'] = _format_timestamp(project['applied_time'])
+                leads_details.append(lead_detail)
         return render_template("/lead/leads.html", data=leads_details)
     except Exception as e:
-        return(str(e))
+        logging.exception("could not list leads")
+        return str(e), 500
 
 
 @lead.get("/today")
 def lead_today():
+    """Leads modified today (IST), one row per lead with its projects and matched keywords."""
     try:
-        db=mongo.db
-        lead_all = db.leads.find({"project":{"$exists":"true"}},{"_id":0}).sort("_id",-1).limit(50)
-        lead_all = json.loads(json_util.dumps(lead_all))
+        start_of_day = IST.localize(datetime.combine(datetime.now(IST).date(), dtime.min))
+        lead_all = mongo.db.leads.find(
+            {"project": {"$exists": True}, "modified_time": {"$gte": start_of_day}},
+            {"_id": 0},
+        ).sort("_id", -1).limit(50)
         leads_details = []
-        try:
-            for lead in lead_all:
-                arr = []
-                mrr = []
-                for project in lead['project']:
-                    lead_detail = dict()
-                    for key, value in lead.items():
-                        if key != 'project':
-                            lead_detail[key] = value
-                        if key == 'created_at':
-                            lead_detail[key] = value['$date']
-                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
-                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
-                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S") 
-                        if key == 'modified_time':  
-                            lead_detail[key] = value['$date'] 
-                            lead_detail[key] = str(lead_detail[key]).split(".")[0]
-                            lead_detail[key] = datetime.strptime(str(lead_detail[key]), "%Y-%m-%dT%H:%M:%S")    
-                            lead_detail[key] = lead_detail[key].strftime("%d/%m/%Y") + " " + lead_detail[key].strftime("%H:%M:%S")                            
-                    for key, value in project.items():
-                        # if key == 'projectname':
-                        #     arr.append(value)
-                        if key == 'subproject':
-                            arr.append(value)
-                        if key == 'match_keywords':
-                            # lead_detail[key] = value
-                            for n in value:
-                                mrr.append(n)
-                #Removing duplicates from lead_detail['project']
-                lead_detail['match_keywords'] = [*set(mrr)]
-                lead_detail['project'] = [*set(arr)]
-                
-                lead_detail['project_list'] = ','.join(map(str, lead_detail['project']))
-                leads_details.append(lead_detail)
-            leads_details = json.loads(json_util.dumps(leads_details))
-        except:
-            pass
+        for lead_row in json.loads(json_util.dumps(lead_all)):
+            projects = lead_row.get('project') or []
+            lead_detail = _lead_fields(lead_row)
+            lead_detail['project'] = sorted({p['subproject'] for p in projects if p.get('subproject')})
+            lead_detail['match_keywords'] = sorted({k for p in projects for k in p.get('match_keywords') or []})
+            lead_detail['project_list'] = ','.join(lead_detail['project'])
+            leads_details.append(lead_detail)
         return render_template("/lead/view.html", data=leads_details)
     except Exception as e:
-        return(str(e))
-
-    except Exception as e:
-        return(str(e))
+        logging.exception("could not list today's leads")
+        return str(e), 500
 
 
 @lead.get("/error_retry")
 def error_retry():
     return render_template('/lead/error_retry.html')
 
+
 @lead.post("/error_retry")
 def getvalue():
-    if request.method == "POST":
-        logging.error("error_retry_working")
-        projectname = request.form['projectname']
-        phone_no = request.form['phone_no']
-        lead_id = request.form['lead_id']
-        logging.error(projectname)
-        logging.error(phone_no)
-        logging.error(lead_id)
-        try:
-            MONGO_DB = "REDACTED"
-            CONN = MongoClient(MONGO_DB)
-            DB = CONN['lead_automation']
-            logging.error("data connected successfully")
+    from app.functions.error_site_base import SiteAutomator1
 
-            #site_data
+    projectname = request.form.get('projectname', '').strip()
+    phone_no = request.form.get('phone_no', '').strip()
+    lead_id = request.form.get('lead_id', '').strip()
+    logging.info("error retry requested: project=%s lead_id=%s", projectname, lead_id)
+    if not (projectname and phone_no and lead_id):
+        return jsonify({"Status": "Error", "Error": "projectname, phone_no and lead_id are all required"}), 400
 
-            site_data = DB.Site.find_one({"project_list.project_name": projectname})
-            logging.error(site_data)
-            logging.error("site data fetched successfully")
+    site_data = mongo.db.Site.find_one({"project_list.project_name": projectname})
+    if site_data is None:
+        return jsonify({"Status": "Error", "Error": "no site has a project named '{}'".format(projectname)}), 404
+    lead_data = mongo.db.leads.find_one({'phone': phone_no})
+    if lead_data is None:
+        return jsonify({"Status": "Error", "Error": "no lead with phone {}".format(phone_no)}), 404
 
-            #lead_data
-
-            lead_data  = DB.leads.find_one({'phone': phone_no})
-            logging.error(lead_data)
-            logging.error("lead data fetched successfully")
-
-            site_name = site_data['name']
-            logging.error("site_name" + site_name)
-            site_projectname = projectname
-            logging.error("projectname" + projectname)
-            browserAutomation = SiteAutomator1(  
-                                            phone = lead_data["phone"],
-                                            email= lead_data["email"],
-                                            lead_data= lead_data,
-                                            match_keywords= [],
-                                            site_data= site_data,
-                                            sub_project_name = site_projectname,
-                                            lead_id = lead_id
-                                            )
-            # browserAutomation.projectCheck(site_name, site_projectname)
-            logging.error("browser_automation working")
-            browserAutomation.automated_flow()
-            logging.error("browser automation automated_flow")
-            browserAutomation.upload_data()
-            logging.error("browser automation upload_data")
+    browserAutomation = None
+    try:
+        browserAutomation = SiteAutomator1(
+                                        phone=lead_data["phone"],
+                                        email=lead_data["email"],
+                                        lead_data=lead_data,
+                                        match_keywords=[],
+                                        site_data=site_data,
+                                        sub_project_name=projectname,
+                                        lead_id=lead_id
+                                        )
+        # automated_flow records the result and uploads the screenshots itself.
+        browserAutomation.automated_flow()
+    except Exception as e:
+        logging.exception("error retry failed")
+        return jsonify({"Status": "Error", "Error": str(e)}), 500
+    finally:
+        if browserAutomation is not None:
             browserAutomation.teardown()
-            logging.error("browser automation teardown")
-        
-        
-        
-        except Exception as e:
-            logging.error("error in whole function")
-            return jsonify({"Status": "Error", "Error": str(e)})
-
 
     return render_template("/lead/error_retry_output.html")

@@ -1,18 +1,24 @@
-from asyncio.log import logger
-from celery import Celery
-from app.util.utility import getPhonenumber
-from config import CeleryConfig
-from config import keyword_field, phone_field
-from celery import shared_task, group
-from bson import json_util
-from app.functions.leadautomator import LeadAutomator
+import glob
 import json
-from celery.utils.log import get_task_logger
-from app.functions.finder import common_member
+import os
+import time
+from datetime import datetime, timedelta
+
+import pytz
+import requests
+import xmltodict
+from bson import json_util
+from celery import Celery, group, shared_task
 from celery.schedules import crontab
+from celery.signals import worker_init
+from celery.utils.log import get_task_logger
 
+from app.database import get_db
+from app.functions.finder import common_member
+from app.functions.leadautomator import LeadAutomator
+from app.util.utility import getPhonenumber, getProjectID, insert_records, refresh_access_token
+from config import CeleryConfig, Config, keyword_field, phone_field
 
-MONGO_DB = "REDACTED"
 
 celery_logger = get_task_logger(__name__)
 celery_app = Celery(__name__,
@@ -35,15 +41,15 @@ celery_app.conf.task_routes = {
 celery_app.conf.beat_schedule = {
         "run_magicbricks_api": {
             "task": "app.tasks.run_magicbricks_api",
-            "schedule": crontab(hour='*/1')
+            "schedule": crontab(minute=0)
         },
         "run_99acres_api": {
             "task": "app.tasks.run_99acres_api",
-            "schedule": crontab(hour='*/1')
+            "schedule": crontab(minute=0)
         },
         "removing_older_img": {
             "task": "app.tasks.removing_older_img",
-            "schedule": crontab(hour='23')
+            "schedule": crontab(minute=0, hour=23)
         },
         "save_access_token": {
             "task": "app.tasks.save_access_token",
@@ -51,62 +57,53 @@ celery_app.conf.beat_schedule = {
         }
 }
 
+IST = pytz.timezone('Asia/Kolkata')
+SCREENSHOT_RETENTION_DAYS = 200
+
+
+@worker_init.connect
+def check_settings(**_):
+    Config.validate()
+
 
 @celery_app.task(name="app.tasks.check")
 def check_celery():
-    print("celery working")
+    celery_logger.info("celery working")
+
+
+def _dispatch_to_sites(lead_data, automate_task, queue):
+    """Create the lead, match it to site projects by keyword, and fan out one browser task per project."""
+    automator = LeadAutomator(lead_data=lead_data)
+    automator.create_lead()
+    for field in keyword_field:
+        automator.get_keywords(lead_data.get(field["field"]) or "", field["seperator"])
+    if len(automator.keywords) == 0:
+        automator.get_keywords("None (default)", ";")
+    site_list = json.loads(json_util.dumps(automator.search_by_keyword()))
+
+    task_list = []
+    for _site in site_list:
+        _site.setdefault('days', 30)
+        celery_logger.info(f"Site: {_site['name']}; Project: {_site['project_list']['project_name']}")
+        task_list.append(automate_task.s(_site, lead_data))
+    if task_list:
+        group(task_list).apply_async(queue=queue)
+    return len(task_list)
 
 
 @celery_app.task()
 def lead(**lead_data):
     try:
         celery_logger.info("lead automator started")
-        print("lead automator started")
-        lead_data["email"] = str(lead_data["email"]).lower()
-        lead_data["phone"] = getPhonenumber([lead_data[field] for field in phone_field])
-        logger.info(lead_data['phone'])
-        print(lead_data['phone'])
+        lead_data["email"] = str(lead_data.get("email", "")).lower()
+        lead_data["phone"] = getPhonenumber([lead_data.get(field) for field in phone_field])
         if lead_data['phone'] is None:
             return "phonenumber not found"
+        lead_data.setdefault("source", "zoho")
 
-        logger.info("lead data in tasks.py")
-        logger.info(lead_data) 
-        print("lead data in tasks.py")
-        print(lead_data)
-
-        LA = LeadAutomator(lead_data=lead_data)
-        LA.create_lead()
-        for _ in keyword_field:
-            LA.get_keywords(lead_data.get(_["field"], ""), ";")
-        if len(LA.keywords) == 0:
-            LA.get_keywords("None (default)", ";")
-        site_list = LA.search_by_keyword()
-        print("site_list in task.py")
-        print(site_list)
-        site_list = json.loads(json_util.dumps(site_list))
-
-        logger.info("site list in tasks.py")
-        logger.info(site_list) 
-        print("site list in tasks.py")
-        print(site_list)
-
-        task_list = []
-        for _site in site_list:
-            site_name = _site['name']
-            site_projectname = _site['project_list']['project_name']
-            try:
-                if 'days' not in _site:
-                    _site['days'] = 30
-            except:
-                _site['days'] = 30
-            celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
-            task_list.append(browserAutomate.s(_site, lead_data))
-        job = group(task_list)
-        output = job.apply_async(queue="browser")
-        print(output)
-        result = "success"
-        celery_logger.info("task sent to browser queue")
-        return result
+        sent = _dispatch_to_sites(lead_data, browserAutomate, "browser")
+        celery_logger.info("%s task(s) sent to browser queue", sent)
+        return "success"
     except Exception:
         celery_logger.exception("problem in sending lead")
         return "problem in sending lead"
@@ -116,476 +113,262 @@ def lead(**lead_data):
 def bulk_lead(**lead_data):
     try:
         celery_logger.info("bulk lead automator started")
-        print("bulk lead automator started")
-        print(lead_data)
-        lead_data["email"] = str(lead_data["email"]).lower()
-        if getPhonenumber([lead_data['phone']]):
-            lead_data["phone"] = getPhonenumber([lead_data['phone']])
+        lead_data["email"] = str(lead_data.get("email", "")).lower()
+        lead_data["phone"] = getPhonenumber([lead_data.get('phone')])
         if lead_data['phone'] is None:
-            return "phonenumber not found"
-        LA = LeadAutomator(lead_data=lead_data)
-        LA.create_lead()
-        for _ in keyword_field:
-            LA.get_keywords(lead_data.get(_["field"], ""), ";")
-        if len(LA.keywords) == 0:
-            LA.get_keywords("None (default)", ";")
-        site_list = LA.search_by_keyword()
-        site_list = json.loads(json_util.dumps(site_list))
-        print('site_list: ', site_list)
-        task_list = []
-        for _site in site_list:
-            site_name = _site['name']
-            site_projectname = _site['project_list']['project_name']
-            try:
-                if 'days' not in _site:
-                    _site['days'] = 30
-            except:
-                _site['days'] = 30
-            celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
-            task_list.append(browserAutomateBulk.s(_site, lead_data))
-        print('task_list: ', task_list)
-        job = group(task_list)
-        output = job.apply_async(queue='bulk')
-        print(output)
-        result = "success"
-        celery_logger.info("task sent to browser queue")
+            return {"msg": "phonenumber not found"}
+        lead_data.setdefault("source", "bulk_upload")
+
+        sent = _dispatch_to_sites(lead_data, browserAutomateBulk, "bulk")
+        celery_logger.info("%s task(s) sent to bulk queue", sent)
         return {"result": "success"}
     except Exception:
         celery_logger.exception("problem in sending lead")
         return {"msg": "problem in sending lead"}
 
+
+def _project_id_or_default(project_name):
+    project_id = getProjectID(project_name)
+    if isinstance(project_id, dict):
+        project_id = getProjectID('None')
+    return project_id
+
+
+def _recently_synced(api_leads, phone_key, phone):
+    return api_leads.find_one(
+        {
+            phone_key: phone,
+            'latest_update': {'$gte': datetime.now() - timedelta(days=1)}
+        }
+    ) is not None
+
+
 # MAGICBRICKS AUTOMATION
 
 @celery_app.task
 def run_magicbricks_api():
+    if not Config.MAGICBRICKS_API_KEY:
+        return {'error': 'MAGICBRICKS_API_KEY is not set'}
     try:
-        import requests
-        from datetime import datetime, timedelta
-        import pytz
-        from json import loads
-        from app.util.utility import insert_records, get_access_token, getProjectID
-        from pymongo import MongoClient
-
-        print('Magicbricks')
-
-        today = datetime.now() + timedelta(days=2)
-        yesterday = today - timedelta(days=4)
-        today = today.astimezone(pytz.timezone('Asia/Kolkata'))
-        yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
-
-        yesterday = datetime.strptime(str(yesterday).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
-        today = datetime.strptime(str(today).split(' ')[0], '%Y-%m-%d').strftime('%Y%m%d')
-        
-        key = 'REDACTED_MAGICBRICKS_KEY'
+        now = datetime.now(IST)
         params = {
-            'key': key,
-            'endDate': today,
-            'startDate': yesterday,
+            'key': Config.MAGICBRICKS_API_KEY,
+            'startDate': (now - timedelta(days=2)).strftime('%Y%m%d'),
+            'endDate': (now + timedelta(days=2)).strftime('%Y%m%d'),
         }
-        url = 'http://rating.magicbricks.com/mbRating/download.json'
-        resp = requests.get(url = url, params = params)
-        leads = loads(resp.content)
-        logs = []
-
-        CONN = MongoClient(MONGO_DB)
-        DB = CONN['lead_automation']
-        api_leads = DB['API_leads']
-
-        all_leads = leads['leadPojo']['leads']
-
+        resp = requests.get('http://rating.magicbricks.com/mbRating/download.json', params=params, timeout=60)
+        resp.raise_for_status()
+        all_leads = (resp.json().get('leadPojo') or {}).get('leads') or []
         if len(all_leads) == 0:
             return {'status': 'Empty'}
 
+        api_leads = get_db()['API_leads']
+        logs = []
         for input in all_leads:
-            # print(input)
-            history = api_leads.find(
-                {
-                    'mobile': input['mobile'],
-                    'latest_update': {
-                        '$gte': datetime.now() - timedelta(days=1)
-                    }
+            if _recently_synced(api_leads, 'mobile', input.get('mobile')):
+                continue
+            try:
+                msg = str(input.get('msg') or '')
+                apartment_names = '2 BHK'
+                if '4 BHK' in msg:
+                    apartment_names = '4 BHK'
+                elif '3 BHK' in msg:
+                    apartment_names = '3 BHK'
+                if not input.get('name'):
+                    input['name'] = 'Magicbricks User'
+                if not input.get('email'):
+                    input['email'] = str(input['mobile']) + '@example.com'
+                details = (msg + '\n\n' + str(input))[:200]
+                data = {
+                    'Configuration1': apartment_names,
+                    'Country_Code': '+' + str(input.get('isd') or '91'),
+                    'City': input.get('city'),
+                    'Email': input['email'],
+                    'Phone': input['mobile'],
+                    'Project_Enquired_for': {'id': _project_id_or_default(input.get('project'))},
+                    'Full_Name': input['name'],
+                    'Lead_Source': 'Magicbricks',
+                    'Last_Name': input['name'],
+                    'Initial_Enquiry_Particulars_Automation': details
                 }
-            )
-            history = json.loads(json_util.dumps(history))
-            # print(history)
+                locality = input.get('locality')
+                if not locality:
+                    data['Interested_Localities'] = None
+                elif isinstance(locality, str):
+                    data['Interested_Localities'] = [locality]
+                else:
+                    data['Interested_Localities'] = list(locality)
 
-            if len(history) == 0:
-                print(input)
-                try:
-                    access_token = get_access_token()
-                    project_id = getProjectID(input['project'], access_token)
-                    print((input['project'], project_id))
-                    if 'error' in project_id:
-                        access_token = get_access_token()
-                        project_id = getProjectID('None', access_token)
-                    apartment_names = '2 BHK'
-                    if '4 BHK' in input['msg']:
-                        apartment_names = '4 BHK'
-                    elif '3 BHK' in input['msg']:
-                        apartment_names = '3 BHK'
-                    if 'name' not in input or input['name'] == None:
-                        input['name'] = 'Magicbricks User'
-                    if 'email' not in input or input['email'] == None:
-                        input['email'] = str(input['mobile']) + '@example.com'
-                    details = str(input['msg']) + str('\n\n') + str(input)
-                    details = details[:200]
-                    data = {
-                        'Configuration1': apartment_names,
-                        'Country_Code': '+' + str(input['isd']),
-                        'City': input['city'],
-                        'Email': input['email'],
-                        'Phone': input['mobile'],
-                        'Project_Enquired_for': dict({'id': project_id}),
-                        'Full_Name': input['name'],
-                        'Lead_Source': 'Magicbricks',
-                        'Last_Name': input['name'],
-                        'Initial_Enquiry_Particulars_Automation': details
-                    }
-                    print(('data 1', data))
-                    if not input['locality']:
-                        data['Interested_Localities'] = None
-                    elif type(input['locality']) == str:
-                        data['Interested_Localities'] = [input['locality']]
-                    else:
-                        data['Interested_Localities'] = list(input['locality'])                
-                    print(data)
-                    response = insert_records(data, access_token)
-                    print(response)
-                    logs.append(response)
-                    input['latest_update'] = datetime.now()
-                    input['response'] = response
-                    api_leads.update_one(
-                            {
-                                'mobile': input['mobile']
-                            },
-                            {
-                                '$set': input
-                            },
-                            upsert = True
-                        )
+                response = insert_records(data)
+                logs.append(response)
+                input['latest_update'] = datetime.now()
+                input['response'] = response
+                api_leads.update_one({'mobile': input['mobile']}, {'$set': input}, upsert=True)
 
-                except Exception as e:
-                    logs.append(str(e))
+            except Exception as e:
+                celery_logger.exception("Magicbricks lead failed")
+                logs.append(str(e))
 
         return logs
-    
-    except Exception as e:
-        return {'error': str(e)}
 
+    except Exception as e:
+        celery_logger.exception("Magicbricks sync failed")
+        return {'error': str(e)}
 
 
 # 99ACRES AUTOMATION
 
+def _format_99acres_lead(lead):
+    contact = lead.get('CntctDtl') or {}
+    query = lead.get('QryDtl') or {}
+    phone = contact.get('Phone')
+    info = query.get('QryInfo')
+    try:
+        country_code = str(phone).split('-')[0][1:] or '91'
+    except Exception:
+        country_code = '91'
+    return {
+        'Full_Name': contact.get('Name') or '99acres User',
+        'Email': contact.get('Email') or str(phone) + '@example.com',
+        'Phone': phone,
+        'Project_Enquired_for': query.get('ProjName'),
+        'Automation Updates': 'Subject: ' + str(info)[:200] if info else 'NIL',
+        'Country_Code': country_code,
+    }
+
+
 @celery_app.task
 def run_99acres_api():
+    if not (Config.ACRES99_USERNAME and Config.ACRES99_PASSWORD and Config.ACRES99_API_TOKEN):
+        return {'error': '99acres credentials are not set'}
     try:
-        import requests
-        from datetime import datetime, timedelta
-        import pytz
-        import xmltodict
-        from bson import json_util
-        from app.util.utility import insert_records, get_access_token, getProjectID
-        from pymongo import MongoClient
-
-        print('99acres')
-
-        today = datetime.now()
-        yesterday = today - timedelta(days=1)
-        today = today.astimezone(pytz.timezone('Asia/Kolkata'))
-        yesterday = yesterday.astimezone(pytz.timezone('Asia/Kolkata'))
-        today = datetime.strptime(str(today).split('.')[0], "%Y-%m-%d %H:%M:%S")
-        yesterday = datetime.strptime(str(yesterday).split('.')[0], "%Y-%m-%d %H:%M:%S")
-
+        now = datetime.now(IST)
         # FORMAT: 2022-11-29 23:59:59
+        today = now.strftime("%Y-%m-%d %H:%M:%S")
+        yesterday = (now - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
 
-        username = 'REDACTED_99ACRES_USER'
-        password = 'REDACTED'
-        url = "https://www.99acres.com/99api/v1/getmy99Response/REDACTED_99ACRES_TOKEN/uid/"
+        url = "https://www.99acres.com/99api/v1/getmy99Response/{}/uid/".format(Config.ACRES99_API_TOKEN)
+        query = xmltodict.unparse({'query': {
+            'user_name': Config.ACRES99_USERNAME,
+            'pswd': Config.ACRES99_PASSWORD,
+            'start_date': yesterday,
+            'end_date': today,
+        }}, full_document=False)
+        payload = {'xml': "<?xml version='1.0'?>" + query}
+        response = requests.post(url, data=payload, timeout=60)
+        response.raise_for_status()
+        resp = (xmltodict.parse(response.content).get('Xml') or {}).get('Resp') or []
+        # xmltodict returns a dict, not a list, when there is exactly one lead.
+        if isinstance(resp, dict):
+            resp = [resp]
 
-        payload={'xml': '<?xml version=\\\'1.0\\\'?><query><user_name>{}</user_name><pswd>{}</pswd><start_date>{}</start_date><end_date>{}</end_date></query>'.format(username, password, yesterday, today)}
-        files=[]
-        headers = {}
-        response = requests.request("POST", url, headers=headers, data=payload, files=files)
-        data_dict = xmltodict.parse(response.content)
-        all_leads = data_dict['Xml']['Resp']
         formatted_leads = []
-
-        for lead in all_leads:
+        for lead in resp:
             try:
-                data = dict()
-                if 'Name' not in lead['CntctDtl'] or lead['CntctDtl'] == None:
-                    data['Full_Name'] = '99acres User'
-                else:
-                    data['Full_Name'] = lead['CntctDtl']['Name']
-                if 'Email' not in lead['CntctDtl'] or lead['CntctDtl'] == None:
-                    data['Email'] = str(lead['CntctDtl']['Phone']) + '@example.com'
-                else:
-                    data['Email'] = lead['CntctDtl']['Email']
-                if 'Phone' not in lead['CntctDtl'] or lead['CntctDtl'] == None:
-                    data['Phone'] = None
-                else:
-                    data['Phone'] = lead['CntctDtl']['Phone']                    
-                try:
-                    data['Project_Enquired_for'] = lead['QryDtl']['ProjName']
-                except:
-                    data['Project_Enquired_for'] = None
-                if 'QryInfo' not in lead['QryDtl']:
-                    data['Automation Updates'] = 'NIL'
-                else:
-                    data['Automation Updates'] = str('Subject: ') + lead['QryDtl']['QryInfo'][:200]
-                try:
-                    data['Country_Code'] = str(lead['CntctDtl']['Phone']).split('-')[0][1:]
-                except:
-                    data['Country_Code'] = '91'
-            
-                formatted_leads.append(data)
-            
-            except:
-                pass        
-
-        print(formatted_leads)
-        CONN = MongoClient(MONGO_DB)
-        DB = CONN['lead_automation']
-        api_leads = DB['API_leads']
-        logs = []
+                formatted_leads.append(_format_99acres_lead(lead))
+            except Exception:
+                celery_logger.exception("could not read a 99acres lead")
 
         if len(formatted_leads) == 0:
             return {'status': 'Empty'}
 
+        api_leads = get_db()['API_leads']
+        logs = []
         for input in formatted_leads:
-            history = api_leads.find(
-                {
+            if not input['Phone'] or _recently_synced(api_leads, 'Phone', input['Phone']):
+                continue
+            try:
+                data = {
+                    'Configuration1': '2 BHK',
+                    'Country_Code': '+' + str(input['Country_Code']),
+                    'Email': input['Email'],
                     'Phone': input['Phone'],
-                    'latest_update': {
-                        '$gte': datetime.now() - timedelta(days=1)
-                    }
+                    'Project_Enquired_for': {'id': _project_id_or_default(input['Project_Enquired_for'])},
+                    'Full_Name': input['Full_Name'],
+                    'Lead_Source': '99acres',
+                    'Last_Name': input['Full_Name'],
+                    'Initial_Enquiry_Particulars_Automation': input['Automation Updates']
                 }
-            )
-            history = json.loads(json_util.dumps(history))
 
-            if len(history) == 0:
-                print('input: ', input)
-                try:
-                    access_token = get_access_token()
-                    project_id = getProjectID(input['Project_Enquired_for'], access_token)
-                    print((input['Project_Enquired_for'], project_id))
-                    if 'error' in project_id:
-                        access_token = get_access_token()
-                        project_id = getProjectID('None', access_token)
+                response = insert_records(data)
+                logs.append(response)
+                input['latest_update'] = datetime.now()
+                input['details'] = data
+                input['response'] = response
+                api_leads.update_one({'Phone': input['Phone']}, {'$set': input}, upsert=True)
 
-                    data = {
-                        'Configuration1': '2 BHK',
-                        'Country_Code': '+' + str(input['Country_Code']),
-                        'Email': input['Email'],
-                        'Phone': input['Phone'],
-                        'Project_Enquired_for': dict({'id': project_id}),
-                        'Full_Name': input['Full_Name'],
-                        'Lead_Source': '99acres',
-                        'Last_Name': input['Full_Name'],
-                        'Initial_Enquiry_Particulars_Automation': input['Automation Updates']
-                    }                    
-                    
-                    response = insert_records(data, access_token)
-                    logs.append(response)
-                    input['latest_update'] = datetime.now()
-                    input['details'] = data
-                    input['response'] = response
-                    api_leads.update_one(
-                            {
-                                'Phone': input['Phone']
-                            },
-                            {
-                                '$set': input
-                            },
-                            upsert = True
-                        )
-
-                except Exception as e:
-                    logs.append(str(e))
+            except Exception as e:
+                celery_logger.exception("99acres lead failed")
+                logs.append(str(e))
 
         return logs
-    
+
     except Exception as e:
+        celery_logger.exception("99acres sync failed")
         return {'error': str(e)}
 
 
 @celery_app.task
 def removing_older_img():
-    import glob
-    import os
-    import time
-
-    print('Remove older files running')
-
-    path = r"storage/**/*.png"
-    now = time.time()
-    days = 200
-    
-    for filename in glob.iglob(path, recursive=True):
-        if os.path.getmtime(os.path.join(path, filename)) < now - days * 86400:
-            if os.path.isfile(os.path.join(path, filename)):
-                logger.info("filename")
-                logger.info(path, filename)
-                print("filename")
-                print(path, filename)
-                try:
-                    os.remove(os.path.join(path, filename))
-                except:
-                    pass
-    
-    return {'status': 'Completed'}
+    cutoff = time.time() - SCREENSHOT_RETENTION_DAYS * 86400
+    removed = 0
+    for filename in glob.iglob(os.path.join(Config.STORAGE_PATH, "**", "*.png"), recursive=True):
+        try:
+            if os.path.isfile(filename) and os.path.getmtime(filename) < cutoff:
+                os.remove(filename)
+                removed += 1
+        except OSError:
+            celery_logger.exception("could not remove %s", filename)
+    celery_logger.info("removed %s screenshots older than %s days", removed, SCREENSHOT_RETENTION_DAYS)
+    return {'status': 'Completed', 'removed': removed}
 
 
 @celery_app.task
 def save_access_token():
-    from requests.structures import CaseInsensitiveDict
-    import os
-    from requests import post,get
-    from dotenv import load_dotenv, set_key, find_dotenv, get_key
-    
-    url = "https://fefc-2400-6180-100-d0-00-b54-e001.ngrok.io"
-    print('Save access token running')
-    get(url)
-    zoho = {
-        "URL": "https://www.zohoapis.com/crm/v2/Leads/",
-        "CLIENT_ID": "REDACTED",
-        "CLIENT_SECRET": "REDACTED",
-        # "REFRESH_TOKEN": "REDACTED",
-        "REFRESH_TOKEN": "REDACTED",
-        "REDIRECT_URI": "https://example.com",
-        "NAME": "Zoho"
-        }
+    """Keep a fresh Zoho access token cached in Redis so lead tasks never wait on a refresh."""
+    refresh_access_token()
+    celery_logger.info("Zoho access token refreshed")
+    return "refreshed"
 
-    url = 'https://accounts.zoho.com/oauth/v2/token?client_id={}&client_secret={}&refresh_token={}&grant_type=refresh_token'.format(
-            zoho['CLIENT_ID'],
-            zoho['CLIENT_SECRET'],
-            zoho['REFRESH_TOKEN'])
 
-    headers = CaseInsensitiveDict()
-    headers["Content-Length"] = "0"
-    resp = post(url, headers=headers)
-    output = resp.json()
-    print(output)
-    dotenv_file = find_dotenv()
-    load_dotenv(dotenv_file)
-    # print("before :", os.environ.get("access_token"))
-    # print('before: {}'.format(os.getenv('access_token')))
-    before = get_key(dotenv_file, 'access_token', encoding='utf-8')
-    print('before: {}'.format(before))
-    access_token = output['access_token']
-    # os.environ["access_token"] = str(access_token)
-    set_key(dotenv_file, "access_token", access_token)
-    # access_token = os.environ.get("access_token")
-    # access_token = os.getenv('access_token')
-    access_token = get_key(dotenv_file, 'access_token', encoding='utf-8')
-    print("after :", access_token)
-  
-    return access_token
+def _run_site_automation(automator_class, _site, lead_data):
+    match_keywords = common_member(_lead_keywords(lead_data), _site['project_list']['keywords'])
+    if match_keywords is None:
+        return "No matched keywords found"
+    site_name = _site['name']
+    site_projectname = _site['project_list']['project_name']
+    celery_logger.info(f"Site: {site_name}; Project: {site_projectname}; matched: {match_keywords}")
+    browserAutomation = automator_class(
+                                    phone=lead_data["phone"],
+                                    email=lead_data["email"],
+                                    lead_data=lead_data,
+                                    match_keywords=match_keywords,
+                                    site_data=_site
+                                    )
+    try:
+        browserAutomation.projectCheck(site_name, site_projectname)
+        browserAutomation.automated_flow()
+    finally:
+        # Always close Firefox, or a failed site leaves a browser process behind on the worker.
+        browserAutomation.teardown()
+    return "success"
+
+
+def _lead_keywords(lead_data):
+    keywords = []
+    for field in ("project_enquired_for", "interested_properties", "interested_localities"):
+        keywords.extend((lead_data.get(field) or "").split(";"))
+    return keywords
 
 
 @shared_task()
 def browserAutomate(_site, lead_data):
     from app.functions.site_base import SiteAutomator
-    print("site list")
-    print(_site)
-    print("lead_data")
-    print(lead_data)
-    celery_logger.info("browser started")
-    site_name = _site['name']
-    site_projectname = _site['project_list']['project_name']
-    ##
-    site_keywords = []
-    project_enquired = lead_data.get("project_enquired_for", "").split(";")
-    interested_project = lead_data.get("interested_properties", "").split(";")
-    interested_localities = lead_data.get("interested_localities", "").split(";")
-    site_keywords.extend(project_enquired)
-    site_keywords.extend(interested_project)
-    site_keywords.extend(interested_localities)
-    logger.info("site_keywords in tasks.py")
-    logger.info(site_keywords) 
-    print("site_keywords in tasks.py")
-    print(site_keywords)    
-    logger.info("project keywords in tasks.py")
-    logger.info(_site['project_list']['keywords']) 
-    print("project keywords in tasks.py")
-    print(_site['project_list']['keywords']) 
-    ##
-    match_keywords = common_member(site_keywords, _site['project_list']['keywords'])
-    print("match keywords in tasks.py")
-    print(match_keywords)
-    if match_keywords == None:
-        return "No matched keywords found"
-    celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
-    browserAutomation = SiteAutomator(  
-                                    phone = lead_data["phone"],
-                                    email= lead_data["email"],
-                                    lead_data= lead_data,
-                                    match_keywords= match_keywords,
-                                    site_data=_site
-                                        )
-    browserAutomation.projectCheck(site_name, site_projectname)
-    print("Project check successful")
-    browserAutomation.automated_flow()
-    # upload_result = browserAutomation.upload_data()
-    # print(f"data upload :{upload_result}")
-    browserAutomation.teardown()
-    return "success"
+    return _run_site_automation(SiteAutomator, _site, lead_data)
 
 
 @shared_task()
 def browserAutomateBulk(_site, lead_data):
     from app.functions.site_automator_bulk import SiteAutomator
+    return _run_site_automation(SiteAutomator, _site, lead_data)
 
-    celery_logger.info("browser started")
-    site_name = _site['name']
-    site_projectname = _site['project_list']['project_name']
-    site_keywords = []
-    project_enquired = lead_data.get("project_enquired_for", "").split(";")
-    interested_project = lead_data.get("interested_properties", "").split(";")
-    interested_localities = lead_data.get("interested_localities", "").split(";")
-    site_keywords.extend(project_enquired)
-    site_keywords.extend(interested_project)
-    site_keywords.extend(interested_localities)
-    print(site_keywords)    
-    match_keywords = common_member(site_keywords, _site['project_list']['keywords'])
-    if match_keywords == None:
-        return "No matched keywords found"
-    celery_logger.info(f"Site: {site_name}; Project: {site_projectname}")
-    browserAutomation = SiteAutomator(  
-                                    phone = lead_data["phone"],
-                                    email= lead_data["email"],
-                                    lead_data= lead_data,
-                                    match_keywords= match_keywords,
-                                    site_data=_site
-                                    )
-    browserAutomation.projectCheck(site_name, site_projectname)
-    browserAutomation.automated_flow()
-    browserAutomation.teardown()
-    return "success"
-
-
-
-# @shared_task
-# def bulk_lead(*args):
-#     try:
-#         return "success"
-#     except Exception as e:
-#         print(str(e))
-#         return "failed"
-
-
-def make_celery(app):
-    celery = Celery(
-        __name__,
-        backend=CeleryConfig.RESULT_BACKEND,
-        broker=CeleryConfig.BROKER_URL
-    )
-    celery.conf.update(app.config)
-
-    class ContextTask(celery.Task):
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return self.run(*args, **kwargs)
-
-    celery.Task = ContextTask
-    return celery

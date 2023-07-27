@@ -47,3 +47,5 @@ logs/lead_automation.log
 celerybeat-schedule
 logs
 .env
+.er.log
+venv/

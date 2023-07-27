@@ -1,86 +1,90 @@
-version: '3.7'
+# Full stack: web app behind nginx, Redis broker, and the Celery workers + scheduler.
+# Settings come from .env (copy .env.example). MongoDB is external (e.g. Atlas), set by MONGO_URI.
 services:
-  #browser
-  firefox:
-    image: selenium/node-firefox
-    container_name: webautomation_firefox
-    depends_on:
-      - hub
-    environment:
-      HUB_PORT_4444_TCP_ADDR: hub
-      HUB_PORT_4444_TCP_PORT: 4444
-      NODE_MAX_SESSION: 2
-      NODE_MAX_INSTANCES: 2
-    volumes:
-      - /dev/shm:/dev/shm
-    ports:
-      - "8006:4444"
-      
-    links:
-     - hub
-
   redis:
-    image: redis
-    ports:
-      - "8001:6379"
+    image: redis:7
+    restart: always
+
+  flask:
+    build: .
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - storage:/opt/lead_automation/storage
+    depends_on:
+      - redis
 
   nginx:
     build: ./nginx
-    # container_name: nginx
-    environment:
-      - NGINX_HOST=localhost
-      - NGINX_PORT=80
+    restart: always
     ports:
       - "8005:80"
-    networks:
-      - hubnet
+    depends_on:
+      - flask
 
-  hub:
-    image: selenium/hub
-    environment:
-      GRID_MAX_SESSION: 4
-      GRID_BROWSER_TIMEOUT: 10000
-      GRID_TIMEOUT: 3000
-    
-    
-  flask:
+  lead_worker:
     build: .
-    # container_name: gunicorn
-    # expose:
-    #   - 5000
-    ports:
-      - 5000:5000
+    entrypoint: ["./worker_starter.sh", "lead"]
     restart: always
-    environment:
-      - MONGO_DB=REDACTED
     env_file:
       - .env
-    # volumes:
-    #   - /opt/lead_automation/logs:./logs/
+    environment:
+      - REDIS_URL=redis://redis:6379/0
     depends_on:
       - redis
-      - nginx
-    networks:
-      - hubnet
-  
-      
 
-networks:
-  hubnet:
-    driver: bridge
+  browser_worker:
+    build: .
+    entrypoint: ["./worker_starter.sh", "browser"]
+    restart: always
+    shm_size: 1gb
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - storage:/opt/lead_automation/storage
+    depends_on:
+      - redis
 
+  bulk_worker:
+    build: .
+    entrypoint: ["./worker_starter.sh", "bulk"]
+    restart: always
+    shm_size: 1gb
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - storage:/opt/lead_automation/storage
+    depends_on:
+      - redis
 
-#  firefox:
-#     image: selenium/standalone-firefox
-#     environment:
-#       HUB_PORT_4444_TCP_ADDR: hub
-#       HUB_PORT_4444_TCP_PORT: 4444
-#       NODE_MAX_INSTANCE: 2
-#       NODE_MAX_SESSION: 2
-#     volumes:
-#       - /dev/shm:/dev/shm 
+  api_worker:
+    build: .
+    entrypoint: ["./worker_starter.sh", "api"]
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
 
-#     links:
-#       - "hub"
-#     ports:
-#       - "8888:4444"
+  beat:
+    build: .
+    entrypoint: ["./worker_starter.sh", "beat"]
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+
+volumes:
+  storage:
