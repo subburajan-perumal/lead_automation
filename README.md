@@ -1,154 +1,158 @@
-<h1 align="center"> Real-estate lead automation</h1>
+# Real-estate lead automation
 
-## Requirements
-* WSGI = [gunicorn 20.1.0](https://gunicorn.org/)<br>
-Web_Server = [flask_2.0.2](https://flask.palletsprojects.com/en/2.1.x/)<br>
-Worker = [celery_5.2.3](https://docs.celeryq.dev/en/stable/)<br> 
-Message_broker = [redis_6.0.16](https://redis.io)<br>
-Storage_location = ./storage<br>
-Browser = firefox 97.0.1<br>
-Webdriver= geckodriver 30.x<br>
-Database = Mongodb Atlas M0<br>
-HTTPS_tunnel = ngrok<br>
+Takes property-enquiry leads from Zoho CRM, MagicBricks and 99acres, matches each lead to
+builder projects by keyword, and registers it on every matching builder's website with a
+Selenium-driven Firefox. Screenshots of each registration are attached back to the Zoho lead.
 
-## Installation:
-### Step 1:
-> clone code from   git repo
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the architecture diagrams and lead flow.
+
+## Stack
+
+| Part | Technology |
+| --- | --- |
+| Web app | Flask 2.0 on gunicorn 20.1, behind nginx |
+| Background jobs | Celery 5.2 with Redis as broker and result backend |
+| Database | MongoDB (Atlas) |
+| Browser automation | Selenium 4.1, Firefox ESR, geckodriver |
+| CRM | Zoho CRM API |
+| Error tracking | Sentry (optional) |
+
+Python 3.9.
+
+## Configuration
+
+All settings come from environment variables, read from a `.env` file in the project root.
+
 ```sh
-git clone https://github.com/subburajan-perumal/lead_automation.git
-
+cp .env.example .env
 ```
 
+These must be set, or the app and workers refuse to start:
+
+| Variable | Purpose |
+| --- | --- |
+| `FLASK_SECRET_KEY` | Flask session signing |
+| `MONGO_URI` | MongoDB connection string, including the database name |
+| `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN` | Zoho CRM OAuth |
+
+Optional:
+
+| Variable | Purpose |
+| --- | --- |
+| `MAGICBRICKS_API_KEY` | Enables the hourly MagicBricks sync |
+| `ACRES99_USERNAME`, `ACRES99_PASSWORD`, `ACRES99_API_TOKEN` | Enables the hourly 99acres sync |
+| `SENTRY_DSN` | Sends errors to Sentry |
+| `REDIS_URL` | Redis address (default `redis://localhost:6379/0`) |
+| `BROWSER_HEADLESS` | Run Firefox without a window (`true` in Docker) |
+| `STORAGE_PATH`, `LOG_PATH` | Where screenshots and logs are written |
+
+`.env` is git-ignored. Never commit it.
+
+## Run with Docker (recommended)
+
 ```sh
-cd lead_automation
-```
-> switch to latest branch
-```sh
-git checkout origin/release_2.1
+docker compose up -d --build
 ```
 
-### Step 2:
+This starts nginx, the Flask app, Redis, four Celery workers and the Celery scheduler. The app
+is served at `http://localhost:8005`.
 
-for activate virtual enivironment
+| Service | Role |
+| --- | --- |
+| `nginx` | Reverse proxy on port 8005 |
+| `flask` | Web app and Zoho webhook |
+| `redis` | Task broker and Zoho token cache |
+| `lead_worker` | Matches leads to builder projects |
+| `browser_worker` | Registers live leads on builder sites |
+| `bulk_worker` | Registers leads from CSV uploads |
+| `api_worker` | MagicBricks and 99acres sync |
+| `beat` | Runs the scheduled jobs |
+
+Useful commands:
+
 ```sh
-source genv/bin/activate
+docker compose logs -f browser_worker        # follow one service's logs
+docker compose up -d --scale browser_worker=2 # more browser capacity
+docker compose down                          # stop everything
 ```
-### Step 3:
 
-install python dependencies
+## Run locally
+
+You need Python 3.9, Redis, and Firefox. The bundled `geckodriver` is a Linux x86-64 binary;
+on other platforms install geckodriver yourself and set `WEB_DRIVER` to its path.
+
 ```sh
+python3.9 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env   # then fill it in
 ```
-### Step 4:
 
-set ssl certifcate and key file  in gunicorn.conf.py
+Start each process in its own terminal:
 
-```py
-#gunicorn.conf.py<br>
-certfile=certificatefile
-keyfile=keyfile
-```
-### Step 6:
-
-## HTTPS tunnel
 ```sh
-#for first time
-$ ngrok authtoken <authkey>
-
-
-$ ./ngrok http 443
+./gunicorn_starter.sh             # web app on :5000
+./worker_starter.sh lead          # lead matching, Zoho token refresh, cleanup
+./worker_starter.sh browser       # live site registrations
+./worker_starter.sh bulk          # CSV upload registrations
+./worker_starter.sh api           # MagicBricks and 99acres sync
+./worker_starter.sh beat          # scheduler
 ```
 
-## Server 
+To receive Zoho webhooks on a local machine, expose port 5000 with a tunnel such as ngrok.
 
-Start flask server
+## Endpoints
+
+| Route | Use |
+| --- | --- |
+| `POST /` | Zoho CRM webhook. Needs `name`, `phone`, `email`, `lead_id` |
+| `POST /retry_leads` | Re-queue one lead for one sub-project |
+| `GET /tasks/<task_id>` | Celery task status |
+| `/bulk_upload`, `/bulk_leads_list` | Upload a CSV of leads and list past uploads |
+| `/lead/all`, `/lead/today` | Lead history |
+| `/lead/error_retry` | Re-run one failed site registration |
+| `/site/`, `/site/add`, `/site/<name>` | Manage builder sites, projects and keywords |
+
+## Scheduled jobs
+
+| Job | When |
+| --- | --- |
+| MagicBricks sync | Every hour |
+| 99acres sync | Every hour |
+| Zoho access token refresh | Every 30 minutes |
+| Delete screenshots older than 200 days | Daily at 23:00 |
+
+## Monitoring
+
+Run Flower to see workers, queues and task history:
+
 ```sh
-$ gunicorn -c gunicorn.conf.py
+celery -A app.tasks flower   # http://localhost:5555
 ```
 
+Check one task from the web app with `GET /tasks/<task_id>`.
 
-## Experimental worker
-```sh
-$ genv/bin/celery multi restart  leadworker selenium bulk_leads -E -A app.celery -c 1 -c:selenium 4  -Q:leadworker lead,celery,default -Q:selenium browser,default,celery -Q:bulk_leads bulk,default,celery --pidfile=/run/celery/%N.pid
-```
+Logs go to `LOG_PATH` (`./logs` by default). Set `SENTRY_DSN` to send errors from Flask,
+Celery and Redis to Sentry.
 
+## Adding a builder site
 
-## Start Bulk worker
-```
-genv/bin/celery -A app.celery worker --loglevel=INFO --concurrency=2 -n bulk_leads@%h
-```
+1. Write the form-filling function in `app/functions/browser_automation.py`.
+2. Register it by site name in `project_store` in `app/functions/site_base.py`.
+3. Add the site, its projects and their match keywords at `/site/add`.
 
+## Project layout
 
-## Start Celery Workers - STEP 2
-```sh
-$ genv/bin/celery multi restart  leadworker selenium -E -A app.celery -c 1 -c:selenium 4  -Q:leadworker lead,celery,default -Q:selenium browser,default,celery --pidfile=/run/celery/%N.pid
+```text
+app/
+  __init__.py          Flask app factory
+  tasks.py             Celery app, queues, schedule and tasks
+  views/               Flask blueprints: home, lead, site, error pages
+  functions/           Lead matching and per-site Selenium automation
+  util/                Zoho API, webhook parsing, helpers
+  templates/, static/  Admin pages
+config.py              Settings, read from the environment
+docs/ARCHITECTURE.md   Architecture diagrams
+nginx/                 Reverse proxy image
+test/                  Manual test scripts
 ```
-
-### START CRON TASKS - STEP 3
-```
-celery -A app.tasks beat -l debug
-```
-
-
-## Leadworker
-Start lead worker
-```sh
-$ celery -A app.celery worker -l info -c 1 -Q default,lead,celery -n leadworker@%h -f logs/%n-%i.log
-```
-
-
-## Selenium worker
-Start selenium worker
-```sh
-$ celery -A app.celery worker -l info -c 4 -Q default,browser,celery -n selenium_worker@%h -f logs/%n-%i.log
-```
-
-## Monitoring tool
-Start monitoring tool
-```sh
-$ celery -A app.celery flower
-```
-
-
-## COMMANDS
-Start Flower
-```
-genv/bin/celery -A app.tasks flower
-```
-
-View Flower
-```
-http://localhost:5555
-```
-
-Run tasks
-```
-genv/bin/celery -A app.tasks call app.tasks.run_apis
-```
-
-Check logs
-```
-cd /var/log/celery/
-```
-
-Start Celery Beats
-```
-celery -A app.tasks beat -l debug
-```
-service lead_automation_server restart
-
-<footer>
-  
-Credentials
-```
-automation_user  
-REDACTED
-```
-  
-```
-Root
-IP: REDACTED_IP
-Pass: REDACTED  
-```  
-
-<footer>
